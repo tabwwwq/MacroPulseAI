@@ -9,7 +9,7 @@ dependencies = []
 package = false
 
 [tool.uv.workspace]
-members = ["apps/api", "packages/economics"]
+members = ["apps/api", "packages/economics", "packages/ml"]
 
 [dependency-groups]
 dev = [
@@ -23,7 +23,7 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["apps/api/src", "packages/economics/src"]
+src = ["apps/api/src", "packages/economics/src", "packages/ml/src"]
 extend-exclude = ["apps/web", "node_modules"]
 
 [tool.ruff.lint]
@@ -48,17 +48,22 @@ quote-style = "double"
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["apps/api/src", "packages/economics/src"]
-mypy_path = ["apps/api/src", "packages/economics/src"]
+files = ["apps/api/src", "packages/economics/src", "packages/ml/src"]
+mypy_path = ["apps/api/src", "packages/economics/src", "packages/ml/src"]
 explicit_package_bases = true
 plugins = ["pydantic.mypy"]
 warn_unreachable = true
 # Alembic revision files are named by date and are not importable modules.
 exclude = ['/migrations/']
 
+[[tool.mypy.overrides]]
+# scikit-learn, joblib and xgboost ship no type information.
+module = ["sklearn.*", "joblib.*", "xgboost.*"]
+ignore_missing_imports = true
+
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
-testpaths = ["apps/api/tests", "packages/economics/tests", "scripts/obsidian/tests"]
+testpaths = ["apps/api/tests", "packages/economics/tests", "packages/ml/tests", "scripts/obsidian/tests"]
 addopts = "-ra --strict-markers"
 markers = [
     "live: hits real external APIs; skipped unless MACROPULSE_LIVE_TESTS=1",

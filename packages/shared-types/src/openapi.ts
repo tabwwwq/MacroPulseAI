@@ -143,6 +143,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Model versions of the latest (or every) run */
+        get: operations["list_models_api_models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/models/{model_id}/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Full metadata, protocol and every measured metric of one model version */
+        get: operations["model_metrics_api_models__model_id__metrics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/observations/export": {
         parameters: {
             query?: never;
@@ -485,6 +519,208 @@ export interface components {
             unit: string;
             /** Value */
             value: number | null;
+        };
+        /** MetricValue */
+        MetricValue: {
+            /**
+             * Detail
+             * @description Calibration bins or confusion counts.
+             */
+            detail?: unknown | null;
+            /** Events */
+            events: number;
+            /** Metric */
+            metric: string;
+            /** N */
+            n: number;
+            /** Note */
+            note?: string | null;
+            /**
+             * Segment
+             * @description `all` or an ISO2 country.
+             */
+            segment: string;
+            /**
+             * Split
+             * @description development (2000-2014) or heldout (2015 onwards).
+             */
+            split: string;
+            /**
+             * Value
+             * @description NULL when undefined for this split; see `note`.
+             */
+            value: number | null;
+        };
+        /** ModelDetail */
+        ModelDetail: {
+            /** Artifact Available */
+            artifact_available: boolean;
+            /** Calibrated Folds */
+            calibrated_folds: number | null;
+            /** Code Revision */
+            code_revision: string | null;
+            /** Coefficients */
+            coefficients: {
+                [key: string]: unknown;
+            } | null;
+            /** Command */
+            command: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Data Snapshot */
+            data_snapshot: string;
+            /** Evaluation */
+            evaluation: {
+                [key: string]: unknown;
+            };
+            /** Feature Names */
+            feature_names: string[];
+            /** Feature Set Version */
+            feature_set_version: string;
+            /**
+             * Headline
+             * @description Per split: brier, brier_skill, log_loss, roc_auc, pr_auc (None = undefined).
+             */
+            headline: {
+                [key: string]: {
+                    [key: string]: number | null;
+                };
+            };
+            /** Heldout Check */
+            heldout_check: {
+                [key: string]: unknown;
+            } | null;
+            /** Horizon */
+            horizon: number;
+            /** Id */
+            id: string;
+            /** Label Cutoff */
+            label_cutoff: {
+                [key: string]: unknown;
+            };
+            /** Library Versions */
+            library_versions: {
+                [key: string]: unknown;
+            };
+            /** Metrics */
+            metrics: components["schemas"]["MetricValue"][];
+            /** Model Key */
+            model_key: string;
+            /** Name */
+            name: string;
+            /** Params */
+            params: {
+                [key: string]: unknown;
+            };
+            /**
+             * Role
+             * @description baseline or candidate
+             */
+            role: string;
+            /** Run Id */
+            run_id: string;
+            /** Seed */
+            seed: number;
+            /**
+             * Selected
+             * @description Published model of its run and horizon.
+             */
+            selected: boolean;
+            /** Selection Note */
+            selection_note: string | null;
+            /**
+             * Status
+             * @description evaluated or unavailable
+             */
+            status: string;
+            /** Target Version */
+            target_version: string;
+            /** Training Events */
+            training_events: number | null;
+            /** Training Last As Of */
+            training_last_as_of: string | null;
+            /** Training Rows */
+            training_rows: number | null;
+            /** Unavailable Reason */
+            unavailable_reason: string | null;
+        };
+        /** ModelList */
+        ModelList: {
+            /** Items */
+            items: components["schemas"]["ModelSummary"][];
+            /** Note */
+            note: string;
+            /** Run Id */
+            run_id: string | null;
+        };
+        /** ModelSummary */
+        ModelSummary: {
+            /** Artifact Available */
+            artifact_available: boolean;
+            /** Code Revision */
+            code_revision: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Data Snapshot */
+            data_snapshot: string;
+            /** Feature Set Version */
+            feature_set_version: string;
+            /**
+             * Headline
+             * @description Per split: brier, brier_skill, log_loss, roc_auc, pr_auc (None = undefined).
+             */
+            headline: {
+                [key: string]: {
+                    [key: string]: number | null;
+                };
+            };
+            /** Heldout Check */
+            heldout_check: {
+                [key: string]: unknown;
+            } | null;
+            /** Horizon */
+            horizon: number;
+            /** Id */
+            id: string;
+            /** Model Key */
+            model_key: string;
+            /** Name */
+            name: string;
+            /**
+             * Role
+             * @description baseline or candidate
+             */
+            role: string;
+            /** Run Id */
+            run_id: string;
+            /**
+             * Selected
+             * @description Published model of its run and horizon.
+             */
+            selected: boolean;
+            /** Selection Note */
+            selection_note: string | null;
+            /**
+             * Status
+             * @description evaluated or unavailable
+             */
+            status: string;
+            /** Target Version */
+            target_version: string;
+            /** Training Events */
+            training_events: number | null;
+            /** Training Last As Of */
+            training_last_as_of: string | null;
+            /** Training Rows */
+            training_rows: number | null;
+            /** Unavailable Reason */
+            unavailable_reason: string | null;
         };
         /**
          * PolicyRateScope
@@ -987,6 +1223,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_models_api_models_get: {
+        parameters: {
+            query?: {
+                run?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelList"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    model_metrics_api_models__model_id__metrics_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Unknown model version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

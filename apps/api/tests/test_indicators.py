@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
+from macropulse_economics.indicators import INDICATORS
+
 
 def _entry(body: dict, iso: str, indicator: str) -> dict:
     country = next(c for c in body["countries"] if c["country"] == iso)
@@ -12,7 +14,7 @@ def test_catalog_covers_all_countries_and_indicators(client: TestClient) -> None
     body = client.get("/api/indicators/catalog").json()
     assert body["probe_date"] == "2026-11-08"
     assert [c["country"] for c in body["countries"]] == ["BE", "DE", "FR", "NL", "US"]
-    assert all(len(c["items"]) == 9 for c in body["countries"])
+    assert all(len(c["items"]) == 11 for c in body["countries"])
 
 
 def test_single_country_filter_is_case_insensitive(client: TestClient) -> None:
@@ -44,3 +46,10 @@ def test_catalog_rejects_unsupported_and_malformed_countries(client: TestClient)
     malformed = client.get("/api/indicators/catalog?country=DEU")
     assert malformed.status_code == 422
     assert malformed.json()["error"]["code"] == "validation_error"
+
+
+def test_every_catalog_indicator_id_is_accepted_by_the_series_endpoint(client: TestClient) -> None:
+    """Regression: ids with digits (bond_yield_10y, short_rate_3m) were rejected with 422."""
+    for ind in INDICATORS:
+        r = client.get("/api/indicators", params={"country": "DE", "indicator": ind.id})
+        assert r.status_code in {200, 404, 503}, (ind.id, r.status_code, r.json())

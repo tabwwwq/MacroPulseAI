@@ -66,6 +66,7 @@ class SourceMapping:
     probe_last_period: str | None
     note: str = ""
     scope_note: str = ""
+    geo: str | None = None  # native geography when it differs from the country (shared series)
 
 
 INDICATORS: tuple[IndicatorDef, ...] = (
@@ -113,6 +114,22 @@ INDICATORS: tuple[IndicatorDef, ...] = (
         Frequency.EVENT,
         "Central-bank policy rate. Euro area members share the ECB rate.",
         kpi=True,
+    ),
+    IndicatorDef(
+        "bond_yield_10y",
+        "Long-term government bond yield (10y)",
+        Category.MONETARY,
+        "% p.a.",
+        Frequency.MONTHLY,
+        "Ten-year government bond yield, monthly average (EMU convergence series for EU members).",
+    ),
+    IndicatorDef(
+        "short_rate_3m",
+        "Short-term interest rate (3m)",
+        Category.MONETARY,
+        "% p.a.",
+        Frequency.MONTHLY,
+        "Three-month money-market rate (euro area for members; 3-month Treasury bill for the US).",
     ),
     IndicatorDef(
         "gov_debt_gdp",
@@ -221,6 +238,36 @@ def _eu_mappings(c: str) -> list[SourceMapping]:
             scope_note="Shared euro area rate — not a national central-bank rate.",
         ),
         SourceMapping(
+            "bond_yield_10y",
+            c,
+            "eurostat",
+            "irt_lt_mcby_m",
+            "freq=M, int_rt=MCBY",
+            Frequency.MONTHLY,
+            None,
+            MappingStatus.VERIFIED,
+            "2026-09",
+            "EMU convergence criterion bond yield; live-verified 2026-11-09 from "
+            + ("1986-04" if c == "NL" else "1980-01")
+            + ".",
+        ),
+        SourceMapping(
+            "short_rate_3m",
+            c,
+            "eurostat",
+            "irt_st_m",
+            "freq=M, int_rt=IRT_M3",
+            Frequency.MONTHLY,
+            None,
+            MappingStatus.VERIFIED,
+            "2026-10",
+            "Eurostat publishes this rate for the euro area only (no national series); "
+            "live-verified 2026-11-09 from 1990-01.",
+            scope_note="Shared euro area 3-month rate — not a national rate; before 1999 a "
+            "Eurostat euro-area aggregate.",
+            geo="EA",
+        ),
+        SourceMapping(
             "gov_debt_gdp",
             c,
             "eurostat",
@@ -307,6 +354,32 @@ _US: list[SourceMapping] = [
         MappingStatus.PARTIAL,
         "2026-10",
         "Effective federal funds rate (monthly average).",
+    ),
+    SourceMapping(
+        "bond_yield_10y",
+        "US",
+        "fred",
+        "GS10",
+        "GS10",
+        Frequency.MONTHLY,
+        None,
+        MappingStatus.PARTIAL,
+        "2026-10",
+        "10-year Treasury constant maturity, monthly average; values verified 2026-11-09 from "
+        "1953-04 via fredgraph CSV.",
+    ),
+    SourceMapping(
+        "short_rate_3m",
+        "US",
+        "fred",
+        "TB3MS",
+        "TB3MS",
+        Frequency.MONTHLY,
+        None,
+        MappingStatus.PARTIAL,
+        "2026-10",
+        "3-month Treasury bill, secondary market, monthly average; values verified 2026-11-09.",
+        scope_note="Treasury bill rate — not an interbank rate like the euro-area 3-month rate.",
     ),
     SourceMapping(
         "gov_debt_gdp",

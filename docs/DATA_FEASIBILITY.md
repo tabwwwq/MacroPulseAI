@@ -11,6 +11,12 @@
 >   485 `.` days. Nothing is interpolated.
 > - Computed support levels: BE, DE, FR, NL **full**; US **partial** (FRED units and metadata need the
 >   key-based API).
+>
+> **Update 2026-11-09 (Phase 5, term spread).** Interest-rate series live-verified and ingested:
+> Eurostat `irt_lt_mcby_m` (`freq=M`, `int_rt=MCBY`; BE/DE/FR from 1980-01, NL from 1986-04, to 2026-09),
+> Eurostat `irt_st_m` (`freq=M`, `int_rt=IRT_M3`) **for the euro area only** — the geo dimension is empty for
+> BE/DE/FR/NL, so the 3-month leg is a shared euro-area rate (1990-01 to 2026-10) — and FRED `GS10`
+> (1953-04) / `TB3MS` (1934-01). Total now **25,702 observations from 31 native series**.
 
 - Probe generated (UTC): **2026-11-08T22:18:14.389483+00:00**.
 - Evidence: [data-feasibility-probe.json](data-feasibility-probe.json); source-specific claims below refer to its `records`, including `request_url`, `retrieved_at_utc`, `notes` and `response_labels`.

@@ -5,7 +5,8 @@ import { CircleCheck, CircleX } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorState } from "@/components/ui/states";
-import { useHealth, useReady, useSourcesStatus } from "@/lib/queries";
+import { modelState, modelSummaryText } from "@/lib/models";
+import { useHealth, useModels, useReady, useSourcesStatus } from "@/lib/queries";
 
 function Row({ label, ok, detail }: { label: string; ok: boolean; detail: string }) {
   const Icon = ok ? CircleCheck : CircleX;
@@ -27,6 +28,7 @@ export function SystemStatus() {
   const health = useHealth();
   const ready = useReady();
   const sources = useSourcesStatus();
+  const models = modelState(useModels().data);
 
   if (ready.isPending || health.isPending) {
     return (
@@ -70,7 +72,7 @@ export function SystemStatus() {
           ok={synced > 0}
           detail={dataDetail}
         />
-        <Row label="Models" ok={false} detail="No trained model artifacts — training pipeline arrives in Phase 5" />
+        <Row label="Models" ok={models.trained} detail={modelSummaryText(models)} />
       </ul>
     </div>
   );

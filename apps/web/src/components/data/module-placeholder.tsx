@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
 import { getModule } from "@/lib/modules";
-import { useSourcesStatus } from "@/lib/queries";
+import { useModels, useSourcesStatus } from "@/lib/queries";
 
 /**
  * Honest page for a module that is not built yet: what it will do, when, and which prerequisites
@@ -15,11 +15,15 @@ import { useSourcesStatus } from "@/lib/queries";
 export function ModulePlaceholder({ moduleId }: { moduleId: string }) {
   const mod = getModule(moduleId);
   const sources = useSourcesStatus();
+  const models = useModels();
   const dataSynced = (sources.data?.items.filter((s) => s.last_success_at).length ?? 0) > 0;
+  const trained = (models.data?.items.length ?? 0) > 0;
 
   function prerequisiteMet(p: string): boolean {
     if (p.startsWith("Observations ingested")) return dataSynced;
-    return false; // models, backtests and snapshots do not exist yet
+    // A training run builds the as-of snapshots and evaluates the models with walk-forward tests.
+    if (p.startsWith("Trained and evaluated model") || p.startsWith("As-of feature snapshots")) return trained;
+    return false; // forecast backtests and other later prerequisites do not exist yet
   }
 
   return (

@@ -130,7 +130,8 @@ def test_unpublished_indicator_is_unavailable_with_the_source_note(app: FastAPI)
 def test_country_data_quality_lists_every_series_behind_the_country(synced: TestClient) -> None:
     body = synced.get("/api/countries/DE/data-quality").json()
     by_id = {i["series_id"]: i for i in body["items"]}
-    assert len(by_id) == 5  # GDP, HICP, unemployment, debt + the shared ECB rate
+    # GDP, HICP, unemployment, debt, 10y yield + the shared ECB rate and euro-area 3m rate
+    assert len(by_id) == 7
     gdp = by_id[DE_GDP_ID]
     assert gdp["health"] == "pass"
     assert gdp["observations"] == 6
@@ -148,11 +149,11 @@ def test_country_data_quality_lists_every_series_behind_the_country(synced: Test
 
 def test_global_inventory_reports_never_synced_series(synced: TestClient) -> None:
     body = synced.get("/api/data-quality").json()
-    assert len(body["items"]) == 24
+    assert len(body["items"]) == 31
     fred = [i for i in body["items"] if i["source_id"] == "fred"]
     assert fred
     assert {i["health"] for i in fred} == {"not_synced"}
-    assert sum(body["counts"].values()) == 24
+    assert sum(body["counts"].values()) == 31
 
 
 def test_a_failed_latest_sync_is_visible_while_older_rows_remain(

@@ -23,6 +23,11 @@ Publisher: **Eurostat (European Commission)** · [API documentation](https://ec.
 | Unemployment rate | `une_rt_m` | `s_adj=SA, age=TOTAL, sex=T, unit=PC_ACT` | BE/DE/FR/NL to 2026-09 |
 | HICP annual rate | ~~`prc_hicp_manr`~~ → **`prc_hicp_minr`** | `freq=M, unit=RCH_A, coicop18=TOTAL` | BE/DE/FR/NL 1997-01–2026-10 (successor verified 2026-11-09; the old dataset ends 2025-12 — [[F-001 HICP dataset frozen at 2025-12]]) |
 | Gov. debt % GDP | `gov_10q_ggdebt` | `unit=PC_GDP, sector=S13, na_item=GD` | BE/DE/FR/NL/EA20 to 2026-Q2 |
+| 10-year government bond yield | `irt_lt_mcby_m` | `freq=M, int_rt=MCBY` | BE/DE/FR 1980-01, NL 1986-04 → 2026-09 (verified 2026-11-09) |
+| 3-month money-market rate | `irt_st_m` | `freq=M, int_rt=IRT_M3`, **geo=EA only** | Euro area 1990-01 → 2026-10; no national series (geo dimension empty for BE/DE/FR/NL) |
+
+## Added 2026-11-09 (Phase 5)
+The two interest-rate datasets feed the term-spread feature ([[ADR-0015 Publish only what beats the baseline]]). The 3-month rate is stored once as `…:EA` and labelled as shared, like the ECB rate; before 1999 it is a Eurostat euro-area aggregate.
 
 ## Ingested by `data-sync` (2026-11-09)
 16 native series, **4,417 observations**, runs 2 and 5 `succeeded`. Each JSON-stat response must select exactly one series (every non-time dimension of size 1) or it is rejected. Eurostat status flags (`p` provisional, `e` estimated, `b` break) are stored per observation, and the dataset `updated` stamp is kept as `source_updated_at` (not a publication date). Connector: `packages/economics/src/macropulse_economics/connectors/eurostat.py` · [[ADR-0013 Native-series ingestion with quality gate]].

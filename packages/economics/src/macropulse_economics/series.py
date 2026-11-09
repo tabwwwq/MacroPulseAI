@@ -28,6 +28,10 @@ NATIVE_UNITS: dict[tuple[str, str], str] = {
     ("fred", "CPIAUCSL"): "Index 1982-1984=100, SA (FRED documentation)",
     ("fred", "UNRATE"): "%, SA (FRED documentation)",
     ("fred", "FEDFUNDS"): "% (FRED documentation)",
+    ("eurostat", "irt_lt_mcby_m"): "% per annum",
+    ("eurostat", "irt_st_m"): "% per annum",
+    ("fred", "GS10"): "% per annum (FRED documentation)",
+    ("fred", "TB3MS"): "% per annum (FRED documentation)",
     ("fred", "GFDEGDQ188S"): "% of GDP (FRED documentation)",
     ("fred", "T10Y3M"): "percentage points (FRED documentation)",
     ("fred", "USREC"): "1 = recession, 0 = expansion (FRED documentation)",
@@ -35,7 +39,10 @@ NATIVE_UNITS: dict[tuple[str, str], str] = {
 
 
 def geo_for(mapping: SourceMapping) -> str:
-    """Geography of the native series: the ECB rate is the euro-area aggregate (U2)."""
+    """Geography of the native series: shared euro-area series (the ECB rate, the euro-area
+    3-month rate) are stored once as "EA"."""
+    if mapping.geo:
+        return mapping.geo
     return "EA" if mapping.source_id == "ecb" else mapping.country
 
 

@@ -702,6 +702,545 @@
         "title": "KpiValue",
         "type": "object"
       },
+      "MetricValue": {
+        "properties": {
+          "detail": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Calibration bins or confusion counts.",
+            "title": "Detail"
+          },
+          "events": {
+            "title": "Events",
+            "type": "integer"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "segment": {
+            "description": "`all` or an ISO2 country.",
+            "title": "Segment",
+            "type": "string"
+          },
+          "split": {
+            "description": "development (2000-2014) or heldout (2015 onwards).",
+            "title": "Split",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "NULL when undefined for this split; see `note`.",
+            "title": "Value"
+          }
+        },
+        "required": [
+          "split",
+          "segment",
+          "metric",
+          "value",
+          "n",
+          "events"
+        ],
+        "title": "MetricValue",
+        "type": "object"
+      },
+      "ModelDetail": {
+        "properties": {
+          "artifact_available": {
+            "title": "Artifact Available",
+            "type": "boolean"
+          },
+          "calibrated_folds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibrated Folds"
+          },
+          "code_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Revision"
+          },
+          "coefficients": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coefficients"
+          },
+          "command": {
+            "title": "Command",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "data_snapshot": {
+            "title": "Data Snapshot",
+            "type": "string"
+          },
+          "evaluation": {
+            "additionalProperties": true,
+            "title": "Evaluation",
+            "type": "object"
+          },
+          "feature_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Feature Names",
+            "type": "array"
+          },
+          "feature_set_version": {
+            "title": "Feature Set Version",
+            "type": "string"
+          },
+          "headline": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "description": "Per split: brier, brier_skill, log_loss, roc_auc, pr_auc (None = undefined).",
+            "title": "Headline",
+            "type": "object"
+          },
+          "heldout_check": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heldout Check"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label_cutoff": {
+            "additionalProperties": true,
+            "title": "Label Cutoff",
+            "type": "object"
+          },
+          "library_versions": {
+            "additionalProperties": true,
+            "title": "Library Versions",
+            "type": "object"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/MetricValue"
+            },
+            "title": "Metrics",
+            "type": "array"
+          },
+          "model_key": {
+            "title": "Model Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "params": {
+            "additionalProperties": true,
+            "title": "Params",
+            "type": "object"
+          },
+          "role": {
+            "description": "baseline or candidate",
+            "title": "Role",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "seed": {
+            "title": "Seed",
+            "type": "integer"
+          },
+          "selected": {
+            "description": "Published model of its run and horizon.",
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "selection_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Note"
+          },
+          "status": {
+            "description": "evaluated or unavailable",
+            "title": "Status",
+            "type": "string"
+          },
+          "target_version": {
+            "title": "Target Version",
+            "type": "string"
+          },
+          "training_events": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Events"
+          },
+          "training_last_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Last As Of"
+          },
+          "training_rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Rows"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailable Reason"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "horizon",
+          "model_key",
+          "name",
+          "role",
+          "status",
+          "selected",
+          "unavailable_reason",
+          "created_at",
+          "target_version",
+          "feature_set_version",
+          "training_rows",
+          "training_events",
+          "training_last_as_of",
+          "data_snapshot",
+          "code_revision",
+          "artifact_available",
+          "headline",
+          "selection_note",
+          "heldout_check",
+          "feature_names",
+          "params",
+          "evaluation",
+          "label_cutoff",
+          "seed",
+          "command",
+          "library_versions",
+          "coefficients",
+          "calibrated_folds",
+          "metrics"
+        ],
+        "title": "ModelDetail",
+        "type": "object"
+      },
+      "ModelList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ModelSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          }
+        },
+        "required": [
+          "run_id",
+          "items",
+          "note"
+        ],
+        "title": "ModelList",
+        "type": "object"
+      },
+      "ModelSummary": {
+        "properties": {
+          "artifact_available": {
+            "title": "Artifact Available",
+            "type": "boolean"
+          },
+          "code_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Revision"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "data_snapshot": {
+            "title": "Data Snapshot",
+            "type": "string"
+          },
+          "feature_set_version": {
+            "title": "Feature Set Version",
+            "type": "string"
+          },
+          "headline": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            "description": "Per split: brier, brier_skill, log_loss, roc_auc, pr_auc (None = undefined).",
+            "title": "Headline",
+            "type": "object"
+          },
+          "heldout_check": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heldout Check"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "model_key": {
+            "title": "Model Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "role": {
+            "description": "baseline or candidate",
+            "title": "Role",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "selected": {
+            "description": "Published model of its run and horizon.",
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "selection_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Note"
+          },
+          "status": {
+            "description": "evaluated or unavailable",
+            "title": "Status",
+            "type": "string"
+          },
+          "target_version": {
+            "title": "Target Version",
+            "type": "string"
+          },
+          "training_events": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Events"
+          },
+          "training_last_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Last As Of"
+          },
+          "training_rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Rows"
+          },
+          "unavailable_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailable Reason"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "horizon",
+          "model_key",
+          "name",
+          "role",
+          "status",
+          "selected",
+          "unavailable_reason",
+          "created_at",
+          "target_version",
+          "feature_set_version",
+          "training_rows",
+          "training_events",
+          "training_last_as_of",
+          "data_snapshot",
+          "code_revision",
+          "artifact_available",
+          "headline",
+          "selection_note",
+          "heldout_check"
+        ],
+        "title": "ModelSummary",
+        "type": "object"
+      },
       "PolicyRateScope": {
         "description": "Whether a country's policy rate is set nationally or shared across a currency union.",
         "enum": [
@@ -1697,7 +2236,7 @@
             "required": true,
             "schema": {
               "description": "Indicator id.",
-              "pattern": "^[a-z_]{2,40}$",
+              "pattern": "^[a-z0-9_]{2,40}$",
               "title": "Indicator",
               "type": "string"
             }
@@ -1838,6 +2377,103 @@
         "summary": "Indicator definitions, verified source mappings and ingestion state",
         "tags": [
           "indicators"
+        ]
+      }
+    },
+    "/api/models": {
+      "get": {
+        "operationId": "list_models_api_models_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "run",
+            "required": false,
+            "schema": {
+              "default": "latest",
+              "pattern": "^(latest|all)$",
+              "title": "Run",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Model versions of the latest (or every) run",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/models/{model_id}/metrics": {
+      "get": {
+        "operationId": "model_metrics_api_models__model_id__metrics_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9]{8}T[0-9]{6}Z-h[24]-[a-z_]{2,40}$",
+              "title": "Model Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unknown model version."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Full metadata, protocol and every measured metric of one model version",
+        "tags": [
+          "models"
         ]
       }
     },

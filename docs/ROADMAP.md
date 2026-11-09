@@ -89,21 +89,27 @@ Acceptance criteria:
 
 ## Phase 5 — Recession target, time-aware features and first real model
 
-**Status:** Planned; no trained model or measured model metrics are claimed.
+**Status:** ✅ Complete (2026-11-09) — with an honest, weak result. `uv run macropulse train` builds 712
+as-of rows (5 countries, US from 1955, EU from 2000), runs a yearly walk-forward backtest per horizon and
+stores every model's metrics and predictions. Published (chosen on 2000–2014 development Brier only):
+H=2 HistGradientBoosting, Brier skill vs prevalence **+0.099** on development but **−0.448** on held-out
+2015–2026; H=4 Logistic Regression, **+0.032** development and **−0.754** held-out. **No model beats the
+historical base rate on the held-out years** (COVID-2020 is not forecastable from these inputs; 2022–24
+curve inversion gave false alarms for BE/FR/US) — see finding F-008. The UI states this.
 **Goal:** Reproduce technical-recession labels and horizon-safe temporal backtests.
 **Deliverables:** H=2/4 labels, as-of feature snapshots, lag/vintage documentation,
 prevalence baseline, Logistic Regression, an available boosted-tree challenger and artifacts.
 
 Acceptance criteria:
 
-- [ ] Tests establish that an event requires two consecutive negative real GDP q/q quarters entirely within the next H quarters; zero is not negative.
-- [ ] Missing GDP and incomplete future horizons produce excluded/censored labels, never false negatives; event/window dates are documented and tested.
-- [ ] Feature eligibility uses publication/vintage evidence or explicit conservative lag assumptions; annual inputs use already-published observations with staleness flags.
-- [ ] Walk-forward/expanding splits have horizon-safe purge/gaps and pooled-country temporal isolation; leakage tests show preprocessing fits only on training data.
-- [ ] Run prevalence baseline and Logistic Regression; execute a boosted-tree challenger only if installed, recording any unavailable dependency.
-- [ ] Report measured Brier, log loss, ROC/PR-AUC where defined, calibration, precision/recall, threshold and real sample/event counts; undefined metrics show N/A with reason.
-- [ ] Calibration uses disjoint temporal data when supported; final test data stays held out.
-- [ ] Save reproducible artifacts with cutoff, dataset snapshot, feature/target versions, command/seed, model version and evaluation method; keep NBER reference separate.
+- [x] Tests establish that an event requires two consecutive negative real GDP q/q quarters entirely within the next H quarters; zero is not negative. *(`packages/ml/tests/test_target.py`, incl. the methodology table.)*
+- [x] Missing GDP and incomplete future horizons produce excluded/censored labels, never false negatives; event/window dates are documented and tested. *(Real run: H=2 702 observed / 10 censored; H=4 692 / 20. Technical recessions found in the data are printed by `train` and stored in each artifact's metadata.)*
+- [x] Feature eligibility uses publication/vintage evidence or explicit conservative lag assumptions; annual inputs use already-published observations with staleness flags. *(Conservative lags in days after period end: GDP 60, inflation 30, unemployment 45, rates 30, ECB 0, FEDFUNDS 7; one missing month falls back with a staleness flag, two exclude the row. No annual inputs are used.)*
+- [x] Walk-forward/expanding splits have horizon-safe purge/gaps and pooled-country temporal isolation; leakage tests show preprocessing fits only on training data. *(Training labels must end before the first test quarter; poisoned-future and scaler-fit tests.)*
+- [x] Run prevalence baseline and Logistic Regression; execute a boosted-tree challenger only if installed, recording any unavailable dependency. *(HistGradientBoosting ± temporal Platt calibration ran; XGBoost is an optional extra and is recorded as "not installed".)*
+- [x] Report measured Brier, log loss, ROC/PR-AUC where defined, calibration, precision/recall, threshold and real sample/event counts; undefined metrics show N/A with reason. *(Per split and per country, stored in `model_metrics`; threshold 0.5.)*
+- [x] Calibration uses disjoint temporal data when supported; final test data stays held out. *(Platt calibration on the latest 30 % of each training window behind a purge gap, only with ≥ 6 events of each class; 2015+ never used for selection. Held-out results of the first run were seen before the term spread was added — recorded in F-008.)*
+- [x] Save reproducible artifacts with cutoff, dataset snapshot, feature/target versions, command/seed, model version and evaluation method; keep NBER reference separate. *(`models/artifacts/<run>/h<H>/model.joblib + metadata.json`; `model_versions` rows; NBER is excluded from features and target.)*
 
 ## Phase 6 — Explainable risk dashboard and model laboratory
 

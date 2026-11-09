@@ -26,6 +26,8 @@ Verified via the key-free `fredgraph.csv` endpoint (values and dates only):
 | `T10Y3M` | Yield-curve slope | 1982-01-04 – 2026-11-06 |
 | `USREC` | NBER reference (**not** the target) | 1854-12 – 2026-10 |
 | `GFDEGDQ188S` | Federal debt % GDP | 1966 – 2026-04 |
+| `GS10` | 10-year Treasury yield, monthly (added 2026-11-09) | 1953-04 – 2026-10 |
+| `TB3MS` | 3-month Treasury bill, monthly (added 2026-11-09) | 1934-01 – 2026-10 |
 
 Units, seasonal adjustment and ALFRED vintages need `FRED_API_KEY` (server-side) — not yet configured.
 

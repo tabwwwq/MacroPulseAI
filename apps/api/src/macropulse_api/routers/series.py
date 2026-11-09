@@ -32,7 +32,7 @@ PeriodQuery = Annotated[
         description="Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD.",
     ),
 ]
-IndicatorQuery = Annotated[str, Query(pattern=r"^[a-z_]{2,40}$", description="Indicator id.")]
+IndicatorQuery = Annotated[str, Query(pattern=r"^[a-z0-9_]{2,40}$", description="Indicator id.")]
 CountryQuery = Annotated[str, Query(pattern=r"^[A-Za-z]{2}$", description="ISO alpha-2 code.")]
 
 

@@ -13,7 +13,17 @@ export const queryKeys = {
     ["indicators", "series", iso2.toUpperCase(), indicator, start ?? "", end ?? ""] as const,
   summary: (iso2: string, asOf: string | null) => ["countries", iso2.toUpperCase(), "summary", asOf ?? "latest"] as const,
   quality: (iso2: string | null) => ["data-quality", iso2 ?? "all"] as const,
+  models: ["models", "latest"] as const,
 };
+
+/** Model versions of the latest training run (empty list + note when nothing is trained). */
+export function useModels() {
+  return useQuery({
+    queryKey: queryKeys.models,
+    queryFn: () => unwrap(api.GET("/api/models", { params: { query: { run: "latest" } } })),
+    staleTime: 5 * 60_000,
+  });
+}
 
 export interface SeriesQuery {
   country: string;

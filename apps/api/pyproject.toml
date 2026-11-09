@@ -13,6 +13,7 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "httpx>=0.28",
     "macropulse-economics",
+    "macropulse-ml",
 ]
 
 [project.scripts]
@@ -20,6 +21,7 @@ macropulse = "macropulse_api.cli:main"
 
 [tool.uv.sources]
 macropulse-economics = { workspace = true }
+macropulse-ml = { workspace = true }
 
 [build-system]
 requires = ["hatchling>=1.27"]

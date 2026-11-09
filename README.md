@@ -18,24 +18,33 @@ next 2 or 4 quarters, with transparent, walk-forward-evaluated and calibrated mo
 
 ## Status
 
-The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–4 are complete:**
-foundation, production-grade UI system, official-data ingestion, and dashboards on the stored data. Phase 5
-(technical-recession target, time-aware features and the first real model) is next.
+The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–5 are complete:**
+foundation, production-grade UI system, official-data ingestion, dashboards on the stored data, and the
+technical-recession target with time-aware features and a first evaluated model. Phase 6 (explainable risk
+dashboard and ML laboratory) is next.
+
+> [!IMPORTANT]
+> **Model result, stated plainly.** The published models beat the historical base rate on the 2000–2014
+> development backtest (Brier skill +0.10 for 2 quarters ahead, +0.03 for 4) but **not on the held-out
+> years 2015–2026** (−0.45 and −0.75). COVID-2020 cannot be foreseen from these macro inputs, and the
+> 2022–24 yield-curve inversion produced false alarms. Probabilities are therefore shown as analytical
+> estimates with this track record — never as forecasts of certainty.
 
 | Area | Working now (verified) | Next |
 | --- | --- | --- |
 | Monorepo | pnpm + uv workspaces, pinned deps, lockfiles, `.env.example`, CI, Dockerfiles, compose | — |
-| Official data | `macropulse data-sync`: Eurostat (JSON-stat), ECB (SDMX CSV) and FRED connectors with timeouts, retries/backoff, `Retry-After`, throttling, response validation, idempotent upserts, per-series quality checks and partial-failure runs. **Live run 2026-11-09: 21,094 observations from 24 series**, all runs succeeded | OECD and World Bank connectors; FRED API-key metadata/ALFRED vintages |
-| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, `/api/indicators?country=&indicator=&start=&end=` (derived series + provenance + quality checks), **`/api/countries/{iso2}/summary?as_of=`** (KPI values, change, staleness, provenance), **`/api/countries/{iso2}/data-quality`**, **`/api/data-quality`**, **`/api/observations/export`** (raw CSV); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Recession target, features and models (Phase 5) |
+| Official data | `macropulse data-sync`: Eurostat (JSON-stat), ECB (SDMX CSV) and FRED connectors with timeouts, retries/backoff, `Retry-After`, throttling, response validation, idempotent upserts, per-series quality checks and partial-failure runs. **Live run 2026-11-09: 25,702 observations from 31 series** (incl. 10-year yields and 3-month rates), all runs succeeded | OECD and World Bank connectors; FRED API-key metadata/ALFRED vintages |
+| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, `/api/indicators?country=&indicator=&start=&end=` (derived series + provenance + quality checks), **`/api/countries/{iso2}/summary?as_of=`** (KPI values, change, staleness, provenance), **`/api/countries/{iso2}/data-quality`**, **`/api/data-quality`**, **`/api/observations/export`** (raw CSV), **`/api/models`**, **`/api/models/{id}/metrics`** (read-only; training is a CLI operation); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Inference and history endpoints (Phase 6) |
 | Web (Next.js 16) | **Overview, Country Explorer, Compare and Data Observatory on stored official data:** KPI tiles with value, change, source flag and provenance tooltip; ECharts with hover source, history window, as-of cut-off, NBER reference bands (US, labelled as external), step lines for rate decisions, table view, CSV (with citations) and PNG export; compare up to four countries as published or as spread vs a baseline, with comparability warnings; per-series lineage with quality checks and raw-row CSV. URL-shareable context; loading / error-with-retry / not-synced / not-built states; no overflow at 375 px | Risk gauge and ML lab once a model exists (Phases 5–6) |
 | Data feasibility | 45 live probes of official endpoints → [`docs/DATA_FEASIBILITY.md`](docs/DATA_FEASIBILITY.md); HICP successor `prc_hicp_minr` verified | — |
-| Models | — (no model trained; the UI says so) | Baselines → logistic regression → gradient boosting (Phase 5) |
+| Models | `macropulse train`: technical-recession labels (H = 2, 4) with censoring, as-of feature snapshots with conservative publication lags (GDP, inflation, unemployment, policy rate, term spread), yearly walk-forward backtest with horizon purge, prevalence and contraction-rule baselines, Logistic Regression, HistGradientBoosting (± temporal Platt calibration); per-split and per-country metrics, OOS predictions and versioned artifacts. Selection uses development data only and requires beating the baseline | Explanations, risk timeline and ML lab (Phase 6) |
 
-Verified on 2026-11-09 (Windows 11): 136 pytest tests (+1 PostgreSQL test that runs in CI, +12 opt-in live
-API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 70 Vitest tests and
-`next build`; a live `data-sync` against Eurostat, ECB and FRED (21,094 observations, idempotent re-runs);
-`pnpm smoke` — 348/348 end-to-end API checks over the synced database; browser checks of all four data pages
-for every country at 1440 px and 375 px, including the as-of cut-off (e.g. US as of 2008-Q4).
+Verified on 2026-11-09 (Windows 11): 173 pytest tests (+1 PostgreSQL test that runs in CI, +16 opt-in live
+API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 73 Vitest tests and
+`next build`; a live `data-sync` against Eurostat, ECB and FRED (25,702 observations, idempotent re-runs);
+a real training run (`20261109T173231Z`, 17 s); `pnpm smoke` — 416/416 end-to-end API checks over the synced
+database; browser checks of all four data pages for every country at 1440 px and 375 px, including the
+as-of cut-off (e.g. US as of 2008-Q4).
 **Not automated yet:** browser-level end-to-end tests (the page checks above were done by hand).
 **Not verified locally:** `docker compose up` (Docker is not installed on the development machine — CI builds
 the images).
@@ -71,6 +80,7 @@ docker compose up --build
 | `pnpm data:sync` | Fetch all mapped official series. Narrow it with `uv run macropulse data-sync --source eurostat --country DE`. Exit code 1 if any run is partial or failed |
 | `$env:MACROPULSE_LIVE_TESTS = "1"; uv run pytest -m live` | Opt-in checks against the real APIs (not run in CI) |
 | `pnpm smoke` | End-to-end checks of a running API over the stored data (provenance, support levels, CSV row counts, error contract) |
+| `pnpm train` | Build as-of features from the stored data, run the walk-forward backtest for H = 2 and 4, store metrics/predictions and save the published model to `models/artifacts/` (`--horizon`, `--seed`, `--no-artifacts`) |
 | `pnpm test` | pytest + Vitest |
 | `pnpm lint` | ruff, ruff format, mypy, ESLint, tsc |
 | `pnpm build` | Next.js production build |
@@ -107,6 +117,10 @@ flowchart LR
   replays are labelled *revised-data / release-lag approximation*.
 - **Metrics that matter for rare events:** Brier score, log loss, calibration, PR-AUC and baselines — not
   accuracy on mostly non-recession quarters.
+- **Protocol as implemented:** yearly expanding-window folds from 2000; development years 2000–2014,
+  held-out 2015 onwards; the published model is the development-best candidate only if it beats the
+  prevalence baseline there, otherwise the baseline itself is published. Details:
+  `vault/50 Methodology/Evaluation protocol.md`.
 
 ## Data sources and attribution
 

@@ -28,3 +28,7 @@ export type KpiValue = Schemas["KpiValue"];
 export type DataQualityReport = Schemas["DataQualityReport"];
 export type StoredSeries = Schemas["StoredSeries"];
 export type SeriesHealth = StoredSeries["health"];
+export type ModelList = Schemas["ModelList"];
+export type ModelSummary = Schemas["ModelSummary"];
+export type ModelDetail = Schemas["ModelDetail"];
+export type MetricValue = Schemas["MetricValue"];

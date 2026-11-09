@@ -99,11 +99,11 @@ The following is a **PLANNED entity allocation**, not a claim that migrations ex
 |---|---|---|
 | `indicator_definitions` | Kept in code (`packages/economics/indicators.py`), versioned with git and served by `/api/indicators/catalog`; a table only if runtime editing is ever needed | — |
 | `release_events` | Publication timing per observation; the current endpoints do not provide it, so it is deferred rather than filled with guesses | 8 (vintages / ALFRED) |
-| `feature_snapshots` | Quarterly as-of inputs, feature version, staleness and lag/vintage assumptions | 5 |
-| `target_labels` | H=2/4 target, event dates, observability/censoring | 5 |
-| `model_versions` | Artifact, training cutoff, target/feature versions, sample counts, snapshot and evaluation method | 5 |
-| `model_metrics` | Walk-forward/baseline/calibration results and undefined-metric reasons | 5; display in 6 |
-| `prediction_runs`, `predictions` | Versioned inference inputs, as-of/timestamp, horizon and probability | 6 |
+| `feature_snapshots` | Not a table: snapshots are rebuilt deterministically from stored observations at training time (feature set version + data snapshot hash in `model_versions`) | 5 (implemented in code) |
+| `target_labels` | Not a table: labels are derived from stored GDP at training time; status counts and event dates are kept in each artifact's metadata | 5 (implemented in code) |
+| `model_versions` | Artifact, training cutoff, target/feature versions, sample counts, snapshot and evaluation method | 5 implemented (migration `0003`) |
+| `model_metrics` | Walk-forward/baseline/calibration results and undefined-metric reasons | 5 implemented; display in 6 |
+| `prediction_runs`, `predictions` | `model_predictions` stores out-of-sample backtest and current (`live`) estimates per model version (5); on-request inference runs in 6 | 5–6 |
 | `scenario_runs` | Bounded sensitivity inputs, baseline/delta and warnings | 7 |
 | `report_exports` | Export selection, generation status, citations and artifact metadata | 9 |
 
@@ -152,7 +152,11 @@ pages remain honest placeholders. Route existence does not establish a completed
 
 Connectors, normalised observations and quality checks are **implemented** (Phase 3,
 [ADR-0013](../vault/30%20Decisions/ADR-0013%20Native-series%20ingestion%20with%20quality%20gate.md)).
-Everything from feature snapshots onwards is **PLANNED**.
+Labels, as-of feature snapshots, walk-forward training/evaluation and versioned artifacts are
+**implemented** in `packages/ml` and `macropulse train` (Phase 5; protocol in
+`vault/50 Methodology/Evaluation protocol.md`). Model results are stored in `model_versions`,
+`model_metrics` and `model_predictions` and read through `/api/models`. Serving inference with
+explanations is **PLANNED** for Phase 6.
 
 ```mermaid
 flowchart TD

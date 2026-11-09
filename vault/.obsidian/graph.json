@@ -7,12 +7,48 @@
   "showOrphans": true,
   "collapse-color-groups": false,
   "colorGroups": [
-    { "query": "path:\"20 Phases\"", "color": { "a": 1, "rgb": 5030911 } },
-    { "query": "path:\"30 Decisions\"", "color": { "a": 1, "rgb": 10980346 } },
-    { "query": "path:\"40 Data\"", "color": { "a": 1, "rgb": 4052643 } },
-    { "query": "path:\"50 Methodology\"", "color": { "a": 1, "rgb": 16102724 } },
-    { "query": "path:\"60 Agents\"", "color": { "a": 1, "rgb": 15886970 } },
-    { "query": "path:\"70 Sessions\" OR path:\"80 Logs\"", "color": { "a": 1, "rgb": 8358307 } }
+    {
+      "query": "path:\"20 Phases\"",
+      "color": {
+        "a": 1,
+        "rgb": 5030911
+      }
+    },
+    {
+      "query": "path:\"30 Decisions\"",
+      "color": {
+        "a": 1,
+        "rgb": 10980346
+      }
+    },
+    {
+      "query": "path:\"40 Data\"",
+      "color": {
+        "a": 1,
+        "rgb": 4052643
+      }
+    },
+    {
+      "query": "path:\"50 Methodology\"",
+      "color": {
+        "a": 1,
+        "rgb": 16102724
+      }
+    },
+    {
+      "query": "path:\"60 Agents\"",
+      "color": {
+        "a": 1,
+        "rgb": 15886970
+      }
+    },
+    {
+      "query": "path:\"70 Sessions\" OR path:\"80 Logs\"",
+      "color": {
+        "a": 1,
+        "rgb": 8358307
+      }
+    }
   ],
   "collapse-display": false,
   "showArrow": true,
@@ -24,5 +60,6 @@
   "repelStrength": 12,
   "linkStrength": 1,
   "linkDistance": 220,
-  "scale": 1
+  "scale": 0.25883865621816216,
+  "close": false
 }

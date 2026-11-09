@@ -14,7 +14,16 @@ from macropulse_api.db import build_engine, build_sessionmaker
 from macropulse_api.errors import install_error_handlers
 from macropulse_api.logging_config import configure_logging
 from macropulse_api.middleware import install_request_middleware
-from macropulse_api.routers import countries, health, indicators, quality, series, sources, summary
+from macropulse_api.routers import (
+    countries,
+    health,
+    indicators,
+    models,
+    quality,
+    series,
+    sources,
+    summary,
+)
 
 DESCRIPTION = """
 Macroeconomic intelligence and technical-recession early-warning API.
@@ -67,4 +76,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(series.router)
     app.include_router(summary.router)
     app.include_router(quality.router)
+    app.include_router(models.router)
     return app

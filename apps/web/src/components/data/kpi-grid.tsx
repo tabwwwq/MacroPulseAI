@@ -8,7 +8,8 @@ import { ErrorState } from "@/components/ui/states";
 import { formatAsOf } from "@/lib/as-of";
 import { formatRelative } from "@/lib/format";
 import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
-import { useCatalog, useCountrySummary } from "@/lib/queries";
+import { modelState, modelSummaryText } from "@/lib/models";
+import { useCatalog, useCountrySummary, useModels } from "@/lib/queries";
 import { flagLabel, provenanceLabel } from "@/lib/series";
 
 /** Change unit: percentage points for rates, otherwise the indicator unit. */
@@ -48,12 +49,13 @@ function KpiTile({ kpi, entry }: { kpi: KpiValue; entry: CatalogEntry | undefine
 
 /**
  * Headline KPIs for one country: latest stored value, change, staleness and provenance for each KPI
- * indicator, then model risk (none trained yet) and data freshness. No tile ever shows a number that
+ * indicator, then the model state (read from /api/models) and data freshness. No tile shows a number that
  * is not a stored official observation (or its documented derivation).
  */
 export function KpiGrid({ iso2, asOf }: { iso2: string; asOf: string | null }) {
   const summary = useCountrySummary(iso2, asOf);
   const catalog = useCatalog(iso2);
+  const models = modelState(useModels().data);
 
   if (summary.isError) return <ErrorState error={summary.error} onRetry={() => void summary.refetch()} />;
 
@@ -72,8 +74,12 @@ export function KpiGrid({ iso2, asOf }: { iso2: string; asOf: string | null }) {
           <KpiCard
             label="Recession risk · next 2Q"
             value={null}
-            badge={{ label: "No model", tone: "neutral" }}
-            note={`No trained model yet (training arrives in Phase 5). Estimates will state model version and the as-of quarter (${formatAsOf(asOf)}).`}
+            badge={models.trained ? { label: "Model trained", tone: "warn" } : { label: "No model", tone: "neutral" }}
+            note={
+              models.trained
+                ? `${modelSummaryText(models)} Probabilities are shown with their diagnostics on the Recession risk page from Phase 6 (as of ${formatAsOf(asOf)}).`
+                : modelSummaryText(models)
+            }
           />
           <KpiCard
             label="Data freshness"

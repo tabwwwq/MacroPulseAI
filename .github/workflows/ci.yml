@@ -40,7 +40,7 @@ jobs:
       - name: Type-check
         run: uv run mypy
       - name: Tests (SQLite + PostgreSQL)
-        run: uv run pytest --cov=macropulse_api --cov=macropulse_economics --cov-report=term-missing
+        run: uv run pytest --cov=macropulse_api --cov=macropulse_economics --cov=macropulse_ml --cov-report=term-missing
       - name: OpenAPI schema is committed and current
         run: |
           uv run macropulse openapi --out packages/shared-types/openapi.json

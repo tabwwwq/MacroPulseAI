@@ -294,3 +294,62 @@ class DataQualityReport(BaseModel):
     items: list[StoredSeries]
     counts: dict[str, int] = Field(description="Number of series per health status.")
     generated_at: datetime
+
+
+# ------------------------------------------------------------------ models (Phase 5)
+
+
+class MetricValue(BaseModel):
+    split: str = Field(description="development (2000-2014) or heldout (2015 onwards).")
+    segment: str = Field(description="`all` or an ISO2 country.")
+    metric: str
+    value: float | None = Field(description="NULL when undefined for this split; see `note`.")
+    n: int
+    events: int
+    note: str | None = None
+    detail: Any | None = Field(default=None, description="Calibration bins or confusion counts.")
+
+
+class ModelSummary(BaseModel):
+    id: str
+    run_id: str
+    horizon: int
+    model_key: str
+    name: str
+    role: str = Field(description="baseline or candidate")
+    status: str = Field(description="evaluated or unavailable")
+    selected: bool = Field(description="Published model of its run and horizon.")
+    unavailable_reason: str | None
+    created_at: datetime
+    target_version: str
+    feature_set_version: str
+    training_rows: int | None
+    training_events: int | None
+    training_last_as_of: str | None
+    data_snapshot: str
+    code_revision: str | None
+    artifact_available: bool
+    headline: dict[str, dict[str, float | None]] = Field(
+        description="Per split: brier, brier_skill, log_loss, roc_auc, pr_auc (None = undefined)."
+    )
+    selection_note: str | None
+    heldout_check: dict[str, Any] | None
+
+
+class ModelList(BaseModel):
+    run_id: str | None
+    items: list[ModelSummary]
+    note: str
+
+
+class ModelDetail(ModelSummary):
+    feature_names: list[str]
+    params: dict[str, Any]
+    evaluation: dict[str, Any]
+    label_cutoff: dict[str, Any]
+    seed: int
+    command: str
+    library_versions: dict[str, Any]
+    coefficients: dict[str, Any] | None
+    calibrated_folds: int | None
+    metrics: list[MetricValue]

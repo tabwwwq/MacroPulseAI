@@ -22,7 +22,8 @@ import { formatAsOf } from "@/lib/as-of";
 import { useAppContext } from "@/lib/context";
 import { formatRelative } from "@/lib/format";
 import { MAPPING_STATUS } from "@/lib/mapping";
-import { useCatalog, useCountries, useDataQuality, useSourcesStatus } from "@/lib/queries";
+import { modelState, modelSummaryText } from "@/lib/models";
+import { useCatalog, useCountries, useDataQuality, useModels, useSourcesStatus } from "@/lib/queries";
 
 const STATUS_ORDER: MappingStatus[] = ["verified", "partial", "stale", "not_published", "unmapped"];
 const HEALTH_TONE = { pass: "ok", warn: "warn", fail: "danger", not_synced: "neutral" } as const;
@@ -94,6 +95,7 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
   const { hrefWithContext } = useAppContext();
   const catalog = useCatalog(iso2);
   const [range] = useRange();
+  const models = modelState(useModels().data);
   const entries = catalog.data?.countries[0]?.items ?? [];
   const counts = STATUS_ORDER.map((s) => ({ s, n: entries.filter((e) => e.mapping.status === s).length })).filter((c) => c.n > 0);
   const storedIndicators = entries.filter((e) => e.ingestion.observations > 0).length;
@@ -129,9 +131,12 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
           <Card>
             <CardHeader title="Technical-recession risk" />
             <CardBody>
-              <EmptyState icon={<Gauge className="size-5" aria-hidden />} title="No trained model yet">
-                The probability for the next 2 and 4 quarters appears once a model has been trained and evaluated with
-                walk-forward backtests (Phase 5). No probability is shown without a measured model.
+              <EmptyState
+                icon={<Gauge className="size-5" aria-hidden />}
+                title={models.trained ? "Model trained — display in Phase 6" : "No trained model yet"}
+              >
+                {modelSummaryText(models)} No probability is shown here until it can be presented with its
+                version, as-of date, explanation and measured track record.
               </EmptyState>
             </CardBody>
           </Card>
