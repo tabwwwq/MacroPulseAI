@@ -31,7 +31,7 @@ def test_mapping_reflects_probe_findings_and_no_observations(client: TestClient)
         "latest_period": None,
         "source_last_success_at": None,
     }
-    assert _entry(body, "FR", "inflation_yoy")["mapping"]["status"] == "stale"
+    assert _entry(body, "FR", "inflation_yoy")["mapping"]["dataset"] == "prc_hicp_minr"
     assert _entry(body, "NL", "cli")["mapping"]["status"] == "not_published"
     assert _entry(body, "DE", "yield_spread")["mapping"]["status"] == "unmapped"
     assert _entry(body, "US", "nber_recession")["indicator"]["category"] == "reference"

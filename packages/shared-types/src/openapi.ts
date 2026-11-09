@@ -58,6 +58,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/indicators": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Observed (or transparently derived) series for one country and indicator */
+        get: operations["indicator_series_api_indicators_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/indicators/catalog": {
         parameters: {
             query?: never;
@@ -243,6 +260,36 @@ export interface components {
             /** Unit */
             unit: string;
         };
+        /** IndicatorSeries */
+        IndicatorSeries: {
+            /** Country */
+            country: string;
+            indicator: components["schemas"]["IndicatorDefinition"];
+            /** Note */
+            note: string;
+            /** Points */
+            points: components["schemas"]["SeriesPoint"][];
+            provenance: components["schemas"]["SeriesProvenance"];
+            /**
+             * Quality
+             * @description Checks from the latest ingestion run.
+             */
+            quality: components["schemas"]["QualityCheckResult"][];
+            /** Scope Note */
+            scope_note: string;
+            /**
+             * Transform
+             * @description How the shown values are derived from the native series.
+             */
+            transform: string;
+            /**
+             * Truncated
+             * @description True when only the most recent points were returned.
+             */
+            truncated: boolean;
+            /** Unit */
+            unit: string;
+        };
         /** IngestionState */
         IngestionState: {
             /** Latest Period */
@@ -264,6 +311,18 @@ export interface components {
          * @enum {string}
          */
         PolicyRateScope: "euro_area_shared" | "national";
+        /** QualityCheckResult */
+        QualityCheckResult: {
+            /** Detail */
+            detail: string;
+            /** Rule */
+            rule: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "warn" | "fail";
+        };
         /** ReadinessCheck */
         ReadinessCheck: {
             /** Detail */
@@ -282,6 +341,49 @@ export interface components {
              * @enum {string}
              */
             status: "ready" | "not_ready";
+        };
+        /** SeriesPoint */
+        SeriesPoint: {
+            /** Period */
+            period: string;
+            /** Value */
+            value: number;
+        };
+        /** SeriesProvenance */
+        SeriesProvenance: {
+            /** Adjustment */
+            adjustment: string | null;
+            /** Dataset */
+            dataset: string;
+            /** Docs Url */
+            docs_url: string | null;
+            /** Native Observations */
+            native_observations: number;
+            /** Native Unit */
+            native_unit: string;
+            /**
+             * Request Url
+             * @description Exact request used for the latest successful fetch.
+             */
+            request_url: string;
+            /**
+             * Retrieved At
+             * @description Last successful fetch (data freshness).
+             */
+            retrieved_at: string | null;
+            /** Series Id */
+            series_id: string;
+            /** Series Key */
+            series_key: string;
+            /** Source Id */
+            source_id: string;
+            /** Source Name */
+            source_name: string;
+            /**
+             * Source Updated At
+             * @description Dataset update stamp reported by the source.
+             */
+            source_updated_at: string | null;
         };
         /** SourceMappingInfo */
         SourceMappingInfo: {
@@ -450,6 +552,62 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    indicator_series_api_indicators_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Indicator id. */
+                indicator: string;
+                /** @description Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD. */
+                start?: string | null;
+                /** @description Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD. */
+                end?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndicatorSeries"];
+                };
+            };
+            /** @description Not published / not mapped for this country. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, indicator or bounds. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Mapped but not synced yet. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

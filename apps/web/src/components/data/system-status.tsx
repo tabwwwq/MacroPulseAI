@@ -43,6 +43,11 @@ export function SystemStatus() {
 
   const synced = sources.data?.items.filter((s) => s.last_success_at).length ?? 0;
   const total = sources.data?.items.length ?? 5;
+  const neverSynced = sources.data?.items.filter((s) => !s.last_success_at).map((s) => s.id) ?? [];
+  const dataDetail =
+    synced === 0
+      ? `0/${total} sources synced — run "uv run macropulse data-sync" on the server`
+      : `${synced}/${total} sources synced${neverSynced.length ? ` · never synced: ${neverSynced.join(", ")}` : ""}`;
 
   return (
     <div>
@@ -63,7 +68,7 @@ export function SystemStatus() {
         <Row
           label="Official data"
           ok={synced > 0}
-          detail={`${synced}/${total} sources synced — connectors arrive in Phase 3`}
+          detail={dataDetail}
         />
         <Row label="Models" ok={false} detail="No trained model artifacts — training pipeline arrives in Phase 5" />
       </ul>

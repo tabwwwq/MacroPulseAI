@@ -310,6 +310,71 @@
         "title": "IndicatorDefinition",
         "type": "object"
       },
+      "IndicatorSeries": {
+        "properties": {
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "indicator": {
+            "$ref": "#/components/schemas/IndicatorDefinition"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/SeriesPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/SeriesProvenance"
+          },
+          "quality": {
+            "description": "Checks from the latest ingestion run.",
+            "items": {
+              "$ref": "#/components/schemas/QualityCheckResult"
+            },
+            "title": "Quality",
+            "type": "array"
+          },
+          "scope_note": {
+            "title": "Scope Note",
+            "type": "string"
+          },
+          "transform": {
+            "description": "How the shown values are derived from the native series.",
+            "title": "Transform",
+            "type": "string"
+          },
+          "truncated": {
+            "description": "True when only the most recent points were returned.",
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "country",
+          "indicator",
+          "unit",
+          "transform",
+          "scope_note",
+          "note",
+          "points",
+          "truncated",
+          "provenance",
+          "quality"
+        ],
+        "title": "IndicatorSeries",
+        "type": "object"
+      },
       "IngestionState": {
         "properties": {
           "latest_period": {
@@ -359,6 +424,34 @@
         "title": "PolicyRateScope",
         "type": "string"
       },
+      "QualityCheckResult": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "rule": {
+            "title": "Rule",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "warn",
+              "fail"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rule",
+          "status",
+          "detail"
+        ],
+        "title": "QualityCheckResult",
+        "type": "object"
+      },
       "ReadinessCheck": {
         "properties": {
           "detail": {
@@ -405,6 +498,124 @@
           "checks"
         ],
         "title": "ReadyResponse",
+        "type": "object"
+      },
+      "SeriesPoint": {
+        "properties": {
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "value"
+        ],
+        "title": "SeriesPoint",
+        "type": "object"
+      },
+      "SeriesProvenance": {
+        "properties": {
+          "adjustment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustment"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "docs_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docs Url"
+          },
+          "native_observations": {
+            "title": "Native Observations",
+            "type": "integer"
+          },
+          "native_unit": {
+            "title": "Native Unit",
+            "type": "string"
+          },
+          "request_url": {
+            "description": "Exact request used for the latest successful fetch.",
+            "title": "Request Url",
+            "type": "string"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last successful fetch (data freshness).",
+            "title": "Retrieved At"
+          },
+          "series_id": {
+            "title": "Series Id",
+            "type": "string"
+          },
+          "series_key": {
+            "title": "Series Key",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_name": {
+            "title": "Source Name",
+            "type": "string"
+          },
+          "source_updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Dataset update stamp reported by the source.",
+            "title": "Source Updated At"
+          }
+        },
+        "required": [
+          "source_id",
+          "source_name",
+          "docs_url",
+          "dataset",
+          "series_key",
+          "series_id",
+          "native_unit",
+          "adjustment",
+          "request_url",
+          "retrieved_at",
+          "source_updated_at",
+          "native_observations"
+        ],
+        "title": "SeriesProvenance",
         "type": "object"
       },
       "SourceMappingInfo": {
@@ -802,6 +1013,121 @@
         "summary": "Liveness probe",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/indicators": {
+      "get": {
+        "operationId": "indicator_series_api_indicators_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Indicator id.",
+            "in": "query",
+            "name": "indicator",
+            "required": true,
+            "schema": {
+              "description": "Indicator id.",
+              "pattern": "^[a-z_]{2,40}$",
+              "title": "Indicator",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD.",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}(-Q[1-4]|-\\d{2}(-\\d{2})?)?$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD.",
+              "title": "Start"
+            }
+          },
+          {
+            "description": "Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD.",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}(-Q[1-4]|-\\d{2}(-\\d{2})?)?$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Period bound: YYYY, YYYY-Qn, YYYY-MM or YYYY-MM-DD.",
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndicatorSeries"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not published / not mapped for this country."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, indicator or bounds."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Mapped but not synced yet."
+          }
+        },
+        "summary": "Observed (or transparently derived) series for one country and indicator",
+        "tags": [
+          "indicators"
         ]
       }
     },

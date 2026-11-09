@@ -18,7 +18,7 @@ import { Notice } from "@/components/ui/states";
 import { formatAsOf } from "@/lib/as-of";
 import { useAppContext } from "@/lib/context";
 import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
-import { useCatalog, useCountries } from "@/lib/queries";
+import { useCatalog, useCountries, useSourcesStatus } from "@/lib/queries";
 
 const STATUS_ORDER: MappingStatus[] = ["verified", "partial", "stale", "not_published", "unmapped"];
 
@@ -50,6 +50,8 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
   const catalog = useCatalog(iso2);
   const entries = catalog.data?.countries[0]?.items ?? [];
   const counts = STATUS_ORDER.map((s) => ({ s, n: entries.filter((e) => e.mapping.status === s).length })).filter((c) => c.n > 0);
+  // Indicators can share a native series (GDP levels feed q/q and y/y), so this counts rows per indicator view.
+  const stored = entries.reduce((sum, e) => sum + e.ingestion.observations, 0);
 
   return (
     <div className="space-y-4">
@@ -93,8 +95,21 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
               ))}
             </ul>
             <p className="mt-4 text-xs leading-relaxed text-fg-muted">
-              Stored observations: <span className="font-mono text-fg">0</span>. Coverage reflects what the
-              official sources publish; values are ingested from Phase 3.
+              {stored > 0 ? (
+                <>
+                  Indicators with stored observations:{" "}
+                  <span className="tabular font-mono text-fg">
+                    {entries.filter((e) => e.ingestion.observations > 0).length}/{entries.length}
+                  </span>
+                  . Counts per indicator are in the country&apos;s source table.
+                </>
+              ) : (
+                <>
+                  Stored observations: <span className="font-mono text-fg">0</span>. Run{" "}
+                  <code className="font-mono">uv run macropulse data-sync</code> on the server to ingest them.
+                </>
+              )}{" "}
+              Coverage reflects what the official sources publish.
             </p>
           </CardBody>
         </Card>
@@ -109,6 +124,33 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
         </WidgetBoundary>
       </div>
     </div>
+  );
+}
+
+/** What the page can and cannot show right now, derived from recorded ingestion runs. */
+function DataStateNotice() {
+  const sources = useSourcesStatus();
+  if (!sources.data) return null;
+  const synced = sources.data.items.filter((s) => s.last_success_at);
+  return (
+    <Notice className="mb-6">
+      {synced.length === 0 ? (
+        <p>
+          <span className="font-medium text-fg">No economic observations have been ingested yet.</span> Every tile and
+          chart below is wired to the API and shows why it is empty. Run{" "}
+          <code className="font-mono">uv run macropulse data-sync</code> on the server to fetch the official series.
+          Nothing on this page is sample or simulated data.
+        </p>
+      ) : (
+        <p>
+          <span className="font-medium text-fg">
+            Official observations are stored from {synced.map((s) => s.name.split(" ")[0]).join(", ")}.
+          </span>{" "}
+          Headline tiles and charts are wired to these stored series in Phase 4; until then each one says what is stored
+          and why nothing is plotted. Nothing on this page is sample or simulated data.
+        </p>
+      )}
+    </Notice>
   );
 }
 
@@ -133,13 +175,7 @@ export function OverviewView() {
         }
       />
 
-      <Notice className="mb-6">
-        <p>
-          <span className="font-medium text-fg">No economic observations have been ingested yet.</span> Every tile
-          and chart below is wired to the API and shows why it is empty — values appear after the official-data
-          connectors run (Phase 3). Nothing on this page is sample or simulated data.
-        </p>
-      </Notice>
+      <DataStateNotice />
 
       {selected ? (
         <CountryDashboard iso2={selected.iso2} asOf={asOf} />

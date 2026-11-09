@@ -152,8 +152,8 @@ _EU = ("BE", "DE", "FR", "NL")
 _ISO3 = {"BE": "BEL", "DE": "DEU", "FR": "FRA", "NL": "NLD"}
 _GDP_LAST = {"BE": "2026-Q2", "DE": "2026-Q3", "FR": "2026-Q3", "NL": "2026-Q3"}
 _HICP_NOTE = (
-    "Dataset ends at 2025-12 although updated 2026-02-06; a successor dataset must be verified "
-    "(finding F-001)."
+    "ECOICOP ver.2 successor of prc_hicp_manr (frozen at 2025-12, finding F-001): covers 1997-01 "
+    "onward; overlapping months differ by at most 0.1 pp (checked 2026-11-09)."
 )
 
 
@@ -188,12 +188,12 @@ def _eu_mappings(c: str) -> list[SourceMapping]:
             "inflation_yoy",
             c,
             "eurostat",
-            "prc_hicp_manr",
-            "coicop=CP00, unit=RCH_A",
+            "prc_hicp_minr",
+            "freq=M, unit=RCH_A, coicop18=TOTAL",
             Frequency.MONTHLY,
             None,
-            MappingStatus.STALE,
-            "2025-12",
+            MappingStatus.VERIFIED,
+            "2026-10",
             _HICP_NOTE,
         ),
         SourceMapping(

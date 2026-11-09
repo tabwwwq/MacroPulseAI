@@ -14,8 +14,9 @@ flowchart LR
   W -->|API_URL rewrite| A[FastAPI :8000\nPydantic and SQLAlchemy]
   A --> D[(SQLite local\nPostgreSQL production target)]
   S[Official sources\nEurostat / ECB / FRED-ALFRED\nWorld Bank / OECD]
-  S -.->|PLANNED official adapters| J[PLANNED offline data-sync CLI / scheduled jobs]
-  J -.-> D
+  S -->|Eurostat / ECB / FRED adapters| J[data-sync CLI
+one ingestion run per source]
+  J --> D
   D -.-> T[PLANNED offline training / evaluation]
   T -.-> M[PLANNED versioned model artifacts]
   M -.->|PLANNED inference| A
@@ -88,16 +89,16 @@ Implemented in `models.py` and the initial Alembic revision:
 |---|---|---|
 | `countries` | ISO2 PK, unique ISO3, name/region/currency, euro membership, policy-rate scope, GDP source, target support, timestamps | 1 implemented |
 | `data_sources` | Source ID PK, publisher, base/docs/terms URLs, attribution, key requirement/env name, timestamps; no secret values | 1 implemented |
-| `ingestion_runs` | Integer PK, source FK, start/finish, running/succeeded/partial/failed, rows upserted, error summary | 1 implemented bookkeeping; actual ingestion planned in 3 |
+| `ingestion_runs` | Integer PK, source FK, start/finish, running/succeeded/partial/failed, rows upserted, error summary | 1; written by `data-sync` since 3 |
+| `observations` | Native series id, source, geo, dataset, series key, period + period start, frequency, value, unit, adjustment, source status flag, source URL, source dataset-update stamp, retrieval time, ingestion run; unique `(series_id, period)` | 3 implemented (migration `0002`) |
+| `quality_checks` | Ingestion run, series id, rule, pass/warn/fail, detail | 3 implemented (migration `0002`) |
 
 The following is a **PLANNED entity allocation**, not a claim that migrations exist:
 
 | Entity from CLAUDE.md §5 | Purpose | Planned phase |
 |---|---|---|
-| `indicator_definitions` | Dataset/dimension keys, units, frequency, adjustment, transforms | 3 |
-| `observations` | Country/indicator/period/value, source/key/URL, retrieval, publication/availability, vintage and quality flags | 3 |
-| `release_events` | Publication timing, nullable/unknown when evidence absent | 3; vintage enrichment in 8 |
-| `data_quality_checks` | Missingness, schema/unit/alignment/freshness checks and failures | 3; coverage UI in 4 |
+| `indicator_definitions` | Kept in code (`packages/economics/indicators.py`), versioned with git and served by `/api/indicators/catalog`; a table only if runtime editing is ever needed | — |
+| `release_events` | Publication timing per observation; the current endpoints do not provide it, so it is deferred rather than filled with guesses | 8 (vintages / ALFRED) |
 | `feature_snapshots` | Quarterly as-of inputs, feature version, staleness and lag/vintage assumptions | 5 |
 | `target_labels` | H=2/4 target, event dates, observability/censoring | 5 |
 | `model_versions` | Artifact, training cutoff, target/feature versions, sample counts, snapshot and evaluation method | 5 |
@@ -106,8 +107,8 @@ The following is a **PLANNED entity allocation**, not a claim that migrations ex
 | `scenario_runs` | Bounded sensitivity inputs, baseline/delta and warnings | 7 |
 | `report_exports` | Export selection, generation status, citations and artifact metadata | 9 |
 
-Current country support is `unavailable` with a no-observations reason, even though the
-five registry entries target `full`. Source health derives only from ingestion-run rows:
+Country support is computed from stored observations: `full` needs verified, fresh real GDP,
+inflation and unemployment; `partial` needs real GDP; otherwise `unavailable`. Source health derives only from ingestion-run rows:
 no runs means `never_synced`; fetch freshness is the last successful run finish time,
 distinct from observation period and publication date.
 
@@ -125,8 +126,8 @@ flowchart LR
 Run `pnpm gen:types` at the repository root. This exports the schema using
 `uv run macropulse openapi --out packages/shared-types/openapi.json`, then runs the
 shared package generator. Do not hand-edit generated types. Current routes cover
-health, readiness, countries and source status; the economic/model endpoints in the
-specification remain planned.
+health, readiness, countries, source status, the indicator catalog and stored series
+(`/api/indicators`); the model endpoints in the specification remain planned.
 
 ## 6. Frontend architecture
 
@@ -142,14 +143,15 @@ specification remain planned.
 Chart wrappers, as-of controls and observation-driven dashboards are later work. Route
 existence does not establish a completed analytical feature.
 
-## 7. Data and ML pipeline — PLANNED
+## 7. Data and ML pipeline
 
-**All stages in this section are PLANNED.** Source probes and metadata registries do not
-establish an operational ingestion or training pipeline.
+Connectors, normalised observations and quality checks are **implemented** (Phase 3,
+[ADR-0013](../vault/30%20Decisions/ADR-0013%20Native-series%20ingestion%20with%20quality%20gate.md)).
+Everything from feature snapshots onwards is **PLANNED**.
 
 ```mermaid
 flowchart TD
-  C[PLANNED official connectors] --> O[Normalised observations with provenance]
+  C[Official connectors] --> O[Normalised observations with provenance]
   O --> Q[Quality checks / explicit partial failures]
   Q --> F[Quarterly as-of feature snapshots\nrelease-lag assumptions / vintage flags]
   O --> L[GDP q/q labels H=2 and H=4\ncensor unavailable future horizons]

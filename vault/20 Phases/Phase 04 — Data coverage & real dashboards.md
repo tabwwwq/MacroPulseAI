@@ -2,7 +2,7 @@
 type: phase
 phase: 4
 title: Data coverage & real dashboards
-status: planned
+status: next
 started:
 completed:
 tags:

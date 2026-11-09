@@ -15,7 +15,7 @@ def test_support_is_unavailable_until_observations_exist(client: TestClient) -> 
     for country in client.get("/api/countries").json()["items"]:
         assert country["support"]["level"] == "unavailable"
         assert country["support"]["target"] == "full"
-        assert "No observations" in country["support"]["reason"]
+        assert "No real-GDP observations" in country["support"]["reason"]
 
 
 def test_euro_area_policy_rate_is_flagged_as_shared(client: TestClient) -> None:

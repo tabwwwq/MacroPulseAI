@@ -1,5 +1,17 @@
 ﻿# Data feasibility — live probe evidence
 
+> **Update 2026-11-09 (Phase 3 ingestion).** The probe below is the 2026-11-08 snapshot and is kept as
+> evidence. Since then:
+> - The HICP blocker is **resolved**: successor dataset **`prc_hicp_minr`** (`freq=M`, `unit=RCH_A`,
+>   `coicop18=TOTAL`, ECOICOP ver. 2) is live-verified for BE, DE, FR, NL from **1997-01 to 2026-10**
+>   (358 months each). On the overlap with `prc_hicp_manr` the values differ by at most 0.1 pp.
+> - `uv run macropulse data-sync` stored **21,094 observations** from 24 native series: Eurostat 16 series
+>   / 4,417 rows, ECB 1 / 69, FRED 7 / 16,608. Every run succeeded.
+> - Real gaps kept as gaps: US `CPIAUCSL` and `UNRATE` have no 2025-10 value (FRED `.`), and `T10Y3M` has
+>   485 `.` days. Nothing is interpolated.
+> - Computed support levels: BE, DE, FR, NL **full**; US **partial** (FRED units and metadata need the
+>   key-based API).
+
 - Probe generated (UTC): **2026-11-08T22:18:14.389483+00:00**.
 - Evidence: [data-feasibility-probe.json](data-feasibility-probe.json); source-specific claims below refer to its `records`, including `request_url`, `retrieved_at_utc`, `notes` and `response_labels`.
 - Regenerate: `uv run python scripts/probe_sources.py --out docs/data-feasibility-probe.json`.

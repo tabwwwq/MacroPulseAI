@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Query
@@ -20,6 +21,7 @@ from macropulse_api.schemas import (
     IngestionState,
     SourceMappingInfo,
 )
+from macropulse_api.services.coverage import SeriesStats, series_stats, stats_for_mapping
 from macropulse_economics import COUNTRIES, get_country
 from macropulse_economics.indicators import INDICATORS, PROBE_DATE, SourceMapping, mappings_for
 
@@ -64,6 +66,19 @@ def _mapping_info(m: SourceMapping | None, sources: dict[str, DataSource]) -> So
     )
 
 
+def _ingestion(
+    m: SourceMapping | None,
+    stats: dict[str, SeriesStats],
+    last_success: dict[str, datetime | None],
+) -> IngestionState:
+    s = stats_for_mapping(m, stats)
+    return IngestionState(
+        observations=s.count if s else 0,
+        latest_period=s.latest_period if s else None,
+        source_last_success_at=last_success.get(m.source_id) if m else None,
+    )
+
+
 @router.get(
     "/catalog",
     response_model=IndicatorCatalog,
@@ -80,12 +95,16 @@ def indicator_catalog(session: SessionDep, country: CountryQuery = None) -> Indi
     for source_id in sources:
         run = session.scalars(
             select(IngestionRun)
-            .where(IngestionRun.source_id == source_id, IngestionRun.status == "succeeded")
+            .where(
+                IngestionRun.source_id == source_id,
+                IngestionRun.status.in_(["succeeded", "partial"]),
+            )
             .order_by(IngestionRun.finished_at.desc())
             .limit(1)
         ).first()
         last_success[source_id] = as_utc(run.finished_at) if run else None
 
+    stats = series_stats(session)
     countries = []
     for iso in isos:
         mapped = mappings_for(iso)
@@ -104,13 +123,7 @@ def indicator_catalog(session: SessionDep, country: CountryQuery = None) -> Indi
                         kpi=ind.kpi,
                     ),
                     mapping=_mapping_info(m, sources),
-                    # The observations table arrives with the Phase 3 connectors; until then
-                    # nothing is stored, so the honest count is zero.
-                    ingestion=IngestionState(
-                        observations=0,
-                        latest_period=None,
-                        source_last_success_at=last_success.get(m.source_id) if m else None,
-                    ),
+                    ingestion=_ingestion(m, stats, last_success),
                 )
             )
         countries.append(CountryCatalog(country=iso, items=items))

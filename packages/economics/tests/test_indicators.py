@@ -36,11 +36,12 @@ def test_every_country_has_the_gdp_target_mapped() -> None:
 
 
 def test_probe_findings_are_reflected() -> None:
-    # F-001: Eurostat HICP dataset is stale for the euro area countries.
+    # F-001 resolved: the frozen prc_hicp_manr was replaced by its ECOICOP 2 successor.
     for c in ("BE", "DE", "FR", "NL"):
         hicp = mappings_for(c)["inflation_yoy"]
-        assert hicp.status is MappingStatus.STALE
-        assert hicp.probe_last_period == "2025-12"
+        assert hicp.dataset == "prc_hicp_minr"
+        assert hicp.status is MappingStatus.VERIFIED
+        assert hicp.probe_last_period == "2026-10"
     # F-002: OECD publishes no CLI for Belgium and the Netherlands.
     assert mappings_for("BE")["cli"].status is MappingStatus.NOT_PUBLISHED
     assert mappings_for("NL")["cli"].status is MappingStatus.NOT_PUBLISHED

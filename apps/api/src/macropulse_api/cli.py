@@ -14,6 +14,9 @@ from macropulse_api.db import build_engine, build_sessionmaker
 from macropulse_api.main import create_app
 from macropulse_api.migrate import current_revision, head_revision, upgrade
 from macropulse_api.services.registry_sync import sync_registry
+from macropulse_api.services.sync import run_sync
+from macropulse_economics.connectors import CONNECTORS
+from macropulse_economics.connectors.http import Fetcher, make_client
 
 
 def _cmd_db_upgrade(_args: argparse.Namespace) -> int:
@@ -72,6 +75,40 @@ def _cmd_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_data_sync(args: argparse.Namespace) -> int:
+    engine = build_engine(get_settings().database_url)
+    try:
+        if current_revision(engine) != head_revision():
+            print(
+                "Database is not migrated. Run `uv run macropulse db upgrade` first.",
+                file=sys.stderr,
+            )
+            return 2
+        with make_client() as client:
+            report = run_sync(
+                build_sessionmaker(engine),
+                Fetcher(client),
+                sources=args.source or None,
+                countries=args.country or None,
+            )
+    finally:
+        engine.dispose()
+
+    width = max((len(o.series_id) for o in report.outcomes), default=20)
+    for o in report.outcomes:
+        state = "ok  " if o.ok else "FAIL"
+        span = f"{o.first} .. {o.last}" if o.ok else (o.error or "")
+        warn = f"  ({o.warnings} warning(s))" if o.warnings else ""
+        print(f"{state} {o.series_id:<{width}} {o.rows:>6} rows  {span}{warn}")
+    for source, (run_id, status) in sorted(report.runs.items()):
+        print(f"run {run_id:>4}  {source:<9} {status}")
+    if report.skipped:
+        print(f"skipped {len(report.skipped)} mapping(s): " + "; ".join(report.skipped))
+    total = sum(o.rows for o in report.outcomes)
+    print(f"{total} observations upserted from {len(report.outcomes)} series")
+    return 0 if all(status == "succeeded" for _, status in report.runs.values()) else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="macropulse", description="MacroPulse AI backend CLI")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -88,6 +125,10 @@ def build_parser() -> argparse.ArgumentParser:
     serve.add_argument("--host", default="127.0.0.1")
     serve.add_argument("--port", type=int, default=8000)
     serve.add_argument("--reload", action="store_true")
+
+    sync = sub.add_parser("data-sync", help="fetch official series into the database")
+    sync.add_argument("--source", action="append", choices=sorted(CONNECTORS), help="repeatable")
+    sync.add_argument("--country", action="append", help="ISO alpha-2, repeatable")
     return parser
 
 
@@ -98,6 +139,8 @@ def main(argv: list[str] | None = None) -> int:
         return handler(args)
     if args.command == "openapi":
         return _cmd_openapi(args)
+    if args.command == "data-sync":
+        return _cmd_data_sync(args)
     return _cmd_serve(args)
 
 

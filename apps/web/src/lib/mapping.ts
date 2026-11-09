@@ -19,19 +19,23 @@ export function sourceLabel(entry: CatalogEntry): string | null {
 }
 
 /**
- * Why there is no value to show yet, in one honest sentence derived from the probe metadata.
- * (Observations are ingested from Phase 3; until then every KPI is unavailable.)
+ * Why there is no value to show yet, in one honest sentence derived from the probe metadata and
+ * the number of observations actually stored.
  */
 export function availabilityReason(entry: CatalogEntry): string {
   const m = entry.mapping;
   const stored = entry.ingestion.observations;
+  const latest = entry.ingestion.latest_period;
+  const storedNote = `${stored.toLocaleString("en")} observations stored${latest ? ` (latest ${latest})` : ""}.`;
   switch (m.status) {
     case "verified":
       return stored > 0
-        ? `${stored} observations stored.`
+        ? storedNote
         : `Series verified on ${m.probe_date} (latest ${m.probe_last_period}); not ingested yet.`;
     case "partial":
-      return `Values verified on ${m.probe_date}; ${m.note || "metadata pending"} Not ingested yet.`;
+      return stored > 0
+        ? `${storedNote} ${m.note || "Metadata pending."}`
+        : `Values verified on ${m.probe_date}; ${m.note || "metadata pending"} Not ingested yet.`;
     case "stale":
       return m.note || `Source series ends ${m.probe_last_period}.`;
     case "not_published":

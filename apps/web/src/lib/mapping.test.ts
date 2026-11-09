@@ -41,6 +41,15 @@ describe("availabilityReason", () => {
 
   it("reports stored observations once they exist", () => {
     expect(availabilityReason(entry("verified", {}, 120))).toBe("120 observations stored.");
+    const withLatest = entry("verified", {}, 1234);
+    withLatest.ingestion.latest_period = "2026-Q3";
+    expect(availabilityReason(withLatest)).toBe("1,234 observations stored (latest 2026-Q3).");
+  });
+
+  it("never says 'not ingested' for a partial mapping that has stored rows", () => {
+    const e = entry("partial", { note: "Units from FRED documentation." }, 956);
+    expect(availabilityReason(e)).toBe("956 observations stored. Units from FRED documentation.");
+    expect(availabilityReason(entry("partial", { note: "Units pending." }))).toContain("Not ingested yet.");
   });
 
   it("uses the finding note for stale and unpublished series", () => {

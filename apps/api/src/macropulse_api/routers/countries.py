@@ -12,7 +12,7 @@ from macropulse_api.deps import SessionDep
 from macropulse_api.errors import ApiError
 from macropulse_api.models import Country as CountryRow
 from macropulse_api.schemas import Country, CountryList, ErrorResponse
-from macropulse_api.services.coverage import country_support
+from macropulse_api.services.coverage import SeriesStats, country_support, series_stats
 from macropulse_economics import COUNTRIES, PolicyRateScope, get_country
 
 router = APIRouter(prefix="/api/countries", tags=["countries"])
@@ -28,7 +28,7 @@ Iso2 = Annotated[
 _ORDER = {c.iso2: i for i, c in enumerate(COUNTRIES)}
 
 
-def _to_schema(row: CountryRow) -> Country:
+def _to_schema(row: CountryRow, stats: dict[str, SeriesStats]) -> Country:
     return Country(
         iso2=row.iso2,
         iso3=row.iso3,
@@ -38,7 +38,7 @@ def _to_schema(row: CountryRow) -> Country:
         euro_area_member=row.euro_area_member,
         policy_rate_scope=PolicyRateScope(row.policy_rate_scope),
         primary_gdp_source=row.primary_gdp_source,
-        support=country_support(row),
+        support=country_support(row, stats),
     )
 
 
@@ -54,7 +54,8 @@ def unsupported_country(iso2: str) -> ApiError:
 @router.get("", response_model=CountryList, summary="List supported countries")
 def list_countries(session: SessionDep) -> CountryList:
     rows = session.scalars(select(CountryRow)).all()
-    items = [_to_schema(r) for r in sorted(rows, key=lambda r: _ORDER.get(r.iso2, 99))]
+    stats = series_stats(session)
+    items = [_to_schema(r, stats) for r in sorted(rows, key=lambda r: _ORDER.get(r.iso2, 99))]
     return CountryList(items=items, count=len(items))
 
 
@@ -74,4 +75,4 @@ def get_one(iso2: Iso2, session: SessionDep) -> Country:
             code="registry_not_synced",
             message="Country registry is not loaded. Run `uv run macropulse db upgrade`.",
         )
-    return _to_schema(row)
+    return _to_schema(row, series_stats(session))

@@ -22,4 +22,7 @@ Publisher: **European Central Bank** · [API documentation](https://data.ecb.eur
 
 Event-dated (changes on decision dates), unit `PCPA`. A **shared euro area rate** — never shown as a national rate for BE/DE/FR/NL ([[ADR-0007 Support levels are computed, never declared]]).
 
+## Ingested by `data-sync` (2026-11-09)
+The deposit facility rate is stored **once** as series `…:EA` (69 decision dates, 1999-01-01 → 2026-09-16; runs 1 and 4 `succeeded`) and served to each euro-area member with its scope note. The CSV `KEY` column must match the requested key, or the response is rejected. Event-dated series have no freshness age limit ([[ADR-0013 Native-series ingestion with quality gate]]).
+
 Evidence: `docs/data-feasibility-probe.json` · regenerate with `uv run python scripts/probe_sources.py --out docs/data-feasibility-probe.json`.

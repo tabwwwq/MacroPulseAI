@@ -168,3 +168,50 @@ class CountryCatalog(BaseModel):
 class IndicatorCatalog(BaseModel):
     probe_date: str
     countries: list[CountryCatalog]
+
+
+# ------------------------------------------------------------------ indicator series
+
+
+class SeriesPoint(BaseModel):
+    period: str
+    value: float
+
+
+class SeriesProvenance(BaseModel):
+    source_id: str
+    source_name: str
+    docs_url: str | None
+    dataset: str
+    series_key: str
+    series_id: str
+    native_unit: str
+    adjustment: str | None
+    request_url: str = Field(description="Exact request used for the latest successful fetch.")
+    retrieved_at: datetime | None = Field(description="Last successful fetch (data freshness).")
+    source_updated_at: str | None = Field(
+        description="Dataset update stamp reported by the source."
+    )
+    native_observations: int
+
+
+QualityStatus = Literal["pass", "warn", "fail"]
+
+
+class QualityCheckResult(BaseModel):
+    rule: str
+    status: QualityStatus
+    detail: str
+
+
+class IndicatorSeries(BaseModel):
+    country: str
+    indicator: IndicatorDefinition
+    unit: str
+    transform: str = Field(description="How the shown values are derived from the native series.")
+    scope_note: str
+    note: str
+    points: list[SeriesPoint]
+    truncated: bool = Field(description="True when only the most recent points were returned.")
+    provenance: SeriesProvenance
+    quality: list[QualityCheckResult] = Field(description="Checks from the latest ingestion run.")

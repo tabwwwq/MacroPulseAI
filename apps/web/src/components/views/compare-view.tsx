@@ -144,7 +144,7 @@ export function CompareView() {
               emptyTitle={selected.length ? "No observations to compare yet" : "Select at least one country"}
               emptyMessage={
                 selected.length
-                  ? "Series are drawn once observations are ingested (Phase 3). The table shows what each source publishes."
+                  ? "Stored series are plotted here from Phase 4. The table shows what each source publishes and how much is stored."
                   : "Use the country chips above."
               }
               allowKindToggle

@@ -3,7 +3,7 @@ name = "macropulse-economics"
 version = "0.1.0"
 description = "MacroPulse AI — country/source registry, official-data connectors, transforms and quality checks"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = ["httpx>=0.28"]
 
 [build-system]
 requires = ["hatchling>=1.27"]

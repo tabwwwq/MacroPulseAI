@@ -29,4 +29,7 @@ Verified via the key-free `fredgraph.csv` endpoint (values and dates only):
 
 Units, seasonal adjustment and ALFRED vintages need `FRED_API_KEY` (server-side) — not yet configured.
 
+## Ingested by `data-sync` (2026-11-09)
+7 series, **16,608 observations**, runs 3 and 6 `succeeded`, via the key-free `fredgraph.csv` endpoint. The CSV header must name the requested series, and quarterly/monthly dates must be period starts, or the series is rejected. FRED's `.` marks a missing value: it is skipped, counted and reported as a `source_warning` (485 in `T10Y3M`, one each in `CPIAUCSL` and `UNRATE` → [[F-006 US October 2025 observations missing]]). Units come from FRED documentation, so US mappings stay `partial` until the key-based metadata path exists.
+
 Evidence: `docs/data-feasibility-probe.json` · regenerate with `uv run python scripts/probe_sources.py --out docs/data-feasibility-probe.json`.

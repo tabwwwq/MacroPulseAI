@@ -49,7 +49,9 @@ Acceptance criteria:
 
 ## Phase 3 — Economic data ingestion and metadata
 
-**Status:** Planned; source registry and separate probe evidence exist, production adapters do not.
+**Status:** ✅ Complete (2026-11-09). Live `data-sync` stored **21,094 observations** from 24 native
+series (Eurostat 16 · 4,417 rows, ECB 1 · 69 rows, FRED 7 · 16,608 rows); all three runs succeeded and a
+re-run is idempotent. Computed support: BE, DE, FR, NL `full`; US `partial` (FRED metadata needs an API key).
 **Goal:** Retrieve and store genuine official observations with provenance and quality checks.
 **Deliverables:** At least two verified official adapters beginning with Eurostat GDP and
 another feasible Eurostat indicator; ECB/FRED as practical; normalized storage, registry,
@@ -57,13 +59,13 @@ quality checks, `data-sync` CLI and source-health API backed by actual runs.
 
 Acceptance criteria:
 
-- [ ] Live-verify at least two adapters; report exact keys, returned row counts and failures without substituting invented values.
-- [ ] Store country/metric/period/value, unit, frequency, adjustment, source URL/key, retrieval time and known publication/vintage dates; unknown dates stay null.
-- [ ] Deterministic tests cover response validation, pagination where needed, timeouts/backoff, rate limits, resumable/idempotent upserts and partial failures.
-- [ ] Transform tests reject gaps/nonadjacent GDP quarters, incompatible units and invalid frequency alignment; missing official values remain null with reasons.
-- [ ] `data-sync` records run status/counts/errors; source-health API distinguishes never-synced, success, degraded and failed, with actual last successful fetch time.
-- [ ] Resolve or explicitly retain the country/source blockers below; no country reaches full on stale or unvalidated core series.
-- [ ] Verify httpx/certifi TLS on Windows; keep live API checks separate from deterministic default CI tests.
+- [x] Live-verify at least two adapters; report exact keys, returned row counts and failures without substituting invented values. *(Eurostat, ECB and FRED; per-series rows and quality warnings printed by `data-sync` and recorded in `quality_checks`.)*
+- [x] Store country/metric/period/value, unit, frequency, adjustment, source URL/key, retrieval time and known publication/vintage dates; unknown dates stay null. *(The dataset `updated` stamp is kept as `source_updated_at`; these endpoints give no per-observation publication date or vintage, so none is stored.)*
+- [x] Deterministic tests cover response validation, pagination where needed, timeouts/backoff, rate limits, resumable/idempotent upserts and partial failures. *(Real captured fixtures; `httpx.MockTransport` for 5xx backoff, 429 `Retry-After`, no retry on 4xx and transport errors. Pagination is not needed: each endpoint returns a whole series per request.)*
+- [x] Transform tests reject gaps/nonadjacent GDP quarters, incompatible units and invalid frequency alignment; missing official values remain null with reasons. *(Growth only across adjacent published periods; multi-series/multi-unit responses are rejected; FRED dates that are not period starts are rejected; FRED `.` values are skipped and counted.)*
+- [x] `data-sync` records run status/counts/errors; source-health API distinguishes never-synced, success, degraded and failed, with actual last successful fetch time.
+- [x] Resolve or explicitly retain the country/source blockers below; no country reaches full on stale or unvalidated core series. *(HICP successor `prc_hicp_minr` verified; OECD CLI and the FRED key path retained as blockers.)*
+- [x] Verify httpx/certifi TLS on Windows; keep live API checks separate from deterministic default CI tests. *(Live sync on Windows 11; `pytest -m live` runs only with `MACROPULSE_LIVE_TESTS=1`.)*
 
 ## Phase 4 — Data coverage and actual dashboards
 

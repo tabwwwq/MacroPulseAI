@@ -46,7 +46,7 @@ export function SyncStatus() {
     if (synced.length === 0) {
       tone = "warn";
       label = "No data synced";
-      detail = `0 of ${total} official sources have been fetched yet. Data connectors arrive in Phase 3.`;
+      detail = `0 of ${total} official sources have been fetched yet. Run "uv run macropulse data-sync" on the server.`;
     } else {
       tone = synced.length === total ? "ok" : "warn";
       label = `${synced.length}/${total} sources synced`;

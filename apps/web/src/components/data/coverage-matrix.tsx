@@ -93,7 +93,7 @@ export function CoverageMatrix() {
             {SHORT[s]} = {MAPPING_STATUS[s].label}
           </Badge>
         ))}
-        <span>· Stored observations: 0 for every cell until the Phase 3 connectors run.</span>
+        <span>· Status is what the live probe found; hover a cell for the observations actually stored.</span>
       </div>
     </div>
   );
