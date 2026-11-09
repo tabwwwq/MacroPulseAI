@@ -1,0 +1,13 @@
+[project]
+name = "macropulse-economics"
+version = "0.1.0"
+description = "MacroPulse AI — country/source registry, official-data connectors, transforms and quality checks"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/macropulse_economics"]

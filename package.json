@@ -1,0 +1,28 @@
+{
+  "name": "macropulse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MacroPulse AI — macroeconomic intelligence and technical-recession early-warning platform",
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "bootstrap": "pnpm install && uv sync --all-packages && pnpm db:upgrade",
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"pnpm:dev:api\" \"pnpm:dev:web\"",
+    "dev:api": "uv run macropulse serve --reload",
+    "dev:web": "pnpm --filter @macropulse/web dev",
+    "db:upgrade": "uv run macropulse db upgrade",
+    "gen:types": "uv run macropulse openapi --out packages/shared-types/openapi.json && pnpm --filter @macropulse/shared-types gen",
+    "lint": "pnpm lint:api && pnpm lint:web",
+    "lint:api": "uv run ruff check . && uv run ruff format --check . && uv run mypy",
+    "lint:web": "pnpm --filter @macropulse/web lint && pnpm --filter @macropulse/web typecheck",
+    "test": "pnpm test:api && pnpm test:web",
+    "test:api": "uv run pytest",
+    "test:web": "pnpm --filter @macropulse/web test",
+    "build": "pnpm --filter @macropulse/web build"
+  },
+  "devDependencies": {
+    "concurrently": "10.0.7"
+  }
+}

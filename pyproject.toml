@@ -1,0 +1,65 @@
+[project]
+name = "macropulse-workspace"
+version = "0.1.0"
+description = "MacroPulse AI — Python workspace root (API, economics and ML packages)"
+requires-python = ">=3.12,<3.14"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["apps/api", "packages/economics"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ruff>=0.11",
+    "mypy>=1.15",
+]
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["apps/api/src", "packages/economics/src"]
+extend-exclude = ["apps/web", "node_modules"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "N", "S", "SIM", "RUF", "PTH", "DTZ", "PL"]
+ignore = [
+    "PLR0913", # FastAPI endpoints legitimately take many query params
+    "PLR2004", # magic values are fine in tests/thresholds that are documented inline
+]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S101", "PLR2004", "S105", "S106"]
+"**/migrations/**" = ["N999"]
+# Standalone, stdlib-only dev probe of official endpoints (fixed https URLs, trusted publishers).
+"scripts/probe_sources.py" = [
+    "E501", "S310", "S314", "S608", "B007", "PLR0912", "PLR0915", "PLR0917", "PLW2901", "RUF012",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["apps/api/src", "packages/economics/src"]
+mypy_path = ["apps/api/src", "packages/economics/src"]
+explicit_package_bases = true
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+# Alembic revision files are named by date and are not importable modules.
+exclude = ['/migrations/']
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests", "packages/economics/tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "live: hits real external APIs; skipped unless MACROPULSE_LIVE_TESTS=1",
+]

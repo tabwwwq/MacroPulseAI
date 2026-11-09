@@ -1,0 +1,2290 @@
+{
+  "generated_at_utc": "2026-11-08T22:18:14.389483+00:00",
+  "user_agent": "MacroPulse-feasibility-probe/0.1",
+  "ca_bundle": "certifi",
+  "timeout_seconds": 20,
+  "retries": 2,
+  "records": [
+    {
+      "country": "BE",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": {
+        "freq": "Q",
+        "unit": "CLV20_MNAC",
+        "s_adj": "SCA",
+        "na_item": "B1GQ",
+        "geo": "BE",
+        "lang": "EN"
+      },
+      "frequency": "Q",
+      "unit": "CLV20_MNAC",
+      "seasonal_adjustment": "SCA",
+      "first_period": "1995-Q1",
+      "last_period": "2026-Q2",
+      "observation_count": 126,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:47.449133+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=BE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Latest revisions; full returned history; metadata request: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN"
+      ]
+    },
+    {
+      "country": "DE",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": {
+        "freq": "Q",
+        "unit": "CLV20_MNAC",
+        "s_adj": "SCA",
+        "na_item": "B1GQ",
+        "geo": "DE",
+        "lang": "EN"
+      },
+      "frequency": "Q",
+      "unit": "CLV20_MNAC",
+      "seasonal_adjustment": "SCA",
+      "first_period": "1991-Q1",
+      "last_period": "2026-Q3",
+      "observation_count": 143,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:47.852240+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=DE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Latest revisions; full returned history; metadata request: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN"
+      ]
+    },
+    {
+      "country": "FR",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": {
+        "freq": "Q",
+        "unit": "CLV20_MNAC",
+        "s_adj": "SCA",
+        "na_item": "B1GQ",
+        "geo": "FR",
+        "lang": "EN"
+      },
+      "frequency": "Q",
+      "unit": "CLV20_MNAC",
+      "seasonal_adjustment": "SCA",
+      "first_period": "1980-Q1",
+      "last_period": "2026-Q3",
+      "observation_count": 187,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:48.231632+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=FR&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Latest revisions; full returned history; metadata request: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN"
+      ]
+    },
+    {
+      "country": "NL",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": {
+        "freq": "Q",
+        "unit": "CLV20_MNAC",
+        "s_adj": "SCA",
+        "na_item": "B1GQ",
+        "geo": "NL",
+        "lang": "EN"
+      },
+      "frequency": "Q",
+      "unit": "CLV20_MNAC",
+      "seasonal_adjustment": "SCA",
+      "first_period": "1996-Q1",
+      "last_period": "2026-Q3",
+      "observation_count": 123,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:48.582892+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=NL&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Latest revisions; full returned history; metadata request: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN"
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": {
+        "freq": "Q",
+        "unit": "CLV20_MNAC",
+        "s_adj": "SCA",
+        "na_item": "B1GQ",
+        "geo": "US",
+        "lang": "EN"
+      },
+      "frequency": "Q",
+      "unit": "CLV20_MNAC",
+      "seasonal_adjustment": "SCA",
+      "first_period": null,
+      "last_period": null,
+      "observation_count": null,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:48.944524+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=US&lang=EN",
+      "status": "failed",
+      "notes": [
+        "Response is not a single series with time as final dimension"
+      ]
+    },
+    {
+      "country": "EA",
+      "indicator": "real_gdp",
+      "source": "Eurostat",
+      "dataset_or_series_code": "namq_10_gdp",
+      "exact_filter_or_key": null,
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": null,
+      "observation_count": null,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:47.101589+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN",
+      "status": "unverified",
+      "notes": [
+        "EA aggregate not uniquely discovered in metadata slice."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "real_gdp",
+      "source": "FRED",
+      "dataset_or_series_code": "GDPC1",
+      "exact_filter_or_key": {
+        "id": "GDPC1"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1947-01-01",
+      "last_period": "2026-07-01",
+      "observation_count": 319,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:49.729114+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDPC1",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "unemployment",
+      "source": "FRED",
+      "dataset_or_series_code": "UNRATE",
+      "exact_filter_or_key": {
+        "id": "UNRATE"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1948-01-01",
+      "last_period": "2026-10-01",
+      "observation_count": 945,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:50.045473+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "inflation",
+      "source": "FRED",
+      "dataset_or_series_code": "CPIAUCSL",
+      "exact_filter_or_key": {
+        "id": "CPIAUCSL"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1947-01-01",
+      "last_period": "2026-09-01",
+      "observation_count": 956,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:50.368834+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "policy_rate",
+      "source": "FRED",
+      "dataset_or_series_code": "FEDFUNDS",
+      "exact_filter_or_key": {
+        "id": "FEDFUNDS"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1954-07-01",
+      "last_period": "2026-10-01",
+      "observation_count": 868,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:50.681240+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "yield_spread",
+      "source": "FRED",
+      "dataset_or_series_code": "T10Y3M",
+      "exact_filter_or_key": {
+        "id": "T10Y3M"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1982-01-04",
+      "last_period": "2026-11-06",
+      "observation_count": 11215,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:51.119539+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "nber_reference",
+      "source": "FRED",
+      "dataset_or_series_code": "USREC",
+      "exact_filter_or_key": {
+        "id": "USREC"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1854-12-01",
+      "last_period": "2026-10-01",
+      "observation_count": 2063,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:51.449955+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "federal_debt",
+      "source": "FRED",
+      "dataset_or_series_code": "GFDEGDQ188S",
+      "exact_filter_or_key": {
+        "id": "GFDEGDQ188S"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": "1966-01-01",
+      "last_period": "2026-04-01",
+      "observation_count": 242,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:51.782458+00:00",
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEGDQ188S",
+      "status": "partial",
+      "notes": [
+        "CSV values verified; frequency/unit/adjustment metadata unverified.",
+        "ALFRED vintages and release dates require FRED_API_KEY; not probed."
+      ]
+    },
+    {
+      "country": "BE",
+      "indicator": "annual_central_debt",
+      "source": "World Bank",
+      "dataset_or_series_code": "GC.DOD.TOTL.GD.ZS",
+      "exact_filter_or_key": {
+        "country": "BE",
+        "indicator": "GC.DOD.TOTL.GD.ZS"
+      },
+      "frequency": "annual",
+      "unit": "Central government debt, total (% of GDP)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": null,
+      "last_period": null,
+      "observation_count": 0,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:52.520041+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/BE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "status": "partial",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json"
+      ],
+      "missing_periods": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011",
+        "2010",
+        "2009",
+        "2008",
+        "2007",
+        "2006",
+        "2005",
+        "2004",
+        "2003",
+        "2002",
+        "2001",
+        "2000",
+        "1999",
+        "1998",
+        "1997",
+        "1996",
+        "1995",
+        "1994",
+        "1993",
+        "1992",
+        "1991",
+        "1990",
+        "1989",
+        "1988",
+        "1987",
+        "1986",
+        "1985",
+        "1984",
+        "1983",
+        "1982",
+        "1981",
+        "1980",
+        "1979",
+        "1978",
+        "1977",
+        "1976",
+        "1975",
+        "1974",
+        "1973",
+        "1972",
+        "1971",
+        "1970",
+        "1969",
+        "1968",
+        "1967",
+        "1966",
+        "1965",
+        "1964",
+        "1963",
+        "1962",
+        "1961",
+        "1960"
+      ]
+    },
+    {
+      "country": "DE",
+      "indicator": "annual_central_debt",
+      "source": "World Bank",
+      "dataset_or_series_code": "GC.DOD.TOTL.GD.ZS",
+      "exact_filter_or_key": {
+        "country": "DE",
+        "indicator": "GC.DOD.TOTL.GD.ZS"
+      },
+      "frequency": "annual",
+      "unit": "Central government debt, total (% of GDP)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1990",
+      "last_period": "1990",
+      "observation_count": 1,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:52.881402+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/DE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json"
+      ],
+      "missing_periods": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011",
+        "2010",
+        "2009",
+        "2008",
+        "2007",
+        "2006",
+        "2005",
+        "2004",
+        "2003",
+        "2002",
+        "2001",
+        "2000",
+        "1999",
+        "1998",
+        "1997",
+        "1996",
+        "1995",
+        "1994",
+        "1993",
+        "1992",
+        "1991",
+        "1989",
+        "1988",
+        "1987",
+        "1986",
+        "1985",
+        "1984",
+        "1983",
+        "1982",
+        "1981",
+        "1980",
+        "1979",
+        "1978",
+        "1977",
+        "1976",
+        "1975",
+        "1974",
+        "1973",
+        "1972",
+        "1971",
+        "1970",
+        "1969",
+        "1968",
+        "1967",
+        "1966",
+        "1965",
+        "1964",
+        "1963",
+        "1962",
+        "1961",
+        "1960"
+      ]
+    },
+    {
+      "country": "FR",
+      "indicator": "annual_central_debt",
+      "source": "World Bank",
+      "dataset_or_series_code": "GC.DOD.TOTL.GD.ZS",
+      "exact_filter_or_key": {
+        "country": "FR",
+        "indicator": "GC.DOD.TOTL.GD.ZS"
+      },
+      "frequency": "annual",
+      "unit": "Central government debt, total (% of GDP)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": null,
+      "last_period": null,
+      "observation_count": 0,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:53.238652+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/FR/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "status": "partial",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json"
+      ],
+      "missing_periods": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011",
+        "2010",
+        "2009",
+        "2008",
+        "2007",
+        "2006",
+        "2005",
+        "2004",
+        "2003",
+        "2002",
+        "2001",
+        "2000",
+        "1999",
+        "1998",
+        "1997",
+        "1996",
+        "1995",
+        "1994",
+        "1993",
+        "1992",
+        "1991",
+        "1990",
+        "1989",
+        "1988",
+        "1987",
+        "1986",
+        "1985",
+        "1984",
+        "1983",
+        "1982",
+        "1981",
+        "1980",
+        "1979",
+        "1978",
+        "1977",
+        "1976",
+        "1975",
+        "1974",
+        "1973",
+        "1972",
+        "1971",
+        "1970",
+        "1969",
+        "1968",
+        "1967",
+        "1966",
+        "1965",
+        "1964",
+        "1963",
+        "1962",
+        "1961",
+        "1960"
+      ]
+    },
+    {
+      "country": "NL",
+      "indicator": "annual_central_debt",
+      "source": "World Bank",
+      "dataset_or_series_code": "GC.DOD.TOTL.GD.ZS",
+      "exact_filter_or_key": {
+        "country": "NL",
+        "indicator": "GC.DOD.TOTL.GD.ZS"
+      },
+      "frequency": "annual",
+      "unit": "Central government debt, total (% of GDP)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1990",
+      "last_period": "1994",
+      "observation_count": 5,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:53.591683+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/NL/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json"
+      ],
+      "missing_periods": [
+        "2025",
+        "2024",
+        "2023",
+        "2022",
+        "2021",
+        "2020",
+        "2019",
+        "2018",
+        "2017",
+        "2016",
+        "2015",
+        "2014",
+        "2013",
+        "2012",
+        "2011",
+        "2010",
+        "2009",
+        "2008",
+        "2007",
+        "2006",
+        "2005",
+        "2004",
+        "2003",
+        "2002",
+        "2001",
+        "2000",
+        "1999",
+        "1998",
+        "1997",
+        "1996",
+        "1995",
+        "1989",
+        "1988",
+        "1987",
+        "1986",
+        "1985",
+        "1984",
+        "1983",
+        "1982",
+        "1981",
+        "1980",
+        "1979",
+        "1978",
+        "1977",
+        "1976",
+        "1975",
+        "1974",
+        "1973",
+        "1972",
+        "1971",
+        "1970",
+        "1969",
+        "1968",
+        "1967",
+        "1966",
+        "1965",
+        "1964",
+        "1963",
+        "1962",
+        "1961",
+        "1960"
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "annual_central_debt",
+      "source": "World Bank",
+      "dataset_or_series_code": "GC.DOD.TOTL.GD.ZS",
+      "exact_filter_or_key": {
+        "country": "US",
+        "indicator": "GC.DOD.TOTL.GD.ZS"
+      },
+      "frequency": "annual",
+      "unit": "Central government debt, total (% of GDP)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1989",
+      "last_period": "2024",
+      "observation_count": 36,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:53.960759+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/US/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json"
+      ],
+      "missing_periods": [
+        "2025",
+        "1988",
+        "1987",
+        "1986",
+        "1985",
+        "1984",
+        "1983",
+        "1982",
+        "1981",
+        "1980",
+        "1979",
+        "1978",
+        "1977",
+        "1976",
+        "1975",
+        "1974",
+        "1973",
+        "1972",
+        "1971",
+        "1970",
+        "1969",
+        "1968",
+        "1967",
+        "1966",
+        "1965",
+        "1964",
+        "1963",
+        "1962",
+        "1961",
+        "1960"
+      ]
+    },
+    {
+      "country": "BE",
+      "indicator": "annual_gdp_growth",
+      "source": "World Bank",
+      "dataset_or_series_code": "NY.GDP.MKTP.KD.ZG",
+      "exact_filter_or_key": {
+        "country": "BE",
+        "indicator": "NY.GDP.MKTP.KD.ZG"
+      },
+      "frequency": "annual",
+      "unit": "GDP growth (annual %)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1961",
+      "last_period": "2025",
+      "observation_count": 65,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:54.729872+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/BE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json"
+      ],
+      "missing_periods": [
+        "1960"
+      ]
+    },
+    {
+      "country": "DE",
+      "indicator": "annual_gdp_growth",
+      "source": "World Bank",
+      "dataset_or_series_code": "NY.GDP.MKTP.KD.ZG",
+      "exact_filter_or_key": {
+        "country": "DE",
+        "indicator": "NY.GDP.MKTP.KD.ZG"
+      },
+      "frequency": "annual",
+      "unit": "GDP growth (annual %)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1961",
+      "last_period": "2025",
+      "observation_count": 65,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:55.080680+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/DE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json"
+      ],
+      "missing_periods": [
+        "1960"
+      ]
+    },
+    {
+      "country": "FR",
+      "indicator": "annual_gdp_growth",
+      "source": "World Bank",
+      "dataset_or_series_code": "NY.GDP.MKTP.KD.ZG",
+      "exact_filter_or_key": {
+        "country": "FR",
+        "indicator": "NY.GDP.MKTP.KD.ZG"
+      },
+      "frequency": "annual",
+      "unit": "GDP growth (annual %)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1961",
+      "last_period": "2025",
+      "observation_count": 65,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:55.439590+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/FR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json"
+      ],
+      "missing_periods": [
+        "1960"
+      ]
+    },
+    {
+      "country": "NL",
+      "indicator": "annual_gdp_growth",
+      "source": "World Bank",
+      "dataset_or_series_code": "NY.GDP.MKTP.KD.ZG",
+      "exact_filter_or_key": {
+        "country": "NL",
+        "indicator": "NY.GDP.MKTP.KD.ZG"
+      },
+      "frequency": "annual",
+      "unit": "GDP growth (annual %)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1961",
+      "last_period": "2025",
+      "observation_count": 65,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:55.826692+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/NL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json"
+      ],
+      "missing_periods": [
+        "1960"
+      ]
+    },
+    {
+      "country": "US",
+      "indicator": "annual_gdp_growth",
+      "source": "World Bank",
+      "dataset_or_series_code": "NY.GDP.MKTP.KD.ZG",
+      "exact_filter_or_key": {
+        "country": "US",
+        "indicator": "NY.GDP.MKTP.KD.ZG"
+      },
+      "frequency": "annual",
+      "unit": "GDP growth (annual %)",
+      "seasonal_adjustment": "not applicable (annual)",
+      "first_period": "1961",
+      "last_period": "2025",
+      "observation_count": 65,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:17:56.174738+00:00",
+      "request_url": "https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "status": "verified",
+      "notes": [
+        "Annual only; central government scope differs from general government.",
+        "Metadata: https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json"
+      ],
+      "missing_periods": [
+        "1960"
+      ]
+    },
+    {
+      "country": "BE",
+      "indicator": "unemployment",
+      "source": "Eurostat",
+      "dataset_or_series_code": "une_rt_m",
+      "exact_filter_or_key": {
+        "s_adj": "SA",
+        "age": "TOTAL",
+        "sex": "T",
+        "unit": "PC_ACT",
+        "geo": "BE",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Percentage of population in the labour force",
+      "seasonal_adjustment": "Seasonally adjusted data, not calendar adjusted data",
+      "first_period": "1986-04",
+      "last_period": "2026-09",
+      "observation_count": 486,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:02.161007+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=BE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-11-05T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "s_adj": "Seasonally adjusted data, not calendar adjusted data",
+        "age": "Total",
+        "unit": "Percentage of population in the labour force",
+        "sex": "Total",
+        "geo": "Belgium"
+      }
+    },
+    {
+      "country": "DE",
+      "indicator": "unemployment",
+      "source": "Eurostat",
+      "dataset_or_series_code": "une_rt_m",
+      "exact_filter_or_key": {
+        "s_adj": "SA",
+        "age": "TOTAL",
+        "sex": "T",
+        "unit": "PC_ACT",
+        "geo": "DE",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Percentage of population in the labour force",
+      "seasonal_adjustment": "Seasonally adjusted data, not calendar adjusted data",
+      "first_period": "1991-01",
+      "last_period": "2026-09",
+      "observation_count": 429,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:02.527580+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=DE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-11-05T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "s_adj": "Seasonally adjusted data, not calendar adjusted data",
+        "age": "Total",
+        "unit": "Percentage of population in the labour force",
+        "sex": "Total",
+        "geo": "Germany"
+      }
+    },
+    {
+      "country": "FR",
+      "indicator": "unemployment",
+      "source": "Eurostat",
+      "dataset_or_series_code": "une_rt_m",
+      "exact_filter_or_key": {
+        "s_adj": "SA",
+        "age": "TOTAL",
+        "sex": "T",
+        "unit": "PC_ACT",
+        "geo": "FR",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Percentage of population in the labour force",
+      "seasonal_adjustment": "Seasonally adjusted data, not calendar adjusted data",
+      "first_period": "1983-01",
+      "last_period": "2026-09",
+      "observation_count": 525,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:02.914487+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=FR&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-11-05T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "s_adj": "Seasonally adjusted data, not calendar adjusted data",
+        "age": "Total",
+        "unit": "Percentage of population in the labour force",
+        "sex": "Total",
+        "geo": "France"
+      }
+    },
+    {
+      "country": "NL",
+      "indicator": "unemployment",
+      "source": "Eurostat",
+      "dataset_or_series_code": "une_rt_m",
+      "exact_filter_or_key": {
+        "s_adj": "SA",
+        "age": "TOTAL",
+        "sex": "T",
+        "unit": "PC_ACT",
+        "geo": "NL",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Percentage of population in the labour force",
+      "seasonal_adjustment": "Seasonally adjusted data, not calendar adjusted data",
+      "first_period": "1983-01",
+      "last_period": "2026-09",
+      "observation_count": 525,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:03.287748+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=NL&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-11-05T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "s_adj": "Seasonally adjusted data, not calendar adjusted data",
+        "age": "Total",
+        "unit": "Percentage of population in the labour force",
+        "sex": "Total",
+        "geo": "Netherlands"
+      }
+    },
+    {
+      "country": "EA",
+      "indicator": "unemployment",
+      "source": "Eurostat",
+      "dataset_or_series_code": "une_rt_m",
+      "exact_filter_or_key": {
+        "s_adj": "SA",
+        "age": "TOTAL",
+        "sex": "T",
+        "unit": "PC_ACT",
+        "geo": "EA20",
+        "lang": "EN"
+      },
+      "frequency": null,
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": null,
+      "observation_count": null,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:03.666550+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=EA20&lang=EN",
+      "status": "failed",
+      "notes": [
+        "Response is not a single series"
+      ]
+    },
+    {
+      "country": "BE",
+      "indicator": "inflation",
+      "source": "Eurostat",
+      "dataset_or_series_code": "prc_hicp_manr",
+      "exact_filter_or_key": {
+        "coicop": "CP00",
+        "unit": "RCH_A",
+        "geo": "BE",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Annual rate of change",
+      "seasonal_adjustment": null,
+      "first_period": "1997-01",
+      "last_period": "2025-12",
+      "observation_count": 348,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:04.052731+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=BE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-02-06T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "unit": "Annual rate of change",
+        "coicop": "All-items HICP",
+        "geo": "Belgium"
+      }
+    },
+    {
+      "country": "DE",
+      "indicator": "inflation",
+      "source": "Eurostat",
+      "dataset_or_series_code": "prc_hicp_manr",
+      "exact_filter_or_key": {
+        "coicop": "CP00",
+        "unit": "RCH_A",
+        "geo": "DE",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Annual rate of change",
+      "seasonal_adjustment": null,
+      "first_period": "1997-01",
+      "last_period": "2025-12",
+      "observation_count": 348,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:04.408949+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=DE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-02-06T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "unit": "Annual rate of change",
+        "coicop": "All-items HICP",
+        "geo": "Germany"
+      }
+    },
+    {
+      "country": "FR",
+      "indicator": "inflation",
+      "source": "Eurostat",
+      "dataset_or_series_code": "prc_hicp_manr",
+      "exact_filter_or_key": {
+        "coicop": "CP00",
+        "unit": "RCH_A",
+        "geo": "FR",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Annual rate of change",
+      "seasonal_adjustment": null,
+      "first_period": "1997-01",
+      "last_period": "2025-12",
+      "observation_count": 348,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:04.804764+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=FR&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-02-06T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "unit": "Annual rate of change",
+        "coicop": "All-items HICP",
+        "geo": "France"
+      }
+    },
+    {
+      "country": "NL",
+      "indicator": "inflation",
+      "source": "Eurostat",
+      "dataset_or_series_code": "prc_hicp_manr",
+      "exact_filter_or_key": {
+        "coicop": "CP00",
+        "unit": "RCH_A",
+        "geo": "NL",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Annual rate of change",
+      "seasonal_adjustment": null,
+      "first_period": "1997-01",
+      "last_period": "2025-12",
+      "observation_count": 348,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:05.180183+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=NL&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-02-06T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "unit": "Annual rate of change",
+        "coicop": "All-items HICP",
+        "geo": "Netherlands"
+      }
+    },
+    {
+      "country": "EA",
+      "indicator": "inflation",
+      "source": "Eurostat",
+      "dataset_or_series_code": "prc_hicp_manr",
+      "exact_filter_or_key": {
+        "coicop": "CP00",
+        "unit": "RCH_A",
+        "geo": "EA20",
+        "lang": "EN"
+      },
+      "frequency": "Monthly",
+      "unit": "Annual rate of change",
+      "seasonal_adjustment": null,
+      "first_period": "2000-12",
+      "last_period": "2025-12",
+      "observation_count": 301,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:05.586953+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=EA20&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-02-06T23:00:00+0100."
+      ],
+      "response_labels": {
+        "freq": "Monthly",
+        "unit": "Annual rate of change",
+        "coicop": "All-items HICP",
+        "geo": "Euro area – 20 countries (2023-2025)"
+      }
+    },
+    {
+      "country": "BE",
+      "indicator": "quarterly_debt",
+      "source": "Eurostat",
+      "dataset_or_series_code": "gov_10q_ggdebt",
+      "exact_filter_or_key": {
+        "unit": "PC_GDP",
+        "sector": "S13",
+        "na_item": "GD",
+        "geo": "BE",
+        "lang": "EN"
+      },
+      "frequency": "Quarterly",
+      "unit": "Percentage of gross domestic product (GDP)",
+      "seasonal_adjustment": null,
+      "first_period": "1995-Q4",
+      "last_period": "2026-Q2",
+      "observation_count": 123,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:05.981115+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=BE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-10-21T11:00:00+0200."
+      ],
+      "response_labels": {
+        "freq": "Quarterly",
+        "na_item": "Government consolidated gross debt",
+        "sector": "General government",
+        "unit": "Percentage of gross domestic product (GDP)",
+        "geo": "Belgium"
+      }
+    },
+    {
+      "country": "DE",
+      "indicator": "quarterly_debt",
+      "source": "Eurostat",
+      "dataset_or_series_code": "gov_10q_ggdebt",
+      "exact_filter_or_key": {
+        "unit": "PC_GDP",
+        "sector": "S13",
+        "na_item": "GD",
+        "geo": "DE",
+        "lang": "EN"
+      },
+      "frequency": "Quarterly",
+      "unit": "Percentage of gross domestic product (GDP)",
+      "seasonal_adjustment": null,
+      "first_period": "2000-Q1",
+      "last_period": "2026-Q2",
+      "observation_count": 106,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:06.348500+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=DE&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-10-21T11:00:00+0200."
+      ],
+      "response_labels": {
+        "freq": "Quarterly",
+        "na_item": "Government consolidated gross debt",
+        "sector": "General government",
+        "unit": "Percentage of gross domestic product (GDP)",
+        "geo": "Germany"
+      }
+    },
+    {
+      "country": "FR",
+      "indicator": "quarterly_debt",
+      "source": "Eurostat",
+      "dataset_or_series_code": "gov_10q_ggdebt",
+      "exact_filter_or_key": {
+        "unit": "PC_GDP",
+        "sector": "S13",
+        "na_item": "GD",
+        "geo": "FR",
+        "lang": "EN"
+      },
+      "frequency": "Quarterly",
+      "unit": "Percentage of gross domestic product (GDP)",
+      "seasonal_adjustment": null,
+      "first_period": "2000-Q1",
+      "last_period": "2026-Q2",
+      "observation_count": 106,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:06.700803+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=FR&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-10-21T11:00:00+0200."
+      ],
+      "response_labels": {
+        "freq": "Quarterly",
+        "na_item": "Government consolidated gross debt",
+        "sector": "General government",
+        "unit": "Percentage of gross domestic product (GDP)",
+        "geo": "France"
+      }
+    },
+    {
+      "country": "NL",
+      "indicator": "quarterly_debt",
+      "source": "Eurostat",
+      "dataset_or_series_code": "gov_10q_ggdebt",
+      "exact_filter_or_key": {
+        "unit": "PC_GDP",
+        "sector": "S13",
+        "na_item": "GD",
+        "geo": "NL",
+        "lang": "EN"
+      },
+      "frequency": "Quarterly",
+      "unit": "Percentage of gross domestic product (GDP)",
+      "seasonal_adjustment": null,
+      "first_period": "2000-Q1",
+      "last_period": "2026-Q2",
+      "observation_count": 106,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:07.072469+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=NL&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-10-21T11:00:00+0200."
+      ],
+      "response_labels": {
+        "freq": "Quarterly",
+        "na_item": "Government consolidated gross debt",
+        "sector": "General government",
+        "unit": "Percentage of gross domestic product (GDP)",
+        "geo": "Netherlands"
+      }
+    },
+    {
+      "country": "EA",
+      "indicator": "quarterly_debt",
+      "source": "Eurostat",
+      "dataset_or_series_code": "gov_10q_ggdebt",
+      "exact_filter_or_key": {
+        "unit": "PC_GDP",
+        "sector": "S13",
+        "na_item": "GD",
+        "geo": "EA20",
+        "lang": "EN"
+      },
+      "frequency": "Quarterly",
+      "unit": "Percentage of gross domestic product (GDP)",
+      "seasonal_adjustment": null,
+      "first_period": "2000-Q1",
+      "last_period": "2026-Q2",
+      "observation_count": 106,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:07.418092+00:00",
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=EA20&lang=EN",
+      "status": "verified",
+      "notes": [
+        "Explicit candidate validated by response labels; dataset updated 2026-10-21T11:00:00+0200."
+      ],
+      "response_labels": {
+        "freq": "Quarterly",
+        "na_item": "Government consolidated gross debt",
+        "sector": "General government",
+        "unit": "Percentage of gross domestic product (GDP)",
+        "geo": "Euro area – 20 countries (2023-2025)"
+      }
+    },
+    {
+      "country": "EA",
+      "indicator": "mro_rate",
+      "source": "ECB",
+      "dataset_or_series_code": "FM.B.U2.EUR.4F.KR.MRR_FR.LEV",
+      "exact_filter_or_key": "FM.B.U2.EUR.4F.KR.MRR_FR.LEV",
+      "frequency": "B",
+      "unit": "PCPA",
+      "seasonal_adjustment": null,
+      "first_period": "1999-01-01",
+      "last_period": "2026-09-16",
+      "observation_count": 48,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:07.993874+00:00",
+      "request_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.MRR_FR.LEV?format=csvdata&detail=full",
+      "status": "verified",
+      "notes": [
+        "Shared euro area policy rate, not a national central-bank rate.",
+        "Event-dated series (changes on decision dates)."
+      ],
+      "response_labels": {
+        "TITLE": [
+          "Main refinancing operations - fixed rate tenders (fixed rate) (date of changes) - Level"
+        ]
+      }
+    },
+    {
+      "country": "EA",
+      "indicator": "deposit_rate",
+      "source": "ECB",
+      "dataset_or_series_code": "FM.B.U2.EUR.4F.KR.DFR.LEV",
+      "exact_filter_or_key": "FM.B.U2.EUR.4F.KR.DFR.LEV",
+      "frequency": "B",
+      "unit": "PCPA",
+      "seasonal_adjustment": null,
+      "first_period": "1999-01-01",
+      "last_period": "2026-09-16",
+      "observation_count": 69,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:08.564791+00:00",
+      "request_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.DFR.LEV?format=csvdata&detail=full",
+      "status": "verified",
+      "notes": [
+        "Shared euro area policy rate, not a national central-bank rate.",
+        "Event-dated series (changes on decision dates)."
+      ],
+      "response_labels": {
+        "TITLE": [
+          "Deposit facility - date of changes (raw data) - Level"
+        ]
+      }
+    },
+    {
+      "country": "BE",
+      "indicator": "cli",
+      "source": "OECD",
+      "dataset_or_series_code": "DSD_STES@DF_CLI",
+      "exact_filter_or_key": "BEL.M.......",
+      "frequency": "M",
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": "2026-09",
+      "observation_count": 2,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:09.591117+00:00",
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/BEL.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "status": "partial",
+      "notes": [
+        "Lists available monthly CLI series (latest obs only); the exact measure/adjustment must be fixed in the Phase 3 connector."
+      ],
+      "response_labels": {
+        "series": [
+          "BCICP / Composite business confidence / AA / Amplitude adjusted / IX / Index",
+          "CCICP / Composite consumer confidence / AA / Amplitude adjusted / IX / Index"
+        ]
+      }
+    },
+    {
+      "country": "DE",
+      "indicator": "cli",
+      "source": "OECD",
+      "dataset_or_series_code": "DSD_STES@DF_CLI",
+      "exact_filter_or_key": "DEU.M.......",
+      "frequency": "M",
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": "2026-09",
+      "observation_count": 17,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:10.762851+00:00",
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/DEU.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "status": "partial",
+      "notes": [
+        "Lists available monthly CLI series (latest obs only); the exact measure/adjustment must be fixed in the Phase 3 connector."
+      ],
+      "response_labels": {
+        "series": [
+          "BCICP / Composite business confidence / AA / Amplitude adjusted / IX / Index",
+          "CCICP / Composite consumer confidence / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / NOR / Normalized / IX / Index",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / GY / Growth rate, over 1 year",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / IX / Index",
+          "LOCOBD / Demand or orders inflow tendency / NOR / Normalized / IX / Index",
+          "LOCOBF / Finished goods stocks tendency / NOR / Normalized / IX / Index",
+          "LOCOBS / Business situation / NOR / Normalized / IX / Index",
+          "LOCOBX / Export orders tendency / NOR / Normalized / IX / Index",
+          "LOCOCI / Consumer confidence / NOR / Normalized / IX / Index",
+          "LOCOOD / Orders / NOR / Normalized / IX / Index",
+          "LOCOS3 / Servies demand expectations / NOR / Normalized / IX / Index",
+          "LOCOSI / Interest rate spread / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / RT / Ratio to trend / IX / Index",
+          "RS / Reference series (GDP) / T / Trend / IX / Index"
+        ]
+      }
+    },
+    {
+      "country": "FR",
+      "indicator": "cli",
+      "source": "OECD",
+      "dataset_or_series_code": "DSD_STES@DF_CLI",
+      "exact_filter_or_key": "FRA.M.......",
+      "frequency": "M",
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": "2026-09",
+      "observation_count": 17,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:11.878472+00:00",
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/FRA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "status": "partial",
+      "notes": [
+        "Lists available monthly CLI series (latest obs only); the exact measure/adjustment must be fixed in the Phase 3 connector."
+      ],
+      "response_labels": {
+        "series": [
+          "BCICP / Composite business confidence / AA / Amplitude adjusted / IX / Index",
+          "CCICP / Composite consumer confidence / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / NOR / Normalized / IX / Index",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / GY / Growth rate, over 1 year",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / IX / Index",
+          "LOCOBI / Prices expectations / NOR / Normalized / IX / Index",
+          "LOCOBP / Production tendency / NOR / Normalized / IX / Index",
+          "LOCOBX / Export orders tendency / NOR / Normalized / IX / Index",
+          "LOCOCI / Consumer confidence / NOR / Normalized / IX / Index",
+          "LOCOOD / Orders / NOR / Normalized / IX / Index",
+          "LOCOPC / Consumer prices / NOR / Normalized / IX / Index",
+          "LOCOSP / Share prices / NOR / Normalized / IX / Index",
+          "LOCOVR / Cars registrations or sales / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / RT / Ratio to trend / IX / Index",
+          "RS / Reference series (GDP) / T / Trend / IX / Index"
+        ]
+      }
+    },
+    {
+      "country": "NL",
+      "indicator": "cli",
+      "source": "OECD",
+      "dataset_or_series_code": "DSD_STES@DF_CLI",
+      "exact_filter_or_key": "NLD.M.......",
+      "frequency": "M",
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": "2026-09",
+      "observation_count": 2,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:12.913363+00:00",
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/NLD.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "status": "partial",
+      "notes": [
+        "Lists available monthly CLI series (latest obs only); the exact measure/adjustment must be fixed in the Phase 3 connector."
+      ],
+      "response_labels": {
+        "series": [
+          "BCICP / Composite business confidence / AA / Amplitude adjusted / IX / Index",
+          "CCICP / Composite consumer confidence / AA / Amplitude adjusted / IX / Index"
+        ]
+      }
+    },
+    {
+      "country": "US",
+      "indicator": "cli",
+      "source": "OECD",
+      "dataset_or_series_code": "DSD_STES@DF_CLI",
+      "exact_filter_or_key": "USA.M.......",
+      "frequency": "M",
+      "unit": null,
+      "seasonal_adjustment": null,
+      "first_period": null,
+      "last_period": "2026-09",
+      "observation_count": 16,
+      "http_status": 200,
+      "retrieved_at_utc": "2026-11-08T22:18:14.138796+00:00",
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/USA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "status": "partial",
+      "notes": [
+        "Lists available monthly CLI series (latest obs only); the exact measure/adjustment must be fixed in the Phase 3 connector."
+      ],
+      "response_labels": {
+        "series": [
+          "BCICP / Composite business confidence / AA / Amplitude adjusted / IX / Index",
+          "CCICP / Composite consumer confidence / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / AA / Amplitude adjusted / IX / Index",
+          "LI / Composite leading indicator (CLI) / NOR / Normalized / IX / Index",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / GY / Growth rate, over 1 year",
+          "LI / Composite leading indicator (CLI) / TR / Trend restored / IX / Index",
+          "LOCOBS / Business situation / NOR / Normalized / IX / Index",
+          "LOCOCI / Consumer confidence / NOR / Normalized / IX / Index",
+          "LOCODW / Construction / NOR / Normalized / IX / Index",
+          "LOCOHS / Hours / NOR / Normalized / IX / Index",
+          "LOCOOD / Orders / NOR / Normalized / IX / Index",
+          "LOCOSI / Interest rate spread / NOR / Normalized / IX / Index",
+          "LOCOSP / Share prices / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / NOR / Normalized / IX / Index",
+          "RS / Reference series (GDP) / RT / Ratio to trend / IX / Index",
+          "RS / Reference series (GDP) / T / Trend / IX / Index"
+        ]
+      }
+    }
+  ],
+  "requests": [
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml?lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:46.334939+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:46.334939+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/catalogue/toc/xml?lang=EN",
+      "content_type": "application/xml;charset=UTF-8"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:47.101589+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:47.101589+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?lastTimePeriod=1&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=BE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:47.449133+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:47.449133+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=BE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=DE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:47.852240+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:47.852240+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=DE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=FR&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:48.231632+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:48.231632+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=FR&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=NL&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:48.582892+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:48.582892+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=NL&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=US&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:48.944524+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:48.944524+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/namq_10_gdp?freq=Q&unit=CLV20_MNAC&s_adj=SCA&na_item=B1GQ&geo=US&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?lastTimePeriod=1&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:17:49.365466+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:49.365466+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?lastTimePeriod=1&lang=EN",
+      "content_type": "application/json",
+      "discovery_error": "Cannot select dimension na_item from official labels"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDPC1",
+      "retrieved_at_utc": "2026-11-08T22:17:49.729114+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:49.729114+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GDPC1",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE",
+      "retrieved_at_utc": "2026-11-08T22:17:50.045473+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:50.045473+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=UNRATE",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL",
+      "retrieved_at_utc": "2026-11-08T22:17:50.368834+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:50.368834+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=CPIAUCSL",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS",
+      "retrieved_at_utc": "2026-11-08T22:17:50.681240+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:50.681240+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=FEDFUNDS",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M",
+      "retrieved_at_utc": "2026-11-08T22:17:51.119539+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:51.119539+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=T10Y3M",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC",
+      "retrieved_at_utc": "2026-11-08T22:17:51.449955+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:51.449955+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=USREC",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEGDQ188S",
+      "retrieved_at_utc": "2026-11-08T22:17:51.782458+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:51.782458+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=GFDEGDQ188S",
+      "content_type": "application/csv"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json",
+      "retrieved_at_utc": "2026-11-08T22:17:52.162758+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:52.161758+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/indicator/GC.DOD.TOTL.GD.ZS?format=json",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/BE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:52.520041+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:52.520041+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/BE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/DE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:52.881402+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:52.881402+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/DE/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/FR/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:53.238652+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:53.238652+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/FR/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/NL/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:53.591683+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:53.591683+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/NL/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/US/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:53.960759+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:53.960759+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/US/indicator/GC.DOD.TOTL.GD.ZS?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json",
+      "retrieved_at_utc": "2026-11-08T22:17:54.375687+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:54.375687+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/indicator/NY.GDP.MKTP.KD.ZG?format=json",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/BE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:54.729872+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:54.729872+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/BE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/DE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:55.080680+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:55.080680+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/DE/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/FR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:55.439590+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:55.439590+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/FR/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/NL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:55.826692+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:55.826692+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/NL/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "retrieved_at_utc": "2026-11-08T22:17:56.174738+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:56.174738+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://api.worldbank.org/v2/country/US/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1000",
+      "content_type": "application/json;charset=utf-8"
+    },
+    {
+      "request_url": "https://data-api.ecb.europa.eu/service/dataflow/ECB/FM/latest?references=all",
+      "retrieved_at_utc": "2026-11-08T22:17:58.328713+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:17:58.328713+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://data-api.ecb.europa.eu/service/dataflow/ECB/FM/latest?references=all",
+      "content_type": "application/vnd.sdmx.structure+xml;version=2.1",
+      "discovered_flows": [
+        {
+          "id": "FM",
+          "agency": "ECB",
+          "version": "1.0",
+          "name": "Financial market data"
+        }
+      ]
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/v1/dataflow/all/all/latest",
+      "retrieved_at_utc": "2026-11-08T22:18:01.172897+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:01.172897+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/v1/dataflow/all/all/latest",
+      "content_type": "application/vnd.sdmx.structure+xml; version=2.1; charset=utf-8",
+      "discovered_flows": [
+        {
+          "id": "DSD_STES@DF_CLI",
+          "agency": "OECD.SDD.STES",
+          "version": "4.1",
+          "name": "Composite leading indicators Indicateurs composites avancés"
+        }
+      ]
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/v1/dataflow/OECD.SDD.STES/DSD_STES@DF_CLI/4.1?references=all",
+      "retrieved_at_utc": "2026-11-08T22:18:01.720740+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:01.720740+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/v1/dataflow/OECD.SDD.STES/DSD_STES@DF_CLI/4.1?references=all",
+      "content_type": "application/vnd.sdmx.structure+xml; version=2.1; charset=utf-8"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=BE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:02.161007+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:02.161007+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=BE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=DE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:02.527580+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:02.527580+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=DE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=FR&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:02.914487+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:02.914487+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=FR&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=NL&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:03.287748+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:03.287748+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=NL&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=EA20&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:03.666550+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:03.666550+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/une_rt_m?s_adj=SA&age=TOTAL&sex=T&unit=PC_ACT&geo=EA20&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=BE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:04.052731+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:04.052731+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=BE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=DE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:04.408949+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:04.408949+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=DE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=FR&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:04.804764+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:04.804764+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=FR&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=NL&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:05.180183+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:05.180183+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=NL&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=EA20&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:05.586953+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:05.586953+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr?coicop=CP00&unit=RCH_A&geo=EA20&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=BE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:05.981115+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:05.981115+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=BE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=DE&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:06.348500+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:06.348500+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=DE&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=FR&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:06.700803+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:06.700803+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=FR&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=NL&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:07.072469+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:07.072469+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=NL&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=EA20&lang=EN",
+      "retrieved_at_utc": "2026-11-08T22:18:07.418092+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:07.418092+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/gov_10q_ggdebt?unit=PC_GDP&sector=S13&na_item=GD&geo=EA20&lang=EN",
+      "content_type": "application/json"
+    },
+    {
+      "request_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.MRR_FR.LEV?format=csvdata&detail=full",
+      "retrieved_at_utc": "2026-11-08T22:18:07.993874+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:07.993874+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.MRR_FR.LEV?format=csvdata&detail=full",
+      "content_type": "text/csv"
+    },
+    {
+      "request_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.DFR.LEV?format=csvdata&detail=full",
+      "retrieved_at_utc": "2026-11-08T22:18:08.564791+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:08.564791+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://data-api.ecb.europa.eu/service/data/FM/B.U2.EUR.4F.KR.DFR.LEV?format=csvdata&detail=full",
+      "content_type": "text/csv"
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/BEL.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "retrieved_at_utc": "2026-11-08T22:18:09.591117+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:09.591117+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/BEL.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "content_type": "application/vnd.sdmx.data+csv; version=2; charset=utf-8; labels=name"
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/DEU.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "retrieved_at_utc": "2026-11-08T22:18:10.762851+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:10.762851+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/DEU.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "content_type": "application/vnd.sdmx.data+csv; version=2; charset=utf-8; labels=name"
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/FRA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "retrieved_at_utc": "2026-11-08T22:18:11.878472+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:11.878472+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/FRA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "content_type": "application/vnd.sdmx.data+csv; charset=utf-8; labels=name; version=2"
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/NLD.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "retrieved_at_utc": "2026-11-08T22:18:12.913363+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:12.913363+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/NLD.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "content_type": "application/vnd.sdmx.data+csv; version=2; charset=utf-8; labels=name"
+    },
+    {
+      "request_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/USA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "retrieved_at_utc": "2026-11-08T22:18:14.138796+00:00",
+      "http_status": 200,
+      "attempts": [
+        {
+          "at": "2026-11-08T22:18:14.138796+00:00",
+          "http_status": 200
+        }
+      ],
+      "final_url": "https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/USA.M.......?lastNObservations=1&format=csvfilewithlabels",
+      "content_type": "application/vnd.sdmx.data+csv; version=2; charset=utf-8; labels=name"
+    }
+  ],
+  "limitations": [
+    "SDMX ambiguous label selections fail closed; slices are partial coverage.",
+    "FRED CSV does not establish units or seasonal adjustment."
+  ]
+}

@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API (Python)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: macropulse
+          POSTGRES_PASSWORD: macropulse
+          POSTGRES_DB: macropulse
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U macropulse" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      MACROPULSE_TEST_POSTGRES_URL: postgresql+psycopg://macropulse:macropulse@localhost:5432/macropulse
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.7"
+          enable-cache: true
+      - run: uv sync --all-packages --frozen
+      - name: Lint
+        run: uv run ruff check . && uv run ruff format --check .
+      - name: Type-check
+        run: uv run mypy
+      - name: Tests (SQLite + PostgreSQL)
+        run: uv run pytest --cov=macropulse_api --cov=macropulse_economics --cov-report=term-missing
+      - name: OpenAPI schema is committed and current
+        run: |
+          uv run macropulse openapi --out packages/shared-types/openapi.json
+          git diff --exit-code packages/shared-types/openapi.json
+
+  web:
+    name: Web (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generated API types are current
+        run: |
+          pnpm --filter @macropulse/shared-types gen
+          git diff --exit-code packages/shared-types/src/openapi.ts
+      - run: pnpm --filter @macropulse/web lint
+      - run: pnpm --filter @macropulse/web typecheck
+      - run: pnpm --filter @macropulse/web test
+      - run: pnpm --filter @macropulse/web build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+  docker:
+    name: Docker images
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker compose build

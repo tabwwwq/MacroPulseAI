@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------------------------------------
+   MacroPulse design tokens. Dark navy research-terminal palette; every text/background pair used
+   for body copy meets WCAG AA (fg-muted on surface ≈ 7:1, fg-subtle on surface ≈ 4.8:1).
+   Semantic colours are always paired with text or an icon — never colour alone.
+   ---------------------------------------------------------------------------------------------- */
+@theme {
+  --color-canvas: #0b1020;
+  --color-surface: #131b2c;
+  --color-surface-2: #172238;
+  --color-elevated: #1c2840;
+  --color-line: #24304a;
+  --color-line-strong: #34425f;
+
+  --color-fg: #e7ebf3;
+  --color-fg-muted: #a0abc0;
+  --color-fg-subtle: #7f8aa3;
+
+  --color-accent: #4cc3ff;
+  --color-accent-strong: #2f9bff;
+  --color-ok: #3dd6a3;
+  --color-warn: #f5b544;
+  --color-danger: #f2667a;
+
+  --radius-card: 0.875rem;
+  --shadow-card: inset 0 1px 0 0 rgb(255 255 255 / 0.035), 0 16px 40px -24px rgb(0 0 0 / 0.7);
+}
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-fg antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  ::selection {
+    background: rgb(76 195 255 / 0.3);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Subtle ambient glow behind the content area. Purely decorative. */
+.app-backdrop {
+  background:
+    radial-gradient(1100px 480px at 75% -12%, rgb(47 155 255 / 0.1), transparent 60%),
+    radial-gradient(700px 360px at -5% -5%, rgb(76 195 255 / 0.06), transparent 55%);
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
