@@ -38,6 +38,13 @@ describe("seriesToCsv", () => {
       .toBe("period,Test (%)\r\n2026-09,\r\n");
     expect(seriesToCsv([])).toBe("period\r\n");
   });
+
+  it("keeps the series citation in the header", () => {
+    const csv = seriesToCsv([
+      { id: "a", name: "DE", unit: "%", citation: "Eurostat, namq_10_gdp; retrieved 2026-11-09", points: [{ period: "2026-Q3", value: 0.23 }] },
+    ]);
+    expect(csv).toBe('period,"DE (%) [Eurostat, namq_10_gdp; retrieved 2026-11-09]"\r\n2026-Q3,0.23\r\n');
+  });
 });
 
 describe("download helpers", () => {

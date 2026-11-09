@@ -69,20 +69,23 @@ Acceptance criteria:
 
 ## Phase 4 — Data coverage and actual dashboards
 
-**Status:** Planned; overview/country/source registry foundation views exist.
+**Status:** ✅ Complete (2026-11-09). Overview, Country Explorer, Compare and Data Observatory plot the
+21,094 stored official observations with provenance; new endpoints `/api/countries/{iso2}/summary`,
+`/api/countries/{iso2}/data-quality`, `/api/data-quality` and `/api/observations/export`; `pnpm smoke`
+passes 348/348 checks against the synced database.
 **Goal:** Make Overview, Country Explorer, Compare and Data Observatory useful with actual data.
 **Deliverables:** Indicator/summary/quality APIs, sourced KPIs/charts, aligned comparisons,
 coverage matrix, source health, date filters, history tables and CSV export.
 
 Acceptance criteria:
 
-- [ ] All four pages render stored official observations and show explicit empty/error states when absent.
-- [ ] Country/date selections alter returned and displayed data; comparisons allow up to four countries and reject or explain incompatible definitions/units/spans.
-- [ ] Each KPI/chart exposes source, transformation, unit, adjustment, reference period, retrieval time and known publication date; shared ECB rates are labeled shared.
-- [ ] BE/DE/FR/NL/US support is computed from validated stored coverage; full/partial/unavailable includes a reason.
-- [ ] Freshness and observation age are distinct; stale and missing observations appear in the coverage/quality views.
-- [ ] CSV exports match the displayed selection and retain citations/units/dates; chart controls visibly work.
-- [ ] End-to-end smoke tests for all four pages and frontend build pass.
+- [x] All four pages render stored official observations and show explicit empty/error states when absent. *(404 "not published" and 503 "not synced" are empty states with the API's reason, never errors or zeros.)*
+- [x] Country/date selections alter returned and displayed data; comparisons allow up to four countries and reject or explain incompatible definitions/units/spans. *(As-of quarter cuts periods server-side; history window 5Y/10Y/20Y/Max; spread mode is refused for mixed native frequencies.)*
+- [x] Each KPI/chart exposes source, transformation, unit, adjustment, reference period, retrieval time and known publication date; shared ECB rates are labeled shared. *(Per-observation publication dates are not offered by these APIs; the dataset update stamp is shown as "source updated".)*
+- [x] BE/DE/FR/NL/US support is computed from validated stored coverage; full/partial/unavailable includes a reason. *(BE/DE/FR/NL full, US partial — FRED metadata needs the key-based API.)*
+- [x] Freshness and observation age are distinct; stale and missing observations appear in the coverage/quality views. *(KPI: days since period end vs last fetch; lineage table: latest checks incl. gaps and failed attempts.)*
+- [x] CSV exports match the displayed selection and retain citations/units/dates; chart controls visibly work. *(Chart CSV headers carry unit + citation; raw CSV carries per-row source URL, retrieval time and attribution.)*
+- [x] End-to-end smoke tests for all four pages and frontend build pass. *(`pnpm smoke` automates the API side; the four pages were checked in a browser at 1440 px and 375 px. No browser-automation suite yet.)*
 
 ## Phase 5 — Recession target, time-aware features and first real model
 

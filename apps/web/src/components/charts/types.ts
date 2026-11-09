@@ -8,6 +8,12 @@ export interface ChartSeries {
   name: string;
   unit: string;
   points: SeriesPoint[];
+  /** Short provenance shown in the hover tooltip, e.g. "Eurostat · namq_10_gdp". */
+  source?: string;
+  /** Draw as a step line (values hold until the next observation, e.g. policy-rate decisions). */
+  step?: boolean;
+  /** Citation kept in CSV exports, e.g. "Eurostat · namq_10_gdp; retrieved 2026-11-09". */
+  citation?: string;
 }
 
 export interface ChartShading {

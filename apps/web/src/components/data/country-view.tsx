@@ -6,8 +6,10 @@ import Link from "next/link";
 
 import type { CatalogEntry, Country } from "@macropulse/shared-types";
 
-import { ChartFrame } from "@/components/charts/chart-frame";
+import { IndicatorChart } from "@/components/data/indicator-chart";
 import { KpiGrid } from "@/components/data/kpi-grid";
+import { RangeControl, useRange } from "@/components/data/range-control";
+import { StoredSeriesTable } from "@/components/data/stored-series-table";
 import { SupportBadge } from "@/components/data/support-badge";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -20,7 +22,8 @@ import { ApiError } from "@/lib/api";
 import { formatAsOf } from "@/lib/as-of";
 import { useAppContext } from "@/lib/context";
 import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
-import { useCatalog, useCountry } from "@/lib/queries";
+import { useCatalog, useCountry, useDataQuality } from "@/lib/queries";
+import type { RangeKey } from "@/lib/series";
 
 const TABS = [
   { id: "overview", label: "Overview", categories: [] as string[] },
@@ -46,33 +49,48 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
   );
 }
 
-function IndicatorPanel({ entry, iso2 }: { entry: CatalogEntry; iso2: string }) {
+function IndicatorPanel({ entry, iso2, asOf, range }: { entry: CatalogEntry; iso2: string; asOf: string | null; range: RangeKey }) {
   const status = MAPPING_STATUS[entry.mapping.status];
-  const label = sourceLabel(entry);
+  const id = entry.indicator.id;
   return (
     <WidgetBoundary label={entry.indicator.name}>
-      <ChartFrame
+      <IndicatorChart
+        iso2={iso2}
+        indicator={id}
         title={entry.indicator.name}
-        description={
-          <span className="flex flex-wrap items-center gap-2">
-            <Badge tone={status.tone} dashed={status.tone === "neutral"}>
-              {status.label}
-            </Badge>
-            <span>
-              {entry.indicator.unit} · {entry.mapping.native_frequency ?? entry.indicator.frequency}
-              {entry.mapping.adjustment ? ` · ${entry.mapping.adjustment}` : ""}
-            </span>
-            {entry.mapping.scope_note ? <span className="text-warn">{entry.mapping.scope_note}</span> : null}
-          </span>
+        asOf={asOf}
+        range={range}
+        reference={id === "real_gdp_qoq" || id === "real_gdp_yoy" || id === "unemployment_rate"}
+        defaultKind={id === "real_gdp_qoq" ? "bar" : "line"}
+        extra={
+          <Badge tone={status.tone} dashed={status.tone === "neutral"} title={availabilityReason(entry)}>
+            {status.label}
+          </Badge>
         }
-        series={[]}
-        emptyMessage={availabilityReason(entry)}
-        source={label ? { label, href: entry.mapping.docs_url ?? undefined } : undefined}
-        allowKindToggle
-        exportName={`macropulse-${iso2.toLowerCase()}-${entry.indicator.id}`}
-        height={240}
       />
     </WidgetBoundary>
+  );
+}
+
+/** Stored native series behind this country: lineage, latest checks and the raw CSV. */
+function LineageTable({ iso2 }: { iso2: string }) {
+  const quality = useDataQuality(iso2);
+  return (
+    <Card className="mt-4">
+      <CardHeader
+        title="Stored series & lineage"
+        description="Every native series the indicators above are derived from: exact request, rows stored, fetch time and the checks of the latest sync attempt."
+      />
+      <CardBody>
+        {quality.isError ? (
+          <ErrorState error={quality.error} onRetry={() => void quality.refetch()} />
+        ) : quality.isPending ? (
+          <Skeleton className="h-40 w-full" />
+        ) : (
+          <StoredSeriesTable items={quality.data.items} />
+        )}
+      </CardBody>
+    </Card>
   );
 }
 
@@ -80,8 +98,8 @@ function DataTab({ entries }: { entries: CatalogEntry[] }) {
   return (
     <Card>
       <CardHeader
-        title="Source mapping & ingestion"
-        description="Verified by a live probe of the official APIs. Probe metadata describes what the source publishes — it is not stored data."
+        title="Source mapping"
+        description="Verified by a live probe of the official APIs. Probe metadata describes what the source publishes; the Stored column counts rows actually in the database."
       />
       <CardBody>
         <div className="relative -mx-5 overflow-x-auto px-5">
@@ -184,6 +202,7 @@ export function CountryView({ iso2 }: { iso2: string }) {
   const catalog = useCatalog(iso2);
   const tabParam = params.get("tab");
   const tab: TabId = isTab(tabParam) ? tabParam : "overview";
+  const [range] = useRange();
 
   if (country.isPending) {
     return (
@@ -260,11 +279,20 @@ export function CountryView({ iso2 }: { iso2: string }) {
               ) : catalog.isPending ? (
                 <Skeleton className="h-72 w-full rounded-card" />
               ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
-                  {inTab.map((e) => (
-                    <IndicatorPanel key={e.indicator.id} entry={e} iso2={data.iso2} />
-                  ))}
-                </div>
+                <>
+                  <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-xs text-fg-subtle">
+                      Stored official observations{asOf ? ` for periods up to ${asOf}` : ""}. Table view, CSV and PNG on
+                      each chart; the source link opens the exact request.
+                    </p>
+                    <RangeControl />
+                  </div>
+                  <div className="grid gap-4 lg:grid-cols-2">
+                    {inTab.map((e) => (
+                      <IndicatorPanel key={e.indicator.id} entry={e} iso2={data.iso2} asOf={asOf} range={range} />
+                    ))}
+                  </div>
+                </>
               )}
             </Tabs.Content>
           );
@@ -276,7 +304,10 @@ export function CountryView({ iso2 }: { iso2: string }) {
           ) : catalog.isPending ? (
             <Skeleton className="h-72 w-full rounded-card" />
           ) : (
-            <DataTab entries={entries} />
+            <>
+              <DataTab entries={entries} />
+              <LineageTable iso2={data.iso2} />
+            </>
           )}
         </Tabs.Content>
       </Tabs.Root>

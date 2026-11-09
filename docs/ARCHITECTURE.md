@@ -126,8 +126,11 @@ flowchart LR
 Run `pnpm gen:types` at the repository root. This exports the schema using
 `uv run macropulse openapi --out packages/shared-types/openapi.json`, then runs the
 shared package generator. Do not hand-edit generated types. Current routes cover
-health, readiness, countries, source status, the indicator catalog and stored series
-(`/api/indicators`); the model endpoints in the specification remain planned.
+health, readiness, countries, source status, the indicator catalog, stored series
+(`/api/indicators`), the country KPI summary with an as-of cut-off
+(`/api/countries/{iso2}/summary`), per-series lineage and quality
+(`/api/countries/{iso2}/data-quality`, `/api/data-quality`) and the raw-observation CSV
+(`/api/observations/export`); the model endpoints in the specification remain planned.
 
 ## 6. Frontend architecture
 
@@ -140,8 +143,10 @@ health, readiness, countries, source status, the indicator catalog and stored se
 | Honest states | Loading skeletons, error/retry, missing/empty records, explicit not-built modules; no fabricated KPIs or probabilities |
 | Shell | Responsive sidebar/mobile drawer, country switcher, system and source status |
 
-Chart wrappers, as-of controls and observation-driven dashboards are later work. Route
-existence does not establish a completed analytical feature.
+Overview, Country Explorer, Compare and Data Observatory are built on stored data (Phase 4):
+every chart goes through `components/data/indicator-chart.tsx` (one API series, its provenance,
+quality notes and the NBER reference for the US) and every KPI through `/summary`. Model-driven
+pages remain honest placeholders. Route existence does not establish a completed analytical feature.
 
 ## 7. Data and ML pipeline
 

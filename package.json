@@ -14,6 +14,7 @@
     "dev:web": "pnpm --filter @macropulse/web dev",
     "db:upgrade": "uv run macropulse db upgrade",
     "data:sync": "uv run macropulse data-sync",
+    "smoke": "uv run python scripts/smoke_api.py",
     "gen:types": "uv run macropulse openapi --out packages/shared-types/openapi.json && pnpm --filter @macropulse/shared-types gen",
     "lint": "pnpm lint:api && pnpm lint:web",
     "lint:api": "uv run ruff check . && uv run ruff format --check . && uv run mypy",

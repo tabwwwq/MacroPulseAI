@@ -38,6 +38,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/countries/{iso2}/data-quality": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lineage and latest quality checks of the series behind one country */
+        get: operations["country_data_quality_api_countries__iso2__data_quality_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/countries/{iso2}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Headline KPIs with latest stored values and provenance */
+        get: operations["country_summary_api_countries__iso2__summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/data-quality": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lineage and latest quality checks of every mapped native series */
+        get: operations["all_data_quality_api_data_quality_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -84,6 +135,23 @@ export interface paths {
         };
         /** Indicator definitions, verified source mappings and ingestion state */
         get: operations["indicator_catalog_api_indicators_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/observations/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Raw stored observations of one native series as CSV, with per-row provenance */
+        get: operations["export_observations_api_observations_export_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -173,6 +241,39 @@ export interface components {
             /** Items */
             items: components["schemas"]["Country"][];
         };
+        /** CountrySummary */
+        CountrySummary: {
+            /**
+             * As Of
+             * @description Requested as-of quarter; `null` means latest.
+             */
+            as_of: string | null;
+            /** Country */
+            country: string;
+            /**
+             * Cutoff
+             * Format: date
+             * @description Only reference periods ending on or before this date.
+             */
+            cutoff: string;
+            /**
+             * Data Basis
+             * @description What the values are (and are not): revisions, vintages.
+             */
+            data_basis: string;
+            /**
+             * Freshness
+             * @description Most recent successful fetch behind the KPIs.
+             */
+            freshness: string | null;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Kpis */
+            kpis: components["schemas"]["KpiValue"][];
+        };
         /** CountrySupport */
         CountrySupport: {
             /** @description Current level, computed from ingested observations. */
@@ -181,6 +282,25 @@ export interface components {
             reason: string;
             /** @description Level the project aims to support for this country. */
             target: components["schemas"]["SupportLevel"];
+        };
+        /** DataQualityReport */
+        DataQualityReport: {
+            /** Country */
+            country: string | null;
+            /**
+             * Counts
+             * @description Number of series per health status.
+             */
+            counts: {
+                [key: string]: number;
+            };
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Items */
+            items: components["schemas"]["StoredSeries"][];
         };
         /** ErrorBody */
         ErrorBody: {
@@ -207,6 +327,11 @@ export interface components {
         /** ErrorResponse */
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
         };
         /** HealthResponse */
         HealthResponse: {
@@ -272,7 +397,7 @@ export interface components {
             provenance: components["schemas"]["SeriesProvenance"];
             /**
              * Quality
-             * @description Checks from the latest ingestion run.
+             * @description Checks from the latest ingestion run that attempted this series.
              */
             quality: components["schemas"]["QualityCheckResult"][];
             /** Scope Note */
@@ -304,6 +429,62 @@ export interface components {
              * @description Last successful fetch of the mapped source (data freshness).
              */
             source_last_success_at: string | null;
+        };
+        /** KpiValue */
+        KpiValue: {
+            /**
+             * Change
+             * @description `value - previous_value` in the unit of `unit` (percentage points for rates).
+             */
+            change: number | null;
+            /**
+             * Days Since Period End
+             * @description Age at the cut-off date.
+             */
+            days_since_period_end: number | null;
+            indicator: components["schemas"]["IndicatorDefinition"];
+            /**
+             * Period
+             * @description Reference period of `value`.
+             */
+            period: string | null;
+            /** Previous Period */
+            previous_period: string | null;
+            /** Previous Value */
+            previous_value: number | null;
+            provenance: components["schemas"]["SeriesProvenance"] | null;
+            /**
+             * Reason
+             * @description Why there is no value (when status is not `ok`).
+             */
+            reason: string | null;
+            /** Scope Note */
+            scope_note: string;
+            /**
+             * Source Flag
+             * @description Source status flag on the observation, e.g. p = provisional, e = estimated.
+             */
+            source_flag: string | null;
+            /**
+             * Stale
+             * @description Older than the release-cycle limit for its frequency.
+             */
+            stale: boolean;
+            /**
+             * Status
+             * @description `ok`: a stored value exists; `no_data`: mapped but nothing stored for the cut-off; `unavailable`: not published, not mapped or no connector.
+             * @enum {string}
+             */
+            status: "ok" | "no_data" | "unavailable";
+            /**
+             * Transform
+             * @description How `value` is derived from the native series.
+             */
+            transform: string | null;
+            /** Unit */
+            unit: string;
+            /** Value */
+            value: number | null;
         };
         /**
          * PolicyRateScope
@@ -470,11 +651,90 @@ export interface components {
             /** Items */
             items: components["schemas"]["SourceStatus"][];
         };
+        /** StoredSeries */
+        StoredSeries: {
+            /** Adjustment */
+            adjustment: string | null;
+            /**
+             * Countries
+             * @description Countries served (the ECB rate serves several).
+             */
+            countries: string[];
+            /** Dataset */
+            dataset: string;
+            /**
+             * Export Path
+             * @description API path of the raw-observation CSV.
+             */
+            export_path: string;
+            /** First Period */
+            first_period: string | null;
+            /** Frequency */
+            frequency: string;
+            /** Geo */
+            geo: string;
+            /**
+             * Health
+             * @description Worst result of the latest checks.
+             * @enum {string}
+             */
+            health: "not_synced" | "pass" | "warn" | "fail";
+            /**
+             * Indicators
+             * @description Indicators derived from this native series.
+             */
+            indicators: string[];
+            /** Last Checked Run Id */
+            last_checked_run_id: number | null;
+            /** Last Period */
+            last_period: string | null;
+            /**
+             * Mapping Status
+             * @enum {string}
+             */
+            mapping_status: "verified" | "partial" | "stale" | "not_published" | "unmapped";
+            /** Observations */
+            observations: number;
+            /** Quality */
+            quality: components["schemas"]["QualityCheckResult"][];
+            /** Request Url */
+            request_url: string | null;
+            /**
+             * Retrieved At
+             * @description Last successful fetch.
+             */
+            retrieved_at: string | null;
+            /** Series Id */
+            series_id: string;
+            /** Series Key */
+            series_key: string;
+            /** Source Id */
+            source_id: string;
+            /** Source Name */
+            source_name: string;
+            /** Source Updated At */
+            source_updated_at: string | null;
+            /** Unit */
+            unit: string;
+        };
         /**
          * SupportLevel
          * @enum {string}
          */
         SupportLevel: "full" | "partial" | "unavailable";
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -532,6 +792,93 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    country_data_quality_api_countries__iso2__data_quality_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description ISO 3166-1 alpha-2 code (case-insensitive). */
+                iso2: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataQualityReport"];
+                };
+            };
+            /** @description Unsupported country. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    country_summary_api_countries__iso2__summary_get: {
+        parameters: {
+            query?: {
+                /** @description Information cut-off quarter (YYYY-Qn). Omit for the latest stored data. */
+                as_of?: string | null;
+            };
+            header?: never;
+            path: {
+                /** @description ISO 3166-1 alpha-2 code (case-insensitive). */
+                iso2: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CountrySummary"];
+                };
+            };
+            /** @description Unsupported country or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    all_data_quality_api_data_quality_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataQualityReport"];
                 };
             };
         };
@@ -635,6 +982,56 @@ export interface operations {
             };
             /** @description Malformed or unsupported country. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    export_observations_api_observations_export_get: {
+        parameters: {
+            query: {
+                /** @description Native series id (see data-quality). */
+                series_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description RFC 4180 CSV. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": unknown;
+                };
+            };
+            /** @description Unknown series id. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Series not synced yet. */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

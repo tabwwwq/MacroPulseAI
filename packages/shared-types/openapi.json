@@ -115,6 +115,73 @@
         "title": "CountryList",
         "type": "object"
       },
+      "CountrySummary": {
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Requested as-of quarter; `null` means latest.",
+            "title": "As Of"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "cutoff": {
+            "description": "Only reference periods ending on or before this date.",
+            "format": "date",
+            "title": "Cutoff",
+            "type": "string"
+          },
+          "data_basis": {
+            "description": "What the values are (and are not): revisions, vintages.",
+            "title": "Data Basis",
+            "type": "string"
+          },
+          "freshness": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Most recent successful fetch behind the KPIs.",
+            "title": "Freshness"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "kpis": {
+            "items": {
+              "$ref": "#/components/schemas/KpiValue"
+            },
+            "title": "Kpis",
+            "type": "array"
+          }
+        },
+        "required": [
+          "country",
+          "as_of",
+          "cutoff",
+          "data_basis",
+          "freshness",
+          "kpis",
+          "generated_at"
+        ],
+        "title": "CountrySummary",
+        "type": "object"
+      },
       "CountrySupport": {
         "properties": {
           "level": {
@@ -136,6 +203,49 @@
           "reason"
         ],
         "title": "CountrySupport",
+        "type": "object"
+      },
+      "DataQualityReport": {
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "Number of series per health status.",
+            "title": "Counts",
+            "type": "object"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StoredSeries"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "country",
+          "items",
+          "counts",
+          "generated_at"
+        ],
+        "title": "DataQualityReport",
         "type": "object"
       },
       "ErrorBody": {
@@ -192,6 +302,19 @@
           "error"
         ],
         "title": "ErrorResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
         "type": "object"
       },
       "HealthResponse": {
@@ -334,7 +457,7 @@
             "$ref": "#/components/schemas/SeriesProvenance"
           },
           "quality": {
-            "description": "Checks from the latest ingestion run.",
+            "description": "Checks from the latest ingestion run that attempted this series.",
             "items": {
               "$ref": "#/components/schemas/QualityCheckResult"
             },
@@ -413,6 +536,170 @@
           "source_last_success_at"
         ],
         "title": "IngestionState",
+        "type": "object"
+      },
+      "KpiValue": {
+        "properties": {
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`value - previous_value` in the unit of `unit` (percentage points for rates).",
+            "title": "Change"
+          },
+          "days_since_period_end": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Age at the cut-off date.",
+            "title": "Days Since Period End"
+          },
+          "indicator": {
+            "$ref": "#/components/schemas/IndicatorDefinition"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reference period of `value`.",
+            "title": "Period"
+          },
+          "previous_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Period"
+          },
+          "previous_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Value"
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SeriesProvenance"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why there is no value (when status is not `ok`).",
+            "title": "Reason"
+          },
+          "scope_note": {
+            "title": "Scope Note",
+            "type": "string"
+          },
+          "source_flag": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Source status flag on the observation, e.g. p = provisional, e = estimated.",
+            "title": "Source Flag"
+          },
+          "stale": {
+            "description": "Older than the release-cycle limit for its frequency.",
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "status": {
+            "description": "`ok`: a stored value exists; `no_data`: mapped but nothing stored for the cut-off; `unavailable`: not published, not mapped or no connector.",
+            "enum": [
+              "ok",
+              "no_data",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How `value` is derived from the native series.",
+            "title": "Transform"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "indicator",
+          "status",
+          "reason",
+          "value",
+          "period",
+          "previous_value",
+          "previous_period",
+          "change",
+          "unit",
+          "transform",
+          "scope_note",
+          "source_flag",
+          "days_since_period_end",
+          "stale",
+          "provenance"
+        ],
+        "title": "KpiValue",
         "type": "object"
       },
       "PolicyRateScope": {
@@ -907,6 +1194,201 @@
         "title": "SourceStatusList",
         "type": "object"
       },
+      "StoredSeries": {
+        "properties": {
+          "adjustment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustment"
+          },
+          "countries": {
+            "description": "Countries served (the ECB rate serves several).",
+            "items": {
+              "type": "string"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "export_path": {
+            "description": "API path of the raw-observation CSV.",
+            "title": "Export Path",
+            "type": "string"
+          },
+          "first_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Period"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "geo": {
+            "title": "Geo",
+            "type": "string"
+          },
+          "health": {
+            "description": "Worst result of the latest checks.",
+            "enum": [
+              "not_synced",
+              "pass",
+              "warn",
+              "fail"
+            ],
+            "title": "Health",
+            "type": "string"
+          },
+          "indicators": {
+            "description": "Indicators derived from this native series.",
+            "items": {
+              "type": "string"
+            },
+            "title": "Indicators",
+            "type": "array"
+          },
+          "last_checked_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Checked Run Id"
+          },
+          "last_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Period"
+          },
+          "mapping_status": {
+            "enum": [
+              "verified",
+              "partial",
+              "stale",
+              "not_published",
+              "unmapped"
+            ],
+            "title": "Mapping Status",
+            "type": "string"
+          },
+          "observations": {
+            "title": "Observations",
+            "type": "integer"
+          },
+          "quality": {
+            "items": {
+              "$ref": "#/components/schemas/QualityCheckResult"
+            },
+            "title": "Quality",
+            "type": "array"
+          },
+          "request_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Url"
+          },
+          "retrieved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last successful fetch.",
+            "title": "Retrieved At"
+          },
+          "series_id": {
+            "title": "Series Id",
+            "type": "string"
+          },
+          "series_key": {
+            "title": "Series Key",
+            "type": "string"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "source_name": {
+            "title": "Source Name",
+            "type": "string"
+          },
+          "source_updated_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Updated At"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "series_id",
+          "source_id",
+          "source_name",
+          "dataset",
+          "series_key",
+          "geo",
+          "frequency",
+          "unit",
+          "adjustment",
+          "indicators",
+          "countries",
+          "mapping_status",
+          "observations",
+          "first_period",
+          "last_period",
+          "retrieved_at",
+          "source_updated_at",
+          "request_url",
+          "last_checked_run_id",
+          "health",
+          "quality",
+          "export_path"
+        ],
+        "title": "StoredSeries",
+        "type": "object"
+      },
       "SupportLevel": {
         "enum": [
           "full",
@@ -915,6 +1397,46 @@
         ],
         "title": "SupportLevel",
         "type": "string"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
       }
     }
   },
@@ -991,6 +1513,142 @@
         "summary": "Get one country",
         "tags": [
           "countries"
+        ]
+      }
+    },
+    "/api/countries/{iso2}/data-quality": {
+      "get": {
+        "operationId": "country_data_quality_api_countries__iso2__data_quality_get",
+        "parameters": [
+          {
+            "description": "ISO 3166-1 alpha-2 code (case-insensitive).",
+            "in": "path",
+            "name": "iso2",
+            "required": true,
+            "schema": {
+              "description": "ISO 3166-1 alpha-2 code (case-insensitive).",
+              "examples": [
+                "DE"
+              ],
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Iso2",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataQualityReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country."
+          }
+        },
+        "summary": "Lineage and latest quality checks of the series behind one country",
+        "tags": [
+          "data quality"
+        ]
+      }
+    },
+    "/api/countries/{iso2}/summary": {
+      "get": {
+        "operationId": "country_summary_api_countries__iso2__summary_get",
+        "parameters": [
+          {
+            "description": "ISO 3166-1 alpha-2 code (case-insensitive).",
+            "in": "path",
+            "name": "iso2",
+            "required": true,
+            "schema": {
+              "description": "ISO 3166-1 alpha-2 code (case-insensitive).",
+              "examples": [
+                "DE"
+              ],
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Iso2",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Information cut-off quarter (YYYY-Qn). Omit for the latest stored data.",
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-Q[1-4]$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Information cut-off quarter (YYYY-Qn). Omit for the latest stored data.",
+              "title": "As Of"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CountrySummary"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country or as-of."
+          }
+        },
+        "summary": "Headline KPIs with latest stored values and provenance",
+        "tags": [
+          "countries"
+        ]
+      }
+    },
+    "/api/data-quality": {
+      "get": {
+        "operationId": "all_data_quality_api_data_quality_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataQualityReport"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Lineage and latest quality checks of every mapped native series",
+        "tags": [
+          "data quality"
         ]
       }
     },
@@ -1180,6 +1838,68 @@
         "summary": "Indicator definitions, verified source mappings and ingestion state",
         "tags": [
           "indicators"
+        ]
+      }
+    },
+    "/api/observations/export": {
+      "get": {
+        "operationId": "export_observations_api_observations_export_get",
+        "parameters": [
+          {
+            "description": "Native series id (see data-quality).",
+            "in": "query",
+            "name": "series_id",
+            "required": true,
+            "schema": {
+              "description": "Native series id (see data-quality).",
+              "maxLength": 200,
+              "minLength": 5,
+              "title": "Series Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "text/csv": {}
+            },
+            "description": "RFC 4180 CSV."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unknown series id."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Series not synced yet."
+          }
+        },
+        "summary": "Raw stored observations of one native series as CSV, with per-row provenance",
+        "tags": [
+          "data quality"
         ]
       }
     },

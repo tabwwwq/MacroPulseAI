@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
@@ -214,4 +214,83 @@ class IndicatorSeries(BaseModel):
     points: list[SeriesPoint]
     truncated: bool = Field(description="True when only the most recent points were returned.")
     provenance: SeriesProvenance
-    quality: list[QualityCheckResult] = Field(description="Checks from the latest ingestion run.")
+    quality: list[QualityCheckResult] = Field(
+        description="Checks from the latest ingestion run that attempted this series."
+    )
+
+
+# ------------------------------------------------------------------ country summary (KPIs)
+
+KpiStatus = Literal["ok", "no_data", "unavailable"]
+
+
+class KpiValue(BaseModel):
+    indicator: IndicatorDefinition
+    status: KpiStatus = Field(
+        description="`ok`: a stored value exists; `no_data`: mapped but nothing stored for the "
+        "cut-off; `unavailable`: not published, not mapped or no connector."
+    )
+    reason: str | None = Field(description="Why there is no value (when status is not `ok`).")
+    value: float | None
+    period: str | None = Field(description="Reference period of `value`.")
+    previous_value: float | None
+    previous_period: str | None
+    change: float | None = Field(
+        description="`value - previous_value` in the unit of `unit` (percentage points for rates)."
+    )
+    unit: str
+    transform: str | None = Field(description="How `value` is derived from the native series.")
+    scope_note: str
+    source_flag: str | None = Field(
+        description="Source status flag on the observation, e.g. p = provisional, e = estimated."
+    )
+    days_since_period_end: int | None = Field(description="Age at the cut-off date.")
+    stale: bool = Field(description="Older than the release-cycle limit for its frequency.")
+    provenance: SeriesProvenance | None
+
+
+class CountrySummary(BaseModel):
+    country: str
+    as_of: str | None = Field(description="Requested as-of quarter; `null` means latest.")
+    cutoff: date = Field(description="Only reference periods ending on or before this date.")
+    data_basis: str = Field(description="What the values are (and are not): revisions, vintages.")
+    freshness: datetime | None = Field(description="Most recent successful fetch behind the KPIs.")
+    kpis: list[KpiValue]
+    generated_at: datetime
+
+
+# ------------------------------------------------------------------ data quality / lineage
+
+SeriesHealth = Literal["not_synced", "pass", "warn", "fail"]
+
+
+class StoredSeries(BaseModel):
+    series_id: str
+    source_id: str
+    source_name: str
+    dataset: str
+    series_key: str
+    geo: str
+    frequency: str
+    unit: str
+    adjustment: str | None
+    indicators: list[str] = Field(description="Indicators derived from this native series.")
+    countries: list[str] = Field(description="Countries served (the ECB rate serves several).")
+    mapping_status: MappingStatusValue
+    observations: int
+    first_period: str | None
+    last_period: str | None
+    retrieved_at: datetime | None = Field(description="Last successful fetch.")
+    source_updated_at: str | None
+    request_url: str | None
+    last_checked_run_id: int | None
+    health: SeriesHealth = Field(description="Worst result of the latest checks.")
+    quality: list[QualityCheckResult]
+    export_path: str = Field(description="API path of the raw-observation CSV.")
+
+
+class DataQualityReport(BaseModel):
+    country: str | None
+    items: list[StoredSeries]
+    counts: dict[str, int] = Field(description="Number of series per health status.")
+    generated_at: datetime

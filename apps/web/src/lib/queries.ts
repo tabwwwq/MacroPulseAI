@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { api, fetchReady, unwrap } from "@/lib/api";
+import { api, ApiError, fetchReady, unwrap } from "@/lib/api";
 
 export const queryKeys = {
   health: ["health"] as const,
@@ -9,7 +9,68 @@ export const queryKeys = {
   country: (iso2: string) => ["countries", iso2.toUpperCase()] as const,
   sources: ["sources", "status"] as const,
   catalog: (iso2: string | null) => ["indicators", "catalog", iso2 ?? "all"] as const,
+  series: (iso2: string, indicator: string, start?: string, end?: string) =>
+    ["indicators", "series", iso2.toUpperCase(), indicator, start ?? "", end ?? ""] as const,
+  summary: (iso2: string, asOf: string | null) => ["countries", iso2.toUpperCase(), "summary", asOf ?? "latest"] as const,
+  quality: (iso2: string | null) => ["data-quality", iso2 ?? "all"] as const,
 };
+
+export interface SeriesQuery {
+  country: string;
+  indicator: string;
+  start?: string;
+  end?: string;
+}
+
+export function seriesQueryOptions({ country, indicator, start, end }: SeriesQuery) {
+  return {
+    queryKey: queryKeys.series(country, indicator, start, end),
+    queryFn: () =>
+      unwrap(
+        api.GET("/api/indicators", {
+          params: { query: { country, indicator, ...(start ? { start } : {}), ...(end ? { end } : {}) } },
+        }),
+      ),
+    staleTime: 5 * 60_000,
+    // 404/503 are answers ("not published", "not synced"), not transient failures.
+    retry: (count: number, error: unknown) =>
+      !(error instanceof ApiError && [404, 422, 503].includes(error.status)) && count < 2,
+  };
+}
+
+/** Stored official series for one country/indicator, derived transparently by the API. */
+export function useIndicatorSeries(q: SeriesQuery | null) {
+  return useQuery({
+    ...seriesQueryOptions(q ?? { country: "", indicator: "" }),
+    enabled: q !== null,
+  });
+}
+
+/** Headline KPIs: latest stored value, change, staleness and provenance per KPI indicator. */
+export function useCountrySummary(iso2: string, asOf: string | null) {
+  return useQuery({
+    queryKey: queryKeys.summary(iso2, asOf),
+    queryFn: () =>
+      unwrap(
+        api.GET("/api/countries/{iso2}/summary", {
+          params: { path: { iso2 }, query: asOf ? { as_of: asOf } : {} },
+        }),
+      ),
+    staleTime: 5 * 60_000,
+  });
+}
+
+/** Lineage and latest quality checks for the series behind one country (or all of them). */
+export function useDataQuality(iso2: string | null) {
+  return useQuery({
+    queryKey: queryKeys.quality(iso2),
+    queryFn: () =>
+      iso2
+        ? unwrap(api.GET("/api/countries/{iso2}/data-quality", { params: { path: { iso2 } } }))
+        : unwrap(api.GET("/api/data-quality")),
+    staleTime: 60_000,
+  });
+}
 
 export function useHealth() {
   return useQuery({

@@ -106,3 +106,11 @@ def test_normal_release_lag_is_not_stale() -> None:
     assert _by_rule(_result(debt, [("2026-Q2", 62.0, None)]))["freshness"][0] == "pass"
     # A quarter more than 150 days past its end is a missed release.
     assert _by_rule(_result(debt, [("2026-Q1", 62.0, None)]))["freshness"][0] == "warn"
+
+
+def test_sdmx_normal_status_is_not_a_flag() -> None:
+    rate = SeriesRequest("ecb", "FM", "k", "EA", "event", "% per annum")
+    rules = _by_rule(_result(rate, [("2026-06-17", 2.25, "A"), ("2026-09-16", 2.5, "A")]))
+    assert "source_flags" not in rules
+    mixed = _by_rule(_result(Q_REQ, [("2026-Q2", 100.0, "A"), ("2026-Q3", 101.0, "p")]))
+    assert mixed["source_flags"][1].startswith("1 observation(s) flagged by the source: p")

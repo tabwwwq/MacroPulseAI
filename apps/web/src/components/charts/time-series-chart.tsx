@@ -50,6 +50,13 @@ export interface TimeSeriesChartProps {
   ref?: Ref<TimeSeriesChartHandle>;
 }
 
+const valueFormat = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 3 });
+
+/** Display rounding only; the table view and CSV export keep full precision. */
+function formatValue(value: number): string {
+  return Number.isFinite(value) ? valueFormat.format(value) : "N/A";
+}
+
 /** Convert period labels to UTC positions, without changing or filling observations. */
 function periodTime(period: string): number {
   const quarter = /^(\d{4})-Q([1-4])$/.exec(period);
@@ -86,13 +93,24 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
     const { periods, columns } = alignSeries(series);
     const times = periods.map(periodTime);
     const labels = new Map(times.map((time, index) => [time, periods[index]]));
-    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id }, index) => ({
+    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id, step }, index) => ({
       id,
       name: columns[index]?.label,
       type: kind,
       data: times.map((time, pointIndex) => [time, columns[index]?.values[pointIndex] ?? null]),
-      ...(kind === "line" ? { connectNulls: false, smooth: false, showSymbol: true, symbolSize: 4 } : {}),
+      ...(kind === "line"
+        ? {
+            // Step series hold each value until the next observation (e.g. a rate decision);
+            // they connect across the gaps that alignment with other series introduces.
+            connectNulls: Boolean(step),
+            smooth: false,
+            showSymbol: times.length <= 150, // dense series: line only, values on hover
+            symbolSize: 4,
+            ...(step ? { step: "end" as const } : {}),
+          }
+        : {}),
     }));
+    const sources = [...new Set(series.map((s) => s.source).filter((s): s is string => Boolean(s)))];
     // Separate, explicitly labelled reference series keep shading in the legend and PNG.
     const references: LineSeriesOption[] = shading.map(({ from, to, label }, index) => ({
       id: `external-reference-${index}`,
@@ -125,20 +143,24 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
           const firstValue = entries[0]?.value;
           const time = Array.isArray(firstValue) ? Number(firstValue[0]) : NaN;
           const period = labels.get(time) ?? "";
-          const values = entries.map((entry) => {
-            const value = Array.isArray(entry.value) ? entry.value[1] : null;
-            return `${entry.seriesName}: ${value == null ? "N/A" : String(value)}`;
-          });
+          const values = entries
+            .filter((entry) => !String(entry.seriesId ?? "").startsWith("external-reference-"))
+            .map((entry) => {
+              const value = Array.isArray(entry.value) ? entry.value[1] : null;
+              return `${entry.seriesName}: ${value == null ? "N/A" : formatValue(Number(value))}`;
+            });
           const referenceLabels = shading
             .filter(({ from, to }) => time >= periodTime(from) && time <= periodTime(to))
             .map(({ label }) => `External reference: ${label}`);
-          return [period, ...values, ...referenceLabels].join("\n");
+          const sourceLines = sources.length ? [`Source: ${sources.join("; ")}`] : [];
+          return [period, ...values, ...referenceLabels, ...sourceLines].join("\n");
         },
       },
       xAxis: { type: "time", axisLine: { lineStyle: { color: theme.axisColor } }, splitLine: { show: false } },
       yAxis: { type: "value", axisLabel: { color: theme.axisColor }, splitLine: { lineStyle: { color: theme.lineColor } } },
       dataZoom: [
-        { type: "inside", filterMode: "none" },
+        // The page must keep scrolling over charts: zoom with Ctrl + wheel, pinch, or the slider.
+        { type: "inside", filterMode: "none", zoomOnMouseWheel: "ctrl", moveOnMouseWheel: false, preventDefaultMouseMove: false },
         { type: "slider", bottom: 4, height: 20, borderColor: theme.lineColor, textStyle: theme.textStyle },
       ],
       series: [...plotted, ...references],

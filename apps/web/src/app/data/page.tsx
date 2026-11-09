@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 
 import { CoverageMatrix } from "@/components/data/coverage-matrix";
+import { SeriesInventory } from "@/components/data/series-inventory";
 import { SourceRegistry } from "@/components/data/source-registry";
 import { SystemStatus } from "@/components/data/system-status";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { WidgetBoundary } from "@/components/ui/error-boundary";
 import { PageHeader } from "@/components/ui/page-header";
 
 export const metadata: Metadata = { title: "Data observatory" };
@@ -15,12 +16,7 @@ export default function DataObservatoryPage() {
       <PageHeader
         eyebrow="Platform"
         title="Data observatory"
-        description="Verify that every number comes from a sourced record: source health, freshness, coverage and lineage."
-        meta={
-          <Badge tone="accent" dashed>
-            Foundation · stored-data lineage in Phase 4
-          </Badge>
-        }
+        description="Verify that every number comes from a sourced record: source health, freshness, coverage, lineage and the raw stored rows."
       />
       <div className="grid gap-4 xl:grid-cols-3">
         <Card className="xl:col-span-2">
@@ -36,6 +32,17 @@ export default function DataObservatoryPage() {
           <CardHeader title="Platform status" />
           <CardBody>
             <SystemStatus />
+          </CardBody>
+        </Card>
+        <Card className="xl:col-span-3">
+          <CardHeader
+            title="Stored series & lineage"
+            description="Each native official series: exact request, rows stored, span, last fetch and the latest quality checks. Download the raw rows to verify any number shown in the app."
+          />
+          <CardBody>
+            <WidgetBoundary label="Series inventory">
+              <SeriesInventory />
+            </WidgetBoundary>
           </CardBody>
         </Card>
         <Card className="xl:col-span-3">

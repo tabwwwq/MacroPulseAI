@@ -30,12 +30,14 @@ export interface ChartFrameProps {
   shading?: ChartShading[];
   height?: number;
   exportName: string;
+  /** Quality warnings, flags or reference notes shown under the chart. */
+  notes?: ReactNode;
 }
 
 export function ChartFrame({
   title, description, series, isLoading = false, error, onRetry,
   emptyTitle = "No observations yet", emptyMessage, source, staleSince,
-  allowKindToggle = false, defaultKind = "line", shading, height = 280, exportName,
+  allowKindToggle = false, defaultKind = "line", shading, height = 280, exportName, notes,
 }: ChartFrameProps): JSX.Element {
   const [kind, setKind] = useState(defaultKind);
   const [tableView, setTableView] = useState(false);
@@ -107,6 +109,7 @@ export function ChartFrame({
             {exportError ? <p role="alert" className="mt-3 text-sm text-danger">{exportError}</p> : null}
           </>
         )}
+        {ready && notes ? notes : null}
         {source ? (
           <footer className="mt-4 border-t border-line pt-3 text-xs text-fg-subtle">
             Source: {source.href ? <a className="text-accent underline underline-offset-2" href={source.href} target="_blank" rel="noopener noreferrer">{source.label}</a> : source.label}

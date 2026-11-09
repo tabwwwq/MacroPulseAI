@@ -10,31 +10,33 @@ next 2 or 4 quarters, with transparent, walk-forward-evaluated and calibrated mo
 > **Engineering truth over flashy claims.** The UI never shows a number that is not traced to a sourced
 > observation or a measured model output. Unbuilt modules say so. Missing data stays missing.
 
-![MacroPulse overview — real screenshot of the Phase 2 build](docs/screenshots/overview.png)
+![MacroPulse overview — real screenshot of the Phase 4 production build with stored official data](docs/screenshots/overview.png)
 
-| Country explorer | Compare | Data observatory |
+| Country explorer (US, NBER reference bands) | Compare (HICP vs CPI) | Data observatory |
 | --- | --- | --- |
 | ![Country explorer](docs/screenshots/country-de.png) | ![Compare](docs/screenshots/compare.png) | ![Data observatory](docs/screenshots/data-observatory.png) |
 
 ## Status
 
-The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–3 are complete:**
-foundation, production-grade UI system, and official-data ingestion. Phase 4 (dashboards plotting the stored
-series) is next.
+The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–4 are complete:**
+foundation, production-grade UI system, official-data ingestion, and dashboards on the stored data. Phase 5
+(technical-recession target, time-aware features and the first real model) is next.
 
 | Area | Working now (verified) | Next |
 | --- | --- | --- |
 | Monorepo | pnpm + uv workspaces, pinned deps, lockfiles, `.env.example`, CI, Dockerfiles, compose | — |
 | Official data | `macropulse data-sync`: Eurostat (JSON-stat), ECB (SDMX CSV) and FRED connectors with timeouts, retries/backoff, `Retry-After`, throttling, response validation, idempotent upserts, per-series quality checks and partial-failure runs. **Live run 2026-11-09: 21,094 observations from 24 series**, all runs succeeded | OECD and World Bank connectors; FRED API-key metadata/ALFRED vintages |
-| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, **`/api/indicators?country=&indicator=&start=&end=`** (derived series + provenance + quality checks); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Country summary & data-quality endpoints (Phase 4) |
-| Web (Next.js 16) | Design system with URL-shareable context (country + as-of quarter), KPI tiles and chart frames that report stored counts and latest periods, ECharts (CSV/PNG export, accessible table view), country explorer tabs, compare with comparability warnings, coverage matrix; loading / error-with-retry / offline / stale / not-built states; no overflow at 375 px | Plot the stored series with provenance tooltips (Phase 4) |
+| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, `/api/indicators?country=&indicator=&start=&end=` (derived series + provenance + quality checks), **`/api/countries/{iso2}/summary?as_of=`** (KPI values, change, staleness, provenance), **`/api/countries/{iso2}/data-quality`**, **`/api/data-quality`**, **`/api/observations/export`** (raw CSV); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Recession target, features and models (Phase 5) |
+| Web (Next.js 16) | **Overview, Country Explorer, Compare and Data Observatory on stored official data:** KPI tiles with value, change, source flag and provenance tooltip; ECharts with hover source, history window, as-of cut-off, NBER reference bands (US, labelled as external), step lines for rate decisions, table view, CSV (with citations) and PNG export; compare up to four countries as published or as spread vs a baseline, with comparability warnings; per-series lineage with quality checks and raw-row CSV. URL-shareable context; loading / error-with-retry / not-synced / not-built states; no overflow at 375 px | Risk gauge and ML lab once a model exists (Phases 5–6) |
 | Data feasibility | 45 live probes of official endpoints → [`docs/DATA_FEASIBILITY.md`](docs/DATA_FEASIBILITY.md); HICP successor `prc_hicp_minr` verified | — |
 | Models | — (no model trained; the UI says so) | Baselines → logistic regression → gradient boosting (Phase 5) |
 
-Verified on 2026-11-09 (Windows 11): 121 pytest tests (+1 PostgreSQL test that runs in CI, +12 opt-in live
-API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 53 Vitest tests and
-`next build`; a live `data-sync` against Eurostat, ECB and FRED, re-run to confirm idempotency; browser checks of
-the Overview and Data Observatory against the synced database.
+Verified on 2026-11-09 (Windows 11): 136 pytest tests (+1 PostgreSQL test that runs in CI, +12 opt-in live
+API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 70 Vitest tests and
+`next build`; a live `data-sync` against Eurostat, ECB and FRED (21,094 observations, idempotent re-runs);
+`pnpm smoke` — 348/348 end-to-end API checks over the synced database; browser checks of all four data pages
+for every country at 1440 px and 375 px, including the as-of cut-off (e.g. US as of 2008-Q4).
+**Not automated yet:** browser-level end-to-end tests (the page checks above were done by hand).
 **Not verified locally:** `docker compose up` (Docker is not installed on the development machine — CI builds
 the images).
 
@@ -68,6 +70,7 @@ docker compose up --build
 | `pnpm db:upgrade` | Apply migrations and sync the country/source registry (idempotent) |
 | `pnpm data:sync` | Fetch all mapped official series. Narrow it with `uv run macropulse data-sync --source eurostat --country DE`. Exit code 1 if any run is partial or failed |
 | `$env:MACROPULSE_LIVE_TESTS = "1"; uv run pytest -m live` | Opt-in checks against the real APIs (not run in CI) |
+| `pnpm smoke` | End-to-end checks of a running API over the stored data (provenance, support levels, CSV row counts, error contract) |
 | `pnpm test` | pytest + Vitest |
 | `pnpm lint` | ruff, ruff format, mypy, ESLint, tsc |
 | `pnpm build` | Next.js production build |

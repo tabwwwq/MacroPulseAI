@@ -1,57 +1,102 @@
 "use client";
 
+import { Gauge } from "lucide-react";
 import Link from "next/link";
 
-import type { CatalogEntry, MappingStatus } from "@macropulse/shared-types";
+import type { MappingStatus, StoredSeries } from "@macropulse/shared-types";
 
-import { ChartFrame } from "@/components/charts/chart-frame";
 import { CountryGrid } from "@/components/data/country-grid";
+import { IndicatorChart } from "@/components/data/indicator-chart";
 import { KpiGrid } from "@/components/data/kpi-grid";
 import { ModuleRoadmap } from "@/components/data/module-roadmap";
+import { RangeControl, useRange } from "@/components/data/range-control";
 import { SourceRegistry } from "@/components/data/source-registry";
 import { SystemStatus } from "@/components/data/system-status";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { WidgetBoundary } from "@/components/ui/error-boundary";
 import { PageHeader } from "@/components/ui/page-header";
-import { Notice } from "@/components/ui/states";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState, ErrorState, Notice } from "@/components/ui/states";
 import { formatAsOf } from "@/lib/as-of";
 import { useAppContext } from "@/lib/context";
-import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
-import { useCatalog, useCountries, useSourcesStatus } from "@/lib/queries";
+import { formatRelative } from "@/lib/format";
+import { MAPPING_STATUS } from "@/lib/mapping";
+import { useCatalog, useCountries, useDataQuality, useSourcesStatus } from "@/lib/queries";
 
 const STATUS_ORDER: MappingStatus[] = ["verified", "partial", "stale", "not_published", "unmapped"];
+const HEALTH_TONE = { pass: "ok", warn: "warn", fail: "danger", not_synced: "neutral" } as const;
 
-function entryFor(entries: CatalogEntry[], id: string): CatalogEntry | undefined {
-  return entries.find((e) => e.indicator.id === id);
+function withParam(href: string, key: string, value: string): string {
+  return `${href}${href.includes("?") ? "&" : "?"}${key}=${encodeURIComponent(value)}`;
 }
 
-function IndicatorChart({ entry, iso2, title }: { entry: CatalogEntry | undefined; iso2: string; title: string }) {
+function seriesName(s: StoredSeries): string {
+  const names: Record<string, string> = {
+    real_gdp_qoq: "Real GDP",
+    inflation_yoy: "Inflation",
+    unemployment_rate: "Unemployment",
+    policy_rate: "Policy rate",
+    gov_debt_gdp: "Government debt",
+    yield_spread: "Yield spread",
+    nber_recession: "NBER reference",
+  };
+  return names[s.indicators.find((i) => i in names) ?? ""] ?? s.indicators.join(", ");
+}
+
+/** The newest stored period per series behind the country — reference periods, not release dates. */
+function LatestObservations({ iso2 }: { iso2: string }) {
+  const { hrefWithContext } = useAppContext();
+  const quality = useDataQuality(iso2);
   return (
-    <ChartFrame
-      title={title}
-      description={entry ? `${entry.indicator.unit} · ${entry.mapping.native_frequency ?? entry.indicator.frequency}` : undefined}
-      series={[]}
-      emptyMessage={entry ? availabilityReason(entry) : "Loading source information…"}
-      source={
-        entry && sourceLabel(entry)
-          ? { label: sourceLabel(entry) as string, href: entry.mapping.docs_url ?? undefined }
-          : undefined
-      }
-      allowKindToggle
-      exportName={`macropulse-${iso2.toLowerCase()}-${entry?.indicator.id ?? "indicator"}`}
-      height={200}
-    />
+    <Card>
+      <CardHeader
+        title="Latest stored periods"
+        description="Newest reference period per official series and when it was fetched. Release dates are not published by these APIs."
+        action={
+          <Link href={withParam(hrefWithContext(`/countries/${iso2.toLowerCase()}`), "tab", "data")} className="text-xs font-medium text-accent hover:underline">
+            Lineage →
+          </Link>
+        }
+      />
+      <CardBody>
+        {quality.isError ? (
+          <ErrorState error={quality.error} onRetry={() => void quality.refetch()} />
+        ) : quality.isPending ? (
+          <Skeleton className="h-40 w-full" />
+        ) : (
+          <ul className="divide-y divide-line/60">
+            {quality.data.items.map((s) => (
+              <li key={s.series_id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <div className="min-w-0">
+                  <p className="truncate text-fg">{seriesName(s)}</p>
+                  <p className="truncate font-mono text-[11px] text-fg-subtle">
+                    {s.source_id === "fred" ? "FRED" : s.source_id === "ecb" ? "ECB" : "Eurostat"} · {s.dataset}
+                    {s.retrieved_at ? ` · fetched ${formatRelative(s.retrieved_at)}` : ""}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <span className="tabular font-mono text-xs text-fg">{s.last_period ?? "—"}</span>
+                  <Badge tone={HEALTH_TONE[s.health]} dashed={s.health === "not_synced"}>
+                    {s.health === "not_synced" ? "not synced" : s.health}
+                  </Badge>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </CardBody>
+    </Card>
   );
 }
 
 function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null }) {
   const { hrefWithContext } = useAppContext();
   const catalog = useCatalog(iso2);
+  const [range] = useRange();
   const entries = catalog.data?.countries[0]?.items ?? [];
   const counts = STATUS_ORDER.map((s) => ({ s, n: entries.filter((e) => e.mapping.status === s).length })).filter((c) => c.n > 0);
-  // Indicators can share a native series (GDP levels feed q/q and y/y), so this counts rows per indicator view.
-  const stored = entries.reduce((sum, e) => sum + e.ingestion.observations, 0);
+  const storedIndicators = entries.filter((e) => e.ingestion.observations > 0).length;
 
   return (
     <div className="space-y-4">
@@ -59,68 +104,79 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
         <KpiGrid iso2={iso2} asOf={asOf} />
       </WidgetBoundary>
 
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+        <p className="text-xs text-fg-subtle">
+          Charts show stored official observations{asOf ? ` for periods up to ${asOf}` : ""}; hover for values and source.
+        </p>
+        <RangeControl />
+      </div>
+
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="min-w-0 xl:col-span-2">
-          <WidgetBoundary label="Risk timeline">
-            <ChartFrame
-              title="Technical-recession risk · next 2 quarters"
-              description="Calibrated model probability over time, with historic technical recessions shaded."
-              series={[]}
-              emptyTitle="No trained model yet"
-              emptyMessage="The risk timeline appears once a model has been trained and evaluated with walk-forward backtests (Phase 5). No probability is ever shown without a measured model."
-              exportName={`macropulse-${iso2.toLowerCase()}-risk`}
-              height={260}
+          <WidgetBoundary label="Real GDP growth">
+            <IndicatorChart
+              iso2={iso2}
+              indicator="real_gdp_qoq"
+              asOf={asOf}
+              range={range}
+              height={280}
+              reference
+              defaultKind="bar"
             />
           </WidgetBoundary>
         </div>
-        <Card>
-          <CardHeader
-            title="Data coverage"
-            description={`Source status for ${iso2} from the live feasibility probe of ${catalog.data?.probe_date ?? "…"}.`}
-            action={
-              <Link href={hrefWithContext("/data")} className="text-xs font-medium text-accent hover:underline">
-                Details →
-              </Link>
-            }
-          />
-          <CardBody>
-            <ul className="space-y-2">
-              {counts.map(({ s, n }) => (
-                <li key={s} className="flex items-center justify-between gap-3 text-sm">
-                  <Badge tone={MAPPING_STATUS[s].tone} dashed={MAPPING_STATUS[s].tone === "neutral"}>
-                    {MAPPING_STATUS[s].label}
-                  </Badge>
-                  <span className="tabular font-mono text-fg">{n}</span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 text-xs leading-relaxed text-fg-muted">
-              {stored > 0 ? (
-                <>
-                  Indicators with stored observations:{" "}
-                  <span className="tabular font-mono text-fg">
-                    {entries.filter((e) => e.ingestion.observations > 0).length}/{entries.length}
-                  </span>
-                  . Counts per indicator are in the country&apos;s source table.
-                </>
-              ) : (
-                <>
-                  Stored observations: <span className="font-mono text-fg">0</span>. Run{" "}
-                  <code className="font-mono">uv run macropulse data-sync</code> on the server to ingest them.
-                </>
-              )}{" "}
-              Coverage reflects what the official sources publish.
-            </p>
-          </CardBody>
-        </Card>
+        <div className="flex min-w-0 flex-col gap-4">
+          <Card>
+            <CardHeader title="Technical-recession risk" />
+            <CardBody>
+              <EmptyState icon={<Gauge className="size-5" aria-hidden />} title="No trained model yet">
+                The probability for the next 2 and 4 quarters appears once a model has been trained and evaluated with
+                walk-forward backtests (Phase 5). No probability is shown without a measured model.
+              </EmptyState>
+            </CardBody>
+          </Card>
+          <Card>
+            <CardHeader
+              title="Data coverage"
+              description={`Source status for ${iso2} from the live probe of ${catalog.data?.probe_date ?? "…"}.`}
+              action={
+                <Link href={hrefWithContext("/data")} className="text-xs font-medium text-accent hover:underline">
+                  Details →
+                </Link>
+              }
+            />
+            <CardBody>
+              <ul className="space-y-2">
+                {counts.map(({ s, n }) => (
+                  <li key={s} className="flex items-center justify-between gap-3 text-sm">
+                    <Badge tone={MAPPING_STATUS[s].tone} dashed={MAPPING_STATUS[s].tone === "neutral"}>
+                      {MAPPING_STATUS[s].label}
+                    </Badge>
+                    <span className="tabular font-mono text-fg">{n}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-xs leading-relaxed text-fg-muted">
+                Indicators with stored observations:{" "}
+                <span className="tabular font-mono text-fg">
+                  {storedIndicators}/{entries.length}
+                </span>
+                . Coverage reflects what the official sources publish.
+              </p>
+            </CardBody>
+          </Card>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <WidgetBoundary label="Inflation chart">
-          <IndicatorChart entry={entryFor(entries, "inflation_yoy")} iso2={iso2} title="Inflation (y/y)" />
+          <IndicatorChart iso2={iso2} indicator="inflation_yoy" asOf={asOf} range={range} height={220} />
         </WidgetBoundary>
         <WidgetBoundary label="Unemployment chart">
-          <IndicatorChart entry={entryFor(entries, "unemployment_rate")} iso2={iso2} title="Unemployment rate" />
+          <IndicatorChart iso2={iso2} indicator="unemployment_rate" asOf={asOf} range={range} height={220} />
+        </WidgetBoundary>
+        <WidgetBoundary label="Latest stored periods">
+          <LatestObservations iso2={iso2} />
         </WidgetBoundary>
       </div>
     </div>
@@ -132,24 +188,15 @@ function DataStateNotice() {
   const sources = useSourcesStatus();
   if (!sources.data) return null;
   const synced = sources.data.items.filter((s) => s.last_success_at);
+  if (synced.length > 0) return null;
   return (
     <Notice className="mb-6">
-      {synced.length === 0 ? (
-        <p>
-          <span className="font-medium text-fg">No economic observations have been ingested yet.</span> Every tile and
-          chart below is wired to the API and shows why it is empty. Run{" "}
-          <code className="font-mono">uv run macropulse data-sync</code> on the server to fetch the official series.
-          Nothing on this page is sample or simulated data.
-        </p>
-      ) : (
-        <p>
-          <span className="font-medium text-fg">
-            Official observations are stored from {synced.map((s) => s.name.split(" ")[0]).join(", ")}.
-          </span>{" "}
-          Headline tiles and charts are wired to these stored series in Phase 4; until then each one says what is stored
-          and why nothing is plotted. Nothing on this page is sample or simulated data.
-        </p>
-      )}
+      <p>
+        <span className="font-medium text-fg">No economic observations have been ingested yet.</span> Every tile and
+        chart below is wired to the API and shows why it is empty. Run{" "}
+        <code className="font-mono">uv run macropulse data-sync</code> on the server to fetch the official series. Nothing
+        on this page is sample or simulated data.
+      </p>
     </Notice>
   );
 }
@@ -168,9 +215,11 @@ export function OverviewView() {
         meta={
           <>
             <Badge tone="neutral">As of {formatAsOf(asOf)}</Badge>
-            <Badge tone="accent" dashed>
-              Design system · Phase 2
-            </Badge>
+            {asOf ? (
+              <Badge tone="warn" dashed title="Values for periods ending by the cut-off, taken from today's revised data — not the figures published at the time.">
+                Revised data, not vintages
+              </Badge>
+            ) : null}
           </>
         }
       />

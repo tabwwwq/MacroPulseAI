@@ -21,11 +21,15 @@ function csvCell(value: string | number | null): string {
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
-/** RFC 4180 records, including CRLF line endings and units in each series header. */
+/**
+ * RFC 4180 records, including CRLF line endings, units in each series header and, when known, the
+ * series citation (source and retrieval date) in brackets, so an exported file still says where
+ * every column comes from.
+ */
 export function seriesToCsv(series: ChartSeries[]): string {
   const { periods, columns } = alignSeries(series);
   const rows = [
-    ["period", ...columns.map(({ label }) => label)],
+    ["period", ...columns.map(({ label }, i) => (series[i]?.citation ? `${label} [${series[i].citation}]` : label))],
     ...periods.map((period, index) => [period, ...columns.map(({ values }) => values[index] ?? null)]),
   ];
   return `${rows.map((row) => row.map(csvCell).join(",")).join("\r\n")}\r\n`;

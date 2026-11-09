@@ -16,6 +16,9 @@ from macropulse_economics.periods import days_since_end, period_start, shift
 # probably missed rather than "not yet due". See vault/50 Methodology for the release-lag notes.
 MAX_AGE_DAYS = {"monthly": 90, "quarterly": 150, "daily": 14}
 
+# SDMX OBS_STATUS codes that mean "normal value" (ECB uses `A`); they are not flags.
+NORMAL_STATUS = frozenset({"A"})
+
 
 @dataclass(frozen=True, slots=True)
 class CheckResult:
@@ -97,7 +100,7 @@ def run_checks(result: FetchResult, today: date) -> list[CheckResult]:
         )
     )
 
-    flagged = [o for o in obs if o.obs_status]
+    flagged = [o for o in obs if o.obs_status and o.obs_status not in NORMAL_STATUS]
     if flagged:
         flags = sorted({o.obs_status or "" for o in flagged})
         checks.append(

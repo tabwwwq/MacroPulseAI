@@ -15,10 +15,11 @@ import {
 export type ModuleGroup = "Monitor" | "Models" | "Platform";
 
 /**
+ * `built`:      the page works on stored official data (verified in the browser and by tests).
  * `foundation`: the route exists and shows real API state, but its full feature set is scheduled.
  * `planned`:    the route exists only as an honest "not built yet" page — no simulated output.
  */
-export type ModuleState = "foundation" | "planned";
+export type ModuleState = "built" | "foundation" | "planned";
 
 export interface AppModule {
   id: string;
@@ -41,12 +42,12 @@ export const MODULES: AppModule[] = [
     group: "Monitor",
     icon: LayoutDashboard,
     phase: 4,
-    state: "foundation",
+    state: "built",
     summary: "Economic-health dashboard for the selected country.",
     capabilities: [
-      "KPI tiles for real GDP growth, inflation, unemployment and policy rate, each traced to a sourced observation",
-      "Recession-risk timeline with historic downturn shading (only once a trained model exists)",
-      "Latest-release timeline and data-coverage indicator",
+      "KPI tiles with the latest stored value, change, source flag and provenance tooltip",
+      "Real GDP growth (NBER reference shading for the US), inflation and unemployment charts",
+      "Latest stored periods and data-coverage indicator; recession risk once a model exists (Phase 5)",
     ],
     prerequisites: ["Observations ingested (Phase 3)"],
   },
@@ -57,12 +58,12 @@ export const MODULES: AppModule[] = [
     group: "Monitor",
     icon: Globe,
     phase: 4,
-    state: "foundation",
+    state: "built",
     summary: "Deep macro profile per country: growth, prices, labour, monetary, fiscal and data.",
     capabilities: [
-      "Section tabs with line/bar and q/q vs y/y toggles where meaningful",
-      "Date ranges, source tooltips, seasonal-adjustment and unit labels",
-      "CSV/PNG export and a scrollable history table with explicit missing-data notes",
+      "Section tabs with line/bar toggles, q/q and y/y growth as separate documented series",
+      "History windows, source and quality notes, adjustment and unit labels, as-of cut-off",
+      "CSV/PNG export, table view and a lineage table with raw-row downloads",
     ],
     prerequisites: ["Observations ingested (Phase 3)"],
   },
@@ -73,12 +74,12 @@ export const MODULES: AppModule[] = [
     group: "Monitor",
     icon: GitCompareArrows,
     phase: 4,
-    state: "foundation",
+    state: "built",
     summary: "Cross-country comparison of up to four countries on comparable units and spans.",
     capabilities: [
-      "Aligned charts and table for growth, inflation, unemployment and debt where compatible",
-      "Period selection, normalisation choices and a consistent baseline",
-      "Policy-rate coverage that labels the shared euro area rate as shared",
+      "Aligned charts and a latest-value table for growth, inflation, unemployment, debt and policy rate",
+      "History window, as-published or spread-vs-baseline normalisation on common periods",
+      "Comparability warnings for different sources, frequencies and the shared euro area rate",
     ],
     prerequisites: ["Observations ingested (Phase 3)"],
   },
@@ -170,12 +171,12 @@ export const MODULES: AppModule[] = [
     group: "Platform",
     icon: Database,
     phase: 4,
-    state: "foundation",
+    state: "built",
     summary: "Source health, freshness, coverage and lineage of every stored observation.",
     capabilities: [
-      "Source health cards with last successful fetch and failed syncs",
-      "Coverage heatmap, missing observations and staleness markers",
-      "Metadata explorer, lineage and CSV download",
+      "Source health with last successful fetch and failed syncs",
+      "Per-series lineage: exact request, rows, span, fetch time and latest quality checks",
+      "Coverage matrix and raw-row CSV downloads with per-row provenance",
     ],
     prerequisites: ["Observations ingested (Phase 3)"],
   },
@@ -211,4 +212,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 2, name: "Production-grade UI system", total: 10 } as const;
+export const CURRENT_PHASE = { number: 4, name: "Data coverage & real dashboards", total: 10 } as const;
