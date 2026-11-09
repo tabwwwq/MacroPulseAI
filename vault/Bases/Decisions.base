@@ -1,0 +1,30 @@
+filters:
+  and:
+  - file.inFolder("30 Decisions")
+  - type == "decision"
+properties:
+  note.id:
+    displayName: ID
+  note.area:
+    displayName: Area
+  note.status:
+    displayName: Status
+  note.date:
+    displayName: Date
+views:
+- type: table
+  name: Decisions
+  order:
+  - id
+  - file.name
+  - area
+  - status
+  - date
+- type: table
+  name: By area
+  groupBy:
+    property: area
+    direction: ASC
+  order:
+  - file.name
+  - status

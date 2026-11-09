@@ -204,3 +204,16 @@ First, inspect the repository. Then produce a concise project architecture, data
 Build in this order: foundation & design shell -> official-data connectors -> normalized storage/quality -> dashboards -> recession models -> forecasts & explainability -> scenarios & historical replay -> reporting -> deployment, tests & GitHub polish.
 
 **Definition of done:** I can clone the repo; run the documented setup; open a responsive, polished web app; navigate all completed pages; browse real sourced historical macroeconomic data; reproduce at least one genuine training/backtesting pipeline; inspect actual model metrics and a justified probability estimate (or an explicit untrained/unavailable state); verify source provenance; download a report; run tests and a production build. No hidden fake numbers, broken controls, fabricated accuracy or train/test leakage.
+
+## 13. Knowledge base (Obsidian vault)
+
+The project's memory is the Obsidian vault in `vault/` (open the folder as a vault in Obsidian). It is part of the deliverable — keep it truthful and current.
+
+- **Automatic (do not hand-edit):** Claude Code hooks in `.claude/settings.json` run `scripts/obsidian/vault_log.py`, which appends prompts, file edits, commands, subagents, skills and final replies to `vault/80 Logs/YYYY-MM-DD.md` (git-ignored, secrets redacted). `scripts/agents/codex-task.ps1` records every Codex run as a note in `vault/60 Agents/Codex runs/`. On session start the hook injects the `## Now` section of `vault/10 Project/Status.md`.
+- **Curated (Claude's job):** after each meaningful step — a finished task, a phase milestone, a decision, a data finding — update:
+  - `vault/10 Project/Status.md` (`## Now`, Working, Blockers, Next, frontmatter `phase`/`updated`);
+  - the phase note in `vault/20 Phases/` (status, started/completed, a dated line under `## Log`);
+  - a new ADR in `vault/30 Decisions/` for any non-trivial technical decision (template `vault/90 Templates/Decision.md`);
+  - a finding in `vault/40 Data/Findings/` for data/tooling problems with evidence (template `Finding.md`);
+  - today's journal `vault/70 Sessions/YYYY-MM-DD.md` (template `Session.md`).
+- Use Obsidian syntax correctly (wikilinks, callouts, properties, `.base`, `.canvas`); the `obsidian-markdown`, `obsidian-bases` and `json-canvas` skills describe it. Never put secrets, raw API keys or personal data in notes; never record a result in the vault that was not actually observed.

@@ -1,0 +1,70 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project --quiet python \"$CLAUDE_PROJECT_DIR/scripts/obsidian/vault_log.py\" hook",
+            "timeout": 30,
+            "statusMessage": "Loading project status from the Obsidian vault",
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project --quiet python \"$CLAUDE_PROJECT_DIR/scripts/obsidian/vault_log.py\" hook",
+            "timeout": 30,
+            "async": true,
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Bash|PowerShell|Agent|Task|Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project --quiet python \"$CLAUDE_PROJECT_DIR/scripts/obsidian/vault_log.py\" hook",
+            "timeout": 30,
+            "async": true,
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project --quiet python \"$CLAUDE_PROJECT_DIR/scripts/obsidian/vault_log.py\" hook",
+            "timeout": 30,
+            "async": true,
+            "shell": "bash"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --no-project --quiet python \"$CLAUDE_PROJECT_DIR/scripts/obsidian/vault_log.py\" hook",
+            "timeout": 30,
+            "async": true,
+            "shell": "bash"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+filters:
+  or:
+    - file.inFolder("40 Data/Sources")
+    - file.inFolder("40 Data/Findings")
+formulas:
+  key: if(api_key_required, "🔑 required", "—")
+  severity_label: if(severity == "high", "🔴 high", if(severity == "medium", "🟠 medium", "🟢 low"))
+  state: if(status == "resolved", "✅ resolved", if(status == "workaround", "🛠️ workaround", "🔎 open"))
+properties:
+  note.publisher:
+    displayName: Publisher
+  note.verified_series:
+    displayName: Verified series
+  note.latest_period:
+    displayName: Latest period
+  formula.key:
+    displayName: API key
+  formula.severity_label:
+    displayName: Severity
+  formula.state:
+    displayName: Status
+views:
+  - type: table
+    name: Sources
+    filters:
+      and:
+        - type == "source"
+    order:
+      - file.name
+      - publisher
+      - verified_series
+      - latest_period
+      - formula.key
+    summaries:
+      verified_series: Sum
+  - type: table
+    name: Findings
+    filters:
+      and:
+        - type == "finding"
+    order:
+      - id
+      - file.name
+      - formula.severity_label
+      - formula.state
+      - area

@@ -1,0 +1,25 @@
+---
+type: source
+publisher: European Central Bank
+api_key_required: false
+verified_series: 2
+latest_period: "2026-09-16"
+probe_date: 2026-11-08
+docs: https://data.ecb.europa.eu/help/api/overview
+tags:
+  - data/source
+---
+
+# ECB
+
+Publisher: **European Central Bank** · [API documentation](https://data.ecb.europa.eu/help/api/overview) · API key: not required
+
+## Verified by live probe (2026-11-08)
+| Series key | Meaning | Coverage |
+| --- | --- | --- |
+| `FM.B.U2.EUR.4F.KR.MRR_FR.LEV` | Main refinancing operations, fixed rate (date of changes) | 1999-01-01 – 2026-09-16 · 48 events |
+| `FM.B.U2.EUR.4F.KR.DFR.LEV` | Deposit facility rate (date of changes) | 1999-01-01 – 2026-09-16 · 69 events |
+
+Event-dated (changes on decision dates), unit `PCPA`. A **shared euro area rate** — never shown as a national rate for BE/DE/FR/NL ([[ADR-0007 Support levels are computed, never declared]]).
+
+Evidence: `docs/data-feasibility-probe.json` · regenerate with `uv run python scripts/probe_sources.py --out docs/data-feasibility-probe.json`.

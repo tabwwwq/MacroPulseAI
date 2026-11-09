@@ -1,0 +1,8 @@
+{
+  "theme": "obsidian",
+  "accentColor": "#4cc3ff",
+  "baseFontSize": 15,
+  "enabledCssSnippets": [
+    "macropulse"
+  ]
+}

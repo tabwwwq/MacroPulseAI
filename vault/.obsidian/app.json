@@ -1,0 +1,12 @@
+{
+  "alwaysUpdateLinks": true,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00 Inbox",
+  "attachmentFolderPath": "Attachments",
+  "showLineNumber": false,
+  "readableLineLength": true,
+  "strictLineBreaks": true,
+  "defaultViewMode": "preview",
+  "propertiesInDocument": "visible",
+  "showUnsupportedFiles": false
+}

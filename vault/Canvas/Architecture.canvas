@@ -1,0 +1,261 @@
+{
+	"nodes": [
+		{
+			"id": "a1f0000000000001",
+			"type": "group",
+			"x": -40,
+			"y": -60,
+			"width": 1840,
+			"height": 320,
+			"label": "Runtime (Phase 1 · implemented)",
+			"color": "5"
+		},
+		{
+			"id": "a1f0000000000002",
+			"type": "text",
+			"x": 0,
+			"y": 0,
+			"width": 280,
+			"height": 200,
+			"color": "5",
+			"text": "## 🧑‍💻 Browser\n\nNext.js client components\nTanStack Query · typed `openapi-fetch`\n\nCalls same-origin `/api/*` only"
+		},
+		{
+			"id": "a1f0000000000003",
+			"type": "text",
+			"x": 500,
+			"y": 0,
+			"width": 300,
+			"height": 200,
+			"color": "5",
+			"text": "## ▲ Next.js 16\n\nApp Router · Tailwind v4 design system\nServer-side rewrite `/api/*` → `API_URL`\n\n[[ADR-0005 Next.js proxies the API]]"
+		},
+		{
+			"id": "a1f0000000000004",
+			"type": "text",
+			"x": 1000,
+			"y": 0,
+			"width": 320,
+			"height": 200,
+			"color": "5",
+			"text": "## ⚡ FastAPI\n\nPydantic v2 · error contract · request ids\n`/api/health` `/api/ready` `/api/countries` `/api/sources/status`"
+		},
+		{
+			"id": "a1f0000000000005",
+			"type": "text",
+			"x": 1500,
+			"y": 0,
+			"width": 260,
+			"height": 200,
+			"color": "5",
+			"text": "## 🗄️ Database\n\nSQLite (local) · PostgreSQL (prod)\nSQLAlchemy 2 · Alembic\n\n[[ADR-0006 SQLite locally, PostgreSQL in production]]"
+		},
+		{
+			"id": "a1f0000000000010",
+			"type": "group",
+			"x": -40,
+			"y": 360,
+			"width": 1180,
+			"height": 320,
+			"label": "Official sources (Phase 3 connectors · probe verified)",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000011",
+			"type": "file",
+			"x": 0,
+			"y": 420,
+			"width": 200,
+			"height": 220,
+			"file": "40 Data/Sources/Eurostat.md",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000012",
+			"type": "file",
+			"x": 220,
+			"y": 420,
+			"width": 200,
+			"height": 220,
+			"file": "40 Data/Sources/ECB.md",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000013",
+			"type": "file",
+			"x": 440,
+			"y": 420,
+			"width": 200,
+			"height": 220,
+			"file": "40 Data/Sources/FRED.md",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000014",
+			"type": "file",
+			"x": 660,
+			"y": 420,
+			"width": 200,
+			"height": 220,
+			"file": "40 Data/Sources/World Bank.md",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000015",
+			"type": "file",
+			"x": 880,
+			"y": 420,
+			"width": 200,
+			"height": 220,
+			"file": "40 Data/Sources/OECD.md",
+			"color": "4"
+		},
+		{
+			"id": "a1f0000000000020",
+			"type": "group",
+			"x": 1200,
+			"y": 360,
+			"width": 600,
+			"height": 320,
+			"label": "Models (Phase 5–8 · planned)",
+			"color": "3"
+		},
+		{
+			"id": "a1f0000000000021",
+			"type": "text",
+			"x": 1240,
+			"y": 420,
+			"width": 520,
+			"height": 220,
+			"color": "3",
+			"text": "## 🧠 ML pipeline\n\nas-of features → labels → walk-forward training → calibrated artifacts → inference\n\n[[Technical recession target]] · [[Evaluation protocol]]"
+		},
+		{
+			"id": "a1f0000000000030",
+			"type": "group",
+			"x": -40,
+			"y": -460,
+			"width": 1840,
+			"height": 340,
+			"label": "Agents & knowledge base",
+			"color": "6"
+		},
+		{
+			"id": "a1f0000000000031",
+			"type": "text",
+			"x": 0,
+			"y": -400,
+			"width": 300,
+			"height": 220,
+			"color": "6",
+			"text": "## 🧭 Claude Code\n\nLead engineer: architecture, implementation, verification, curated notes"
+		},
+		{
+			"id": "a1f0000000000032",
+			"type": "text",
+			"x": 500,
+			"y": -400,
+			"width": 300,
+			"height": 220,
+			"color": "6",
+			"text": "## 🛠️ Codex\n\nScoped side tasks from written briefs\nNo network in sandbox\n\n[[Agent workflow]]"
+		},
+		{
+			"id": "a1f0000000000033",
+			"type": "file",
+			"x": 1000,
+			"y": -400,
+			"width": 300,
+			"height": 220,
+			"file": "Home.md",
+			"color": "6"
+		},
+		{
+			"id": "a1f0000000000034",
+			"type": "file",
+			"x": 1460,
+			"y": -400,
+			"width": 300,
+			"height": 220,
+			"file": "10 Project/Status.md",
+			"color": "6"
+		}
+	],
+	"edges": [
+		{
+			"id": "b2e0000000000001",
+			"fromNode": "a1f0000000000002",
+			"fromSide": "right",
+			"toNode": "a1f0000000000003",
+			"toSide": "left",
+			"label": "/api"
+		},
+		{
+			"id": "b2e0000000000002",
+			"fromNode": "a1f0000000000003",
+			"fromSide": "right",
+			"toNode": "a1f0000000000004",
+			"toSide": "left",
+			"label": "proxy"
+		},
+		{
+			"id": "b2e0000000000003",
+			"fromNode": "a1f0000000000004",
+			"fromSide": "right",
+			"toNode": "a1f0000000000005",
+			"toSide": "left",
+			"label": "ORM"
+		},
+		{
+			"id": "b2e0000000000004",
+			"fromNode": "a1f0000000000010",
+			"fromSide": "top",
+			"toNode": "a1f0000000000004",
+			"toSide": "bottom",
+			"label": "data-sync (Phase 3)",
+			"color": "4"
+		},
+		{
+			"id": "b2e0000000000005",
+			"fromNode": "a1f0000000000021",
+			"fromSide": "top",
+			"toNode": "a1f0000000000005",
+			"toSide": "bottom",
+			"label": "artifacts & predictions",
+			"color": "3"
+		},
+		{
+			"id": "b2e0000000000006",
+			"fromNode": "a1f0000000000031",
+			"fromSide": "right",
+			"toNode": "a1f0000000000032",
+			"toSide": "left",
+			"label": "briefs"
+		},
+		{
+			"id": "b2e0000000000007",
+			"fromNode": "a1f0000000000032",
+			"fromSide": "right",
+			"toNode": "a1f0000000000033",
+			"toSide": "left",
+			"label": "run notes"
+		},
+		{
+			"id": "b2e0000000000008",
+			"fromNode": "a1f0000000000031",
+			"fromSide": "bottom",
+			"toNode": "a1f0000000000001",
+			"toSide": "top",
+			"label": "builds & verifies",
+			"color": "6"
+		},
+		{
+			"id": "b2e0000000000009",
+			"fromNode": "a1f0000000000033",
+			"fromSide": "right",
+			"toNode": "a1f0000000000034",
+			"toSide": "left",
+			"label": "status"
+		}
+	]
+}

@@ -57,7 +57,8 @@ $exe = Resolve-CodexExe
 
 $runs = Join-Path $root '.agents\codex-runs'
 New-Item -ItemType Directory -Force $runs | Out-Null
-$base = Join-Path $runs ("{0}-{1}" -f (Get-Date -Format 'yyyyMMdd-HHmmss'), $Name)
+$stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$base = Join-Path $runs ("{0}-{1}" -f $stamp, $Name)
 
 $preamble = @"
 You are Codex, a delegated side-task engineer on the MacroPulse AI repository.
@@ -93,5 +94,16 @@ if (Test-Path "$base.result.md") {
 } else {
     Write-Host '(no final message written; see .log / .err.log)'
     Get-Content -Tail 30 "$base.err.log" -ErrorAction SilentlyContinue
+}
+
+# Record the run in the Obsidian vault (vault/60 Agents/Codex runs + daily log). Never fails the run.
+try {
+    $logArgs = @('run', '--no-project', '--quiet', 'python', (Join-Path $root 'scripts\obsidian\vault_log.py'),
+        'codex-run', '--name', $Name, '--stamp', $stamp, '--exit-code', "$code", '--sandbox', $Sandbox,
+        '--prompt-file', "$base.prompt.md", '--result-file', "$base.result.md")
+    if ($Network) { $logArgs += '--network' }
+    & uv @logArgs | ForEach-Object { Write-Host "[codex-task] $_" }
+} catch {
+    Write-Host "[codex-task] vault logging skipped: $_"
 }
 exit $code

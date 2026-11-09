@@ -1,0 +1,32 @@
+filters:
+  and:
+  - file.inFolder("20 Phases")
+  - type == "phase"
+formulas:
+  state: if(status == "done", "✅ Done", if(status == "in-progress", "🔄 In progress", "⏳ Planned"))
+properties:
+  note.phase:
+    displayName: '#'
+  formula.state:
+    displayName: Status
+  note.started:
+    displayName: Started
+  note.completed:
+    displayName: Completed
+views:
+- type: table
+  name: Roadmap
+  order:
+  - phase
+  - file.name
+  - formula.state
+  - started
+  - completed
+- type: cards
+  name: Board
+  groupBy:
+    property: status
+    direction: ASC
+  order:
+  - file.name
+  - formula.state

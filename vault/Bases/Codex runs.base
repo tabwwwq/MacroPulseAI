@@ -1,0 +1,28 @@
+filters:
+  and:
+  - file.inFolder("60 Agents/Codex runs")
+  - type == "codex-run"
+formulas:
+  result: if(status == "success", "✅", "❌")
+properties:
+  formula.result:
+    displayName: ''
+  note.name:
+    displayName: Task
+  note.sandbox:
+    displayName: Sandbox
+  note.network:
+    displayName: Network
+  note.exit_code:
+    displayName: Exit
+views:
+- type: table
+  name: Codex runs
+  order:
+  - formula.result
+  - date
+  - time
+  - name
+  - sandbox
+  - network
+  - exit_code

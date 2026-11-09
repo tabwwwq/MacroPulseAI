@@ -119,6 +119,14 @@ scripts/               Source probe; scripts/agents for AI-agent delegation
 docs/                  Architecture, roadmap, data feasibility (+ raw probe evidence)
 ```
 
+## Knowledge base (Obsidian)
+
+`vault/` is an [Obsidian](https://obsidian.md) vault holding the project's memory: live status, phase notes,
+architecture decisions (ADRs), verified data sources and findings, methodology, Codex run reports, daily
+session journals, Bases dashboards and an architecture canvas. Claude Code hooks (`.claude/settings.json`)
+and the Codex runner log activity automatically into `vault/80 Logs/` (local only, secrets redacted). Open the
+`vault` folder in Obsidian and start at **Home**.
+
 ## AI-assisted development
 
 Built with Claude Code as lead engineer and OpenAI Codex for scoped side tasks (briefs in `.agents/briefs/`,

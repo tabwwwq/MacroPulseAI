@@ -1,0 +1,8 @@
+{
+  "items": [
+    { "type": "file", "ctime": 1794268800000, "path": "Home.md", "title": "🏠 Home" },
+    { "type": "file", "ctime": 1794268800001, "path": "10 Project/Status.md", "title": "📍 Status" },
+    { "type": "file", "ctime": 1794268800002, "path": "Canvas/Architecture.canvas", "title": "🗺️ Architecture" },
+    { "type": "file", "ctime": 1794268800003, "path": "Bases/Phases.base", "title": "🧭 Roadmap" }
+  ]
+}

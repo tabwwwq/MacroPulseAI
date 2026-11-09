@@ -54,9 +54,15 @@ Run the narrowest relevant checks for what you changed and include the results i
 - Python: ruff (lint+format), type hints everywhere, mypy-clean where practical, pytest with tiny
   deterministic local fixtures; live-API tests are marked `@pytest.mark.live` and skipped by default.
 - TypeScript: strict mode, no `any` without a comment, components small and accessible
-  (keyboard + screen reader), design tokens from `apps/web/src/styles`, never hard-coded colours.
+  (keyboard + screen reader), design tokens from `apps/web/src/app/globals.css` (`@theme`), never hard-coded colours.
 - UI: never render a control that does nothing; unbuilt features are disabled or omitted with a clear label.
 
 ## Final report format (for delegated tasks)
 
 1. Summary (2–4 lines) 2. Files changed 3. Commands run → result 4. Unverified / open questions.
+
+## Obsidian knowledge base (`vault/`)
+
+- Your runs are recorded automatically in `vault/60 Agents/Codex runs/` by `scripts/agents/codex-task.ps1` — do not write those notes yourself.
+- Edit vault notes only when a brief lists them. Follow Obsidian syntax (wikilinks, callouts, properties) and the
+  `obsidian-markdown` / `obsidian-bases` / `json-canvas` skills. Never write unverified results or secrets into the vault.

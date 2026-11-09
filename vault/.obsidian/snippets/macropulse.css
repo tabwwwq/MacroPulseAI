@@ -1,0 +1,47 @@
+/* MacroPulse vault styling — matches the app's research-terminal palette. */
+.theme-dark {
+  --background-primary: #0b1020;
+  --background-primary-alt: #131b2c;
+  --background-secondary: #101727;
+  --background-secondary-alt: #131b2c;
+  --background-modifier-border: #24304a;
+  --text-normal: #e7ebf3;
+  --text-muted: #a0abc0;
+  --text-faint: #7f8aa3;
+  --interactive-accent: #2f9bff;
+  --text-accent: #4cc3ff;
+  --h1-color: #e7ebf3;
+  --h2-color: #4cc3ff;
+  --h3-color: #a0abc0;
+  --font-monospace: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+/* Numbers line up in tables (metrics, periods, counts). */
+.markdown-rendered table,
+.bases-view {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline code reads like the app's mono labels. */
+.markdown-rendered code {
+  color: #4cc3ff;
+  background-color: rgba(76, 195, 255, 0.08);
+}
+
+/* Custom callouts: > [!phase], > [!finding], > [!decision] */
+.callout[data-callout="phase"] {
+  --callout-color: 76, 195, 255;
+  --callout-icon: lucide-milestone;
+}
+.callout[data-callout="finding"] {
+  --callout-color: 245, 181, 68;
+  --callout-icon: lucide-search-check;
+}
+.callout[data-callout="decision"] {
+  --callout-color: 167, 139, 250;
+  --callout-icon: lucide-git-branch;
+}
+.callout[data-callout="verified"] {
+  --callout-color: 61, 214, 163;
+  --callout-icon: lucide-badge-check;
+}

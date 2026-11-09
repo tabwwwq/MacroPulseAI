@@ -1,0 +1,16 @@
+filters:
+  and:
+  - file.inFolder("70 Sessions")
+  - type == "session"
+properties:
+  note.phase:
+    displayName: Phase
+  note.highlights:
+    displayName: Highlights
+views:
+- type: table
+  name: Sessions
+  order:
+  - file.name
+  - phase
+  - highlights
