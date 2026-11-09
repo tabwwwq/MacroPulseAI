@@ -8,6 +8,7 @@ export const queryKeys = {
   countries: ["countries"] as const,
   country: (iso2: string) => ["countries", iso2.toUpperCase()] as const,
   sources: ["sources", "status"] as const,
+  catalog: (iso2: string | null) => ["indicators", "catalog", iso2 ?? "all"] as const,
 };
 
 export function useHealth() {
@@ -38,6 +39,16 @@ export function useCountry(iso2: string) {
   return useQuery({
     queryKey: queryKeys.country(iso2),
     queryFn: () => unwrap(api.GET("/api/countries/{iso2}", { params: { path: { iso2 } } })),
+    staleTime: 5 * 60_000,
+  });
+}
+
+/** Indicator definitions + verified source mappings + ingestion state (one country or all). */
+export function useCatalog(iso2: string | null) {
+  return useQuery({
+    queryKey: queryKeys.catalog(iso2),
+    queryFn: () =>
+      unwrap(api.GET("/api/indicators/catalog", { params: { query: iso2 ? { country: iso2 } : {} } })),
     staleTime: 5 * 60_000,
   });
 }

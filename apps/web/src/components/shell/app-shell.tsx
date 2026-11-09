@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { type ReactNode, Suspense, useState } from "react";
 
 import { MobileNav } from "@/components/shell/mobile-nav";
 import { Sidebar } from "@/components/shell/sidebar";
@@ -24,6 +24,10 @@ function Footer() {
   );
 }
 
+function TopbarFallback() {
+  return <div className="sticky top-0 z-30 h-14 border-b border-line bg-canvas/80" aria-hidden />;
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -36,12 +40,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <aside className="sticky top-0 hidden h-dvh border-r border-line bg-surface/50 lg:block">
-        <Sidebar />
+        <Suspense fallback={null}>
+          <Sidebar />
+        </Suspense>
       </aside>
-      <MobileNav open={menuOpen} onOpenChange={setMenuOpen} />
+      <Suspense fallback={null}>
+        <MobileNav open={menuOpen} onOpenChange={setMenuOpen} />
+      </Suspense>
 
       <div className="app-backdrop flex min-w-0 flex-col">
-        <Topbar onOpenMenu={() => setMenuOpen(true)} />
+        <Suspense fallback={<TopbarFallback />}>
+          <Topbar onOpenMenu={() => setMenuOpen(true)} />
+        </Suspense>
         <main id="main" tabIndex={-1} className="flex-1 px-4 py-6 focus:outline-none sm:px-6 sm:py-8 lg:px-8">
           <div className="mx-auto w-full max-w-7xl">{children}</div>
         </main>

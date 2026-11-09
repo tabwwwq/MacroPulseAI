@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 
+import { CoverageMatrix } from "@/components/data/coverage-matrix";
 import { SourceRegistry } from "@/components/data/source-registry";
 import { SystemStatus } from "@/components/data/system-status";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageHeader } from "@/components/ui/page-header";
-import { EmptyState } from "@/components/ui/states";
 
 export const metadata: Metadata = { title: "Data observatory" };
 
@@ -18,7 +18,7 @@ export default function DataObservatoryPage() {
         description="Verify that every number comes from a sourced record: source health, freshness, coverage and lineage."
         meta={
           <Badge tone="accent" dashed>
-            Foundation · coverage & lineage in Phase 4
+            Foundation · stored-data lineage in Phase 4
           </Badge>
         }
       />
@@ -39,12 +39,12 @@ export default function DataObservatoryPage() {
           </CardBody>
         </Card>
         <Card className="xl:col-span-3">
-          <CardHeader title="Coverage heatmap" description="Country × indicator availability with staleness markers." />
+          <CardHeader
+            title="Coverage matrix"
+            description="Country × indicator availability from the live probe of the official APIs (see docs/DATA_FEASIBILITY.md). Click a cell for the country's source table."
+          />
           <CardBody>
-            <EmptyState title="No observations stored yet">
-              The coverage matrix is computed from stored observations, so it stays empty until the first data
-              sync (Phase 3). Pre-ingestion feasibility evidence is documented in docs/DATA_FEASIBILITY.md.
-            </EmptyState>
+            <CoverageMatrix />
           </CardBody>
         </Card>
       </div>

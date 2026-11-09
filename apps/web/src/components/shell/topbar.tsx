@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
 
+import { AsOfSelect } from "@/components/shell/as-of-select";
 import { CountrySwitcher } from "@/components/shell/country-switcher";
 import { LogoMark } from "@/components/shell/logo";
 import { SyncStatus } from "@/components/shell/sync-status";
@@ -33,8 +34,9 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
         </p>
       ) : null}
 
-      <div className="ml-auto flex min-w-0 items-center gap-2">
+      <div className="ml-auto flex min-w-0 items-center gap-1.5 sm:gap-2">
         <CountrySwitcher />
+        <AsOfSelect />
         <SyncStatus />
       </div>
     </header>

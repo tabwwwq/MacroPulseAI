@@ -1,6 +1,26 @@
 {
   "components": {
     "schemas": {
+      "CatalogEntry": {
+        "properties": {
+          "indicator": {
+            "$ref": "#/components/schemas/IndicatorDefinition"
+          },
+          "ingestion": {
+            "$ref": "#/components/schemas/IngestionState"
+          },
+          "mapping": {
+            "$ref": "#/components/schemas/SourceMappingInfo"
+          }
+        },
+        "required": [
+          "indicator",
+          "mapping",
+          "ingestion"
+        ],
+        "title": "CatalogEntry",
+        "type": "object"
+      },
       "Country": {
         "properties": {
           "currency": {
@@ -51,6 +71,27 @@
           "support"
         ],
         "title": "Country",
+        "type": "object"
+      },
+      "CountryCatalog": {
+        "properties": {
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogEntry"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "country",
+          "items"
+        ],
+        "title": "CountryCatalog",
         "type": "object"
       },
       "CountryList": {
@@ -188,6 +229,127 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "IndicatorCatalog": {
+        "properties": {
+          "countries": {
+            "items": {
+              "$ref": "#/components/schemas/CountryCatalog"
+            },
+            "title": "Countries",
+            "type": "array"
+          },
+          "probe_date": {
+            "title": "Probe Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "probe_date",
+          "countries"
+        ],
+        "title": "IndicatorCatalog",
+        "type": "object"
+      },
+      "IndicatorDefinition": {
+        "properties": {
+          "category": {
+            "enum": [
+              "growth",
+              "prices",
+              "labor",
+              "monetary",
+              "fiscal",
+              "leading",
+              "reference"
+            ],
+            "title": "Category",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "frequency": {
+            "enum": [
+              "monthly",
+              "quarterly",
+              "annual",
+              "event",
+              "daily"
+            ],
+            "title": "Frequency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kpi": {
+            "description": "Shown as a headline KPI tile.",
+            "title": "Kpi",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "category",
+          "unit",
+          "frequency",
+          "description",
+          "kpi"
+        ],
+        "title": "IndicatorDefinition",
+        "type": "object"
+      },
+      "IngestionState": {
+        "properties": {
+          "latest_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Period"
+          },
+          "observations": {
+            "description": "Observations stored for this country/indicator.",
+            "title": "Observations",
+            "type": "integer"
+          },
+          "source_last_success_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last successful fetch of the mapped source (data freshness).",
+            "title": "Source Last Success At"
+          }
+        },
+        "required": [
+          "observations",
+          "latest_period",
+          "source_last_success_at"
+        ],
+        "title": "IngestionState",
+        "type": "object"
+      },
       "PolicyRateScope": {
         "description": "Whether a country's policy rate is set nationally or shared across a currency union.",
         "enum": [
@@ -243,6 +405,153 @@
           "checks"
         ],
         "title": "ReadyResponse",
+        "type": "object"
+      },
+      "SourceMappingInfo": {
+        "properties": {
+          "adjustment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustment"
+          },
+          "dataset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset"
+          },
+          "docs_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Docs Url"
+          },
+          "native_frequency": {
+            "anyOf": [
+              {
+                "enum": [
+                  "monthly",
+                  "quarterly",
+                  "annual",
+                  "event",
+                  "daily"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Native Frequency"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "probe_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Probe Date"
+          },
+          "probe_last_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest period seen by the probe \u2014 metadata, not an ingested observation.",
+            "title": "Probe Last Period"
+          },
+          "scope_note": {
+            "title": "Scope Note",
+            "type": "string"
+          },
+          "series_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Series Key"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "source_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Name"
+          },
+          "status": {
+            "description": "What the live feasibility probe observed for this country/indicator: `verified` series returned, `partial` values without full metadata, `stale` series out of date, `not_published` by the source for this geography, `unmapped` not mapped yet.",
+            "enum": [
+              "verified",
+              "partial",
+              "stale",
+              "not_published",
+              "unmapped"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "source_id",
+          "source_name",
+          "docs_url",
+          "dataset",
+          "series_key",
+          "native_frequency",
+          "adjustment",
+          "probe_last_period",
+          "probe_date",
+          "note",
+          "scope_note"
+        ],
+        "title": "SourceMappingInfo",
         "type": "object"
       },
       "SourceStatus": {
@@ -493,6 +802,58 @@
         "summary": "Liveness probe",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/indicators/catalog": {
+      "get": {
+        "operationId": "indicator_catalog_api_indicators_catalog_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code; omit for all countries.",
+            "in": "query",
+            "name": "country",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^[A-Za-z]{2}$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO alpha-2 code; omit for all countries.",
+              "title": "Country"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndicatorCatalog"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Malformed or unsupported country."
+          }
+        },
+        "summary": "Indicator definitions, verified source mappings and ingestion state",
+        "tags": [
+          "indicators"
         ]
       }
     },

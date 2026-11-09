@@ -5,11 +5,13 @@ import { usePathname } from "next/navigation";
 
 import { Logo } from "@/components/shell/logo";
 import { cn } from "@/lib/cn";
+import { useAppContext } from "@/lib/context";
 import { CURRENT_PHASE, MODULE_GROUPS, MODULES, moduleForPath } from "@/lib/modules";
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const active = moduleForPath(pathname);
+  const { hrefWithContext } = useAppContext();
 
   return (
     <div className="flex h-full flex-col">
@@ -30,7 +32,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                 return (
                   <li key={m.id}>
                     <Link
-                      href={m.href}
+                      href={hrefWithContext(m.href)}
                       onClick={onNavigate}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(

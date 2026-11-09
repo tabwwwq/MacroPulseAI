@@ -73,7 +73,7 @@ export const MODULES: AppModule[] = [
     group: "Monitor",
     icon: GitCompareArrows,
     phase: 4,
-    state: "planned",
+    state: "foundation",
     summary: "Cross-country comparison of up to four countries on comparable units and spans.",
     capabilities: [
       "Aligned charts and table for growth, inflation, unemployment and debt where compatible",
@@ -89,7 +89,7 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: Gauge,
     phase: 6,
-    state: "planned",
+    state: "foundation",
     summary:
       "Estimated probability of a technical recession within the next 2 or 4 quarters at an explicit as-of date.",
     capabilities: [
@@ -106,7 +106,7 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: ChartSpline,
     phase: 7,
-    state: "planned",
+    state: "foundation",
     summary: "Multi-step forecasts for GDP growth, inflation and unemployment with empirical intervals.",
     capabilities: [
       "Naive baselines plus a stronger challenger, evaluated with rolling backtests",
@@ -211,4 +211,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 1, name: "Foundation & design shell", total: 10 } as const;
+export const CURRENT_PHASE = { number: 2, name: "Production-grade UI system", total: 10 } as const;

@@ -33,19 +33,19 @@ Acceptance criteria:
 
 ## Phase 2 — Production-grade UI system
 
-**Status:** Planned; shell and state primitives exist in Phase 1, full phase not accepted.
+**Status:** Done 2026-11-09 — verified locally (see vault `20 Phases/Phase 02`).
 **Goal:** Complete consistent responsive layouts and functional controls without fake data.
 **Deliverables:** Sidebar/topbar, country/as-of selection, chart wrappers, KPI cards,
 tooltips, skeletons, stale/missing/error states and mobile layouts.
 
 Acceptance criteria:
 
-- [ ] All module layouts use shared tokens/components and typed queries; unbuilt features show explicit unavailable/not-built states.
-- [ ] Keyboard traversal, focus handling and screen-reader names work for shell, selectors, tooltips and mobile menu.
-- [ ] Country/as-of selectors and every enabled filter/button change visible state; unavailable actions are disabled with reasons or omitted.
-- [ ] Loading, empty, stale, API-error and retry states are exercised with deterministic fixtures.
-- [ ] Inspect desktop/tablet/mobile layouts for overflow and reduced motion; record screenshots when supported.
-- [ ] Frontend tests, lint/type checks and production build pass after UI changes.
+- [x] All module layouts use shared tokens/components and typed queries; unbuilt features show explicit unavailable/not-built states.
+- [x] Keyboard traversal, focus handling and screen-reader names work for shell, selectors, tooltips and mobile menu.
+- [x] Country/as-of selectors and every enabled filter/button change visible state; unavailable actions are disabled with reasons or omitted.
+- [x] Loading, empty, stale, API-error and retry states are exercised with deterministic fixtures.
+- [x] Inspect desktop/tablet/mobile layouts for overflow and reduced motion; record screenshots when supported.
+- [x] Frontend tests, lint/type checks and production build pass after UI changes.
 
 ## Phase 3 — Economic data ingestion and metadata
 

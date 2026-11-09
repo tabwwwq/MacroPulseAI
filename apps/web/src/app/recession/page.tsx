@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { ModulePlaceholder } from "@/components/data/module-placeholder";
+import { Skeleton } from "@/components/ui/skeleton";
+import { RecessionView } from "@/components/views/recession-view";
 
 export const metadata: Metadata = { title: "Recession risk" };
 
 export default function RecessionPage() {
-  return <ModulePlaceholder moduleId="recession" />;
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
+      <RecessionView />
+    </Suspense>
+  );
 }

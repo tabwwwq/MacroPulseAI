@@ -59,10 +59,11 @@ export function SyncStatus() {
       <Tooltip.Trigger asChild>
         <Link
           href="/data"
-          className="inline-flex h-8 items-center gap-2 whitespace-nowrap rounded-full border border-line-strong bg-surface-2 px-3 text-xs font-medium text-fg-muted hover:bg-elevated hover:text-fg"
+          className="inline-flex h-8 min-w-8 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line-strong bg-surface-2 px-2.5 text-xs font-medium text-fg-muted hover:bg-elevated hover:text-fg sm:px-3"
         >
           <StatusDot tone={tone} pulse={tone === "danger"} />
-          <span>{label}</span>
+          {/* Dot only on phones; the label stays available to screen readers. */}
+          <span className="sr-only sm:not-sr-only">{label}</span>
         </Link>
       </Tooltip.Trigger>
       <Tooltip.Portal>

@@ -2,29 +2,25 @@
 
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown, Globe } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
 
 import { SupportBadge } from "@/components/data/support-badge";
+import { useAppContext } from "@/lib/context";
 import { useCountries } from "@/lib/queries";
 
-const COUNTRY_PATH = /^\/countries\/([A-Za-z]{2})(?:\/|$)/;
-
-/** Navigates to the selected country's profile; reflects the country currently being viewed. */
+/**
+ * Global country selection. On a country page it navigates to the chosen country; on every other
+ * page it sets ?country= so module views (risk, forecasts, …) follow the selection.
+ */
 export function CountrySwitcher() {
   const { data, isPending, isError } = useCountries();
-  const pathname = usePathname();
-  const router = useRouter();
-  const current = COUNTRY_PATH.exec(pathname)?.[1]?.toUpperCase() ?? "";
+  const { country, setCountry } = useAppContext();
   const unavailable = isPending || isError || !data;
+  const supported = data?.items.some((c) => c.iso2 === country) ?? false;
 
   return (
-    <Select.Root
-      value={current}
-      onValueChange={(iso2) => router.push(`/countries/${iso2.toLowerCase()}`)}
-      disabled={unavailable}
-    >
+    <Select.Root value={supported && country ? country : ""} onValueChange={setCountry} disabled={unavailable}>
       <Select.Trigger
-        aria-label="Select country"
+        aria-label={country ? `Country: ${country}` : "Select country"}
         className="inline-flex h-8 min-w-0 items-center gap-2 rounded-lg border border-line-strong bg-surface-2 px-2.5 text-sm text-fg hover:bg-elevated disabled:opacity-60 data-[placeholder]:text-fg-muted"
       >
         <Globe className="size-4 shrink-0 text-fg-subtle" aria-hidden />
@@ -33,7 +29,7 @@ export function CountrySwitcher() {
         </span>
         {/* Compact label on phones; the full name is in the list and in the trigger's aria-label. */}
         <span className="font-mono text-xs sm:hidden" aria-hidden>
-          {current || "Country"}
+          {(supported && country) || "Country"}
         </span>
         <Select.Icon>
           <ChevronDown className="size-4 text-fg-subtle" aria-hidden />

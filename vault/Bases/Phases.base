@@ -3,7 +3,7 @@ filters:
   - file.inFolder("20 Phases")
   - type == "phase"
 formulas:
-  state: if(status == "done", "✅ Done", if(status == "in-progress", "🔄 In progress", "⏳ Planned"))
+  state: if(status == "done", "✅ Done", if(status == "in-progress", "🔄 In progress", if(status == "next", "⏭️ Next", "⏳ Planned")))
 properties:
   note.phase:
     displayName: '#'

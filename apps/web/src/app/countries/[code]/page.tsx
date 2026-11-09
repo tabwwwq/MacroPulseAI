@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { CountryView } from "@/components/data/country-view";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ISO2 = /^[A-Za-z]{2}$/;
 
@@ -17,5 +19,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CountryPage({ params }: Props) {
   const { code } = await params;
   if (!ISO2.test(code)) notFound();
-  return <CountryView iso2={code.toUpperCase()} />;
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
+      <CountryView iso2={code.toUpperCase()} />
+    </Suspense>
+  );
 }

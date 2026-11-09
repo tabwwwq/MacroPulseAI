@@ -10,24 +10,29 @@ next 2 or 4 quarters, with transparent, walk-forward-evaluated and calibrated mo
 > **Engineering truth over flashy claims.** The UI never shows a number that is not traced to a sourced
 > observation or a measured model output. Unbuilt modules say so. Missing data stays missing.
 
-![MacroPulse overview — real screenshot of the Phase 1 build](docs/screenshots/overview.png)
+![MacroPulse overview — real screenshot of the Phase 2 build](docs/screenshots/overview.png)
+
+| Country explorer | Compare | Data observatory |
+| --- | --- | --- |
+| ![Country explorer](docs/screenshots/country-de.png) | ![Compare](docs/screenshots/compare.png) | ![Data observatory](docs/screenshots/data-observatory.png) |
 
 ## Status
 
-The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phase 1 — foundation & design
-shell — is complete.**
+The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phase 1 (foundation) and Phase 2
+(production-grade UI system) are complete;** Phase 3 (official-data ingestion) is next.
 
 | Area | Working now (verified) | Next |
 | --- | --- | --- |
 | Monorepo | pnpm + uv workspaces, pinned deps, lockfiles, `.env.example`, CI, Dockerfiles, compose | — |
-| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries`, `/api/countries/{iso2}`, `/api/sources/status`; structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Official-data connectors & `data-sync` CLI (Phase 3) |
-| Web (Next.js 16) | Dark research-terminal design system, sidebar/topbar, live country switcher, sync-status badge, mobile drawer, all 10 module routes; loading / error-with-retry / API-offline / not-built states | Indicator dashboards (Phase 4) |
+| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries`, `/api/countries/{iso2}`, `/api/sources/status`, `/api/indicators/catalog` (9 indicators × 5 countries with verified source keys and probe status); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Official-data connectors & `data-sync` CLI (Phase 3) |
+| Web (Next.js 16) | Design system with URL-shareable context (country + as-of quarter), KPI tiles, ECharts chart frames (CSV/PNG export, accessible table view), country explorer tabs, compare with comparability warnings, recession horizon toggle, forecast controls, coverage matrix; loading / error-with-retry / offline / stale / not-built states; no overflow at 375 px | Real series once data is ingested (Phase 3–4) |
 | Data feasibility | 45 live probes of official endpoints → [`docs/DATA_FEASIBILITY.md`](docs/DATA_FEASIBILITY.md) | Connectors use the verified keys |
 | Models | — (no model trained; the UI says so) | Baselines → logistic regression → gradient boosting (Phase 5) |
 
-Verified on 2026-11-08 (Windows 11): 27 pytest tests (+1 PostgreSQL test that runs in CI), ruff, mypy
-`--strict`; ESLint, `tsc`, 16 Vitest tests and `next build`; manual browser checks of navigation, country
-switching, mobile layout (no horizontal overflow at 375 px) and API-offline recovery.
+Verified on 2026-11-09 (Windows 11): 42 pytest tests (+1 PostgreSQL test that runs in CI), ruff, mypy
+`--strict`; ESLint, `tsc`, 52 Vitest tests and `next build`; browser checks of country/as-of selection, context
+kept across navigation, horizon/indicator controls, keyboard tab navigation, mobile layout (no horizontal
+overflow at 375 px on any route) and API-offline recovery.
 **Not verified locally:** `docker compose up` (Docker is not installed on the development machine — CI builds
 the images).
 

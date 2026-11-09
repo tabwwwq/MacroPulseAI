@@ -104,3 +104,67 @@ class SourceStatus(BaseModel):
 class SourceStatusList(BaseModel):
     items: list[SourceStatus]
     generated_at: datetime
+
+
+# ------------------------------------------------------------------ indicator catalog
+
+IndicatorCategory = Literal[
+    "growth", "prices", "labor", "monetary", "fiscal", "leading", "reference"
+]
+IndicatorFrequency = Literal["monthly", "quarterly", "annual", "event", "daily"]
+MappingStatusValue = Literal["verified", "partial", "stale", "not_published", "unmapped"]
+
+
+class IndicatorDefinition(BaseModel):
+    id: str
+    name: str
+    category: IndicatorCategory
+    unit: str
+    frequency: IndicatorFrequency
+    description: str
+    kpi: bool = Field(description="Shown as a headline KPI tile.")
+
+
+class SourceMappingInfo(BaseModel):
+    status: MappingStatusValue = Field(
+        description="What the live feasibility probe observed for this country/indicator: "
+        "`verified` series returned, `partial` values without full metadata, `stale` series out "
+        "of date, `not_published` by the source for this geography, `unmapped` not mapped yet."
+    )
+    source_id: str | None
+    source_name: str | None
+    docs_url: str | None
+    dataset: str | None
+    series_key: str | None
+    native_frequency: IndicatorFrequency | None
+    adjustment: str | None
+    probe_last_period: str | None = Field(
+        description="Latest period seen by the probe — metadata, not an ingested observation."
+    )
+    probe_date: str | None
+    note: str
+    scope_note: str
+
+
+class IngestionState(BaseModel):
+    observations: int = Field(description="Observations stored for this country/indicator.")
+    latest_period: str | None
+    source_last_success_at: datetime | None = Field(
+        description="Last successful fetch of the mapped source (data freshness)."
+    )
+
+
+class CatalogEntry(BaseModel):
+    indicator: IndicatorDefinition
+    mapping: SourceMappingInfo
+    ingestion: IngestionState
+
+
+class CountryCatalog(BaseModel):
+    country: str
+    items: list[CatalogEntry]
+
+
+class IndicatorCatalog(BaseModel):
+    probe_date: str
+    countries: list[CountryCatalog]

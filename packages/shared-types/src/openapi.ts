@@ -58,6 +58,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/indicators/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Indicator definitions, verified source mappings and ingestion state */
+        get: operations["indicator_catalog_api_indicators_catalog_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/ready": {
         parameters: {
             query?: never;
@@ -99,6 +116,12 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** CatalogEntry */
+        CatalogEntry: {
+            indicator: components["schemas"]["IndicatorDefinition"];
+            ingestion: components["schemas"]["IngestionState"];
+            mapping: components["schemas"]["SourceMappingInfo"];
+        };
         /** Country */
         Country: {
             /** Currency */
@@ -118,6 +141,13 @@ export interface components {
             /** Region */
             region: string;
             support: components["schemas"]["CountrySupport"];
+        };
+        /** CountryCatalog */
+        CountryCatalog: {
+            /** Country */
+            country: string;
+            /** Items */
+            items: components["schemas"]["CatalogEntry"][];
         };
         /** CountryList */
         CountryList: {
@@ -180,6 +210,54 @@ export interface components {
             /** Version */
             version: string;
         };
+        /** IndicatorCatalog */
+        IndicatorCatalog: {
+            /** Countries */
+            countries: components["schemas"]["CountryCatalog"][];
+            /** Probe Date */
+            probe_date: string;
+        };
+        /** IndicatorDefinition */
+        IndicatorDefinition: {
+            /**
+             * Category
+             * @enum {string}
+             */
+            category: "growth" | "prices" | "labor" | "monetary" | "fiscal" | "leading" | "reference";
+            /** Description */
+            description: string;
+            /**
+             * Frequency
+             * @enum {string}
+             */
+            frequency: "monthly" | "quarterly" | "annual" | "event" | "daily";
+            /** Id */
+            id: string;
+            /**
+             * Kpi
+             * @description Shown as a headline KPI tile.
+             */
+            kpi: boolean;
+            /** Name */
+            name: string;
+            /** Unit */
+            unit: string;
+        };
+        /** IngestionState */
+        IngestionState: {
+            /** Latest Period */
+            latest_period: string | null;
+            /**
+             * Observations
+             * @description Observations stored for this country/indicator.
+             */
+            observations: number;
+            /**
+             * Source Last Success At
+             * @description Last successful fetch of the mapped source (data freshness).
+             */
+            source_last_success_at: string | null;
+        };
         /**
          * PolicyRateScope
          * @description Whether a country's policy rate is set nationally or shared across a currency union.
@@ -204,6 +282,40 @@ export interface components {
              * @enum {string}
              */
             status: "ready" | "not_ready";
+        };
+        /** SourceMappingInfo */
+        SourceMappingInfo: {
+            /** Adjustment */
+            adjustment: string | null;
+            /** Dataset */
+            dataset: string | null;
+            /** Docs Url */
+            docs_url: string | null;
+            /** Native Frequency */
+            native_frequency: ("monthly" | "quarterly" | "annual" | "event" | "daily") | null;
+            /** Note */
+            note: string;
+            /** Probe Date */
+            probe_date: string | null;
+            /**
+             * Probe Last Period
+             * @description Latest period seen by the probe — metadata, not an ingested observation.
+             */
+            probe_last_period: string | null;
+            /** Scope Note */
+            scope_note: string;
+            /** Series Key */
+            series_key: string | null;
+            /** Source Id */
+            source_id: string | null;
+            /** Source Name */
+            source_name: string | null;
+            /**
+             * Status
+             * @description What the live feasibility probe observed for this country/indicator: `verified` series returned, `partial` values without full metadata, `stale` series out of date, `not_published` by the source for this geography, `unmapped` not mapped yet.
+             * @enum {string}
+             */
+            status: "verified" | "partial" | "stale" | "not_published" | "unmapped";
         };
         /** SourceStatus */
         SourceStatus: {
@@ -338,6 +450,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    indicator_catalog_api_indicators_catalog_get: {
+        parameters: {
+            query?: {
+                /** @description ISO alpha-2 code; omit for all countries. */
+                country?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndicatorCatalog"];
+                };
+            };
+            /** @description Malformed or unsupported country. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

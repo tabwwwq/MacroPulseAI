@@ -2,7 +2,7 @@
 type: phase
 phase: 3
 title: Economic data ingestion & metadata
-status: planned
+status: next
 started:
 completed:
 tags:
