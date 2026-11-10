@@ -19,7 +19,7 @@ tags:
 `apps/api/Dockerfile` copied only `apps/api` and `packages/economics`; the new workspace member `packages/ml` (a dependency of the API) was missing. Reproduced without Docker by running the image's second `uv sync --frozen --no-dev --all-packages` on the same file set: `Distribution not found at: …/packages/ml`. With `packages/ml` copied the install succeeds and `macropulse_api`, `macropulse_ml` and scikit-learn import.
 
 ## Fix
-The Dockerfile copies `packages/ml` (manifest and sources), creates `/app/models/artifacts` for the non-root user and sets `MODELS_DIR`; compose mounts a `models` volume. The real `docker compose build` is verified by CI, not locally (Docker is not installed on the development machine).
+The Dockerfile copies `packages/ml` (manifest and sources), creates `/app/models/artifacts` for the non-root user and sets `MODELS_DIR`; compose mounts a `models` volume. Verified by CI: run 42827449417 for `b6987da` passed all three jobs, including "Docker images" (`docker compose build`). Docker is still not installed on the development machine.
 
 ## Lesson
 After every push, confirm the CI conclusion — not only that a run started.

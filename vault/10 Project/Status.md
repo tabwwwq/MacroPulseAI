@@ -17,7 +17,7 @@ tags:
 - ✅ **Phase 5 — Recession target, features & first model** done (`ed7a1ab`, 2026-11-09) — published models do **not** beat the base rate on 2015+ held-out years ([[F-008 No model beats the base rate on held-out years]]). See [[Phase 05 — Recession target, features & first model]].
 - ✅ **Phase 6 — Explainable risk dashboard & ML lab** done (2026-11-10): live inference round trip, explanations, risk timeline, ML laboratory. See [[Phase 06 — Explainable risk dashboard & ML lab]].
 - ⏭️ **Phase 7 — Forecasts & scenario lab** is next. See [[Phase 07 — Forecasts & scenario lab]].
-- CI: the Docker job failed on `ed7a1ab` and is fixed in the Phase 6 commit ([[F-010 Docker build broke when the ML package was added]]) — confirm on GitHub after the push.
+- CI: the Docker job failed on `ed7a1ab`; fixed in `b6987da`, whose CI run passed all jobs including Docker images ([[F-010 Docker build broke when the ML package was added]]).
 
 ## Working (verified 2026-11-10)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.
