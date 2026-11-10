@@ -126,6 +126,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/history/episodes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Realised technical recessions (warned / missed) and false alarms, out of sample */
+        get: operations["get_episodes_api_history_episodes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/history/presets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Suggested crisis dates */
+        get: operations["presets_api_history_presets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/history/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** What the walk-forward model said at a past as-of quarter, and what followed */
+        get: operations["get_replay_api_history_replay_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/indicators": {
         parameters: {
             query?: never;
@@ -446,6 +497,13 @@ export interface components {
             /** @description Level the project aims to support for this country. */
             target: components["schemas"]["SupportLevel"];
         };
+        /** CrisisPreset */
+        CrisisPreset: {
+            /** As Of */
+            as_of: string;
+            /** Label */
+            label: string;
+        };
         /** CurvePoint */
         CurvePoint: {
             /** X */
@@ -555,6 +613,37 @@ export interface components {
             status: string;
             /** Window */
             window: string[];
+        };
+        /** ExternalReference */
+        ExternalReference: {
+            /** Months In Window */
+            months_in_window: number;
+            /** Months Known */
+            months_known: number;
+            /** Name */
+            name: string;
+            /** Source */
+            source: string;
+            /** Window Months */
+            window_months: number;
+        };
+        /** FalseAlarm */
+        FalseAlarm: {
+            /** End */
+            end: string;
+            /**
+             * Follows Recession
+             * @description Technical recession it started during or within two quarters after.
+             */
+            follows_recession: string | null;
+            /** Max At */
+            max_at: string;
+            /** Max Probability */
+            max_probability: number;
+            /** Quarters */
+            quarters: number;
+            /** Start */
+            start: string;
         };
         /** ForecastBacktest */
         ForecastBacktest: {
@@ -1132,6 +1221,26 @@ export interface components {
              */
             status: "ready" | "not_ready";
         };
+        /** RecessionEpisode */
+        RecessionEpisode: {
+            /** End */
+            end: string;
+            /** Max At */
+            max_at: string | null;
+            /** Max Probability */
+            max_probability: number | null;
+            /** Note */
+            note: string | null;
+            /** Start */
+            start: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "warned" | "missed" | "not_evaluable";
+            /** Warning As Of */
+            warning_as_of: string[];
+        };
         /** RecessionEstimate */
         RecessionEstimate: {
             /** As Of */
@@ -1232,6 +1341,184 @@ export interface components {
             end: string;
             /** Start */
             start: string;
+        };
+        /** Replay */
+        Replay: {
+            /** As Of */
+            as_of: string;
+            /** Band */
+            band: string;
+            /** Baseline Probability */
+            baseline_probability: number | null;
+            basis: components["schemas"]["ReplayBasis"];
+            /** Caveats */
+            caveats: string[];
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Country */
+            country: string;
+            /**
+             * Cutoff
+             * Format: date
+             */
+            cutoff: string;
+            /** Event Definition */
+            event_definition: string;
+            /** Gdp */
+            gdp: components["schemas"]["ReplayGdpPoint"][];
+            /** Horizon */
+            horizon: number;
+            /** Inputs */
+            inputs: components["schemas"]["ReplayInput"][];
+            /** Inputs Note */
+            inputs_note: string | null;
+            model: components["schemas"]["ReplayModel"];
+            nber: components["schemas"]["ExternalReference"] | null;
+            outcome: components["schemas"]["ReplayOutcome"];
+            /**
+             * Probability
+             * @description Walk-forward estimate made without later outcomes.
+             */
+            probability: number;
+            range: components["schemas"]["ReplayRange"];
+            /** Threshold */
+            threshold: number;
+        };
+        /** ReplayBasis */
+        ReplayBasis: {
+            /** Detail */
+            detail: string;
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "revised_data_release_lag_approximation";
+            /** Label */
+            label: string;
+            /** Lag Assumptions Days */
+            lag_assumptions_days: {
+                [key: string]: number;
+            };
+            /** Vintage Note */
+            vintage_note: string;
+            /** Vintages Available */
+            vintages_available: boolean;
+        };
+        /** ReplayEpisodes */
+        ReplayEpisodes: {
+            /** Confusion */
+            confusion: {
+                [key: string]: number;
+            };
+            /** Country */
+            country: string;
+            /** False Alarms */
+            false_alarms: components["schemas"]["FalseAlarm"][];
+            /** First As Of */
+            first_as_of: string;
+            /** Horizon */
+            horizon: number;
+            /** Last As Of */
+            last_as_of: string;
+            /** Last Labelled As Of */
+            last_labelled_as_of: string | null;
+            /** Model Id */
+            model_id: string;
+            /** Model Name */
+            model_name: string;
+            /** Note */
+            note: string;
+            /** Recessions */
+            recessions: components["schemas"]["RecessionEpisode"][];
+            /** Threshold */
+            threshold: number;
+        };
+        /** ReplayGdpPoint */
+        ReplayGdpPoint: {
+            /**
+             * Known At As Of
+             * @description Published by the as-of under the lag assumption (else published later).
+             */
+            known_at_as_of: boolean;
+            /** Period */
+            period: string;
+            /** Value */
+            value: number;
+        };
+        /** ReplayInput */
+        ReplayInput: {
+            /** Feature */
+            feature: string;
+            /** Label */
+            label: string;
+            /**
+             * Period
+             * @description Reference period the value is based on.
+             */
+            period: string | null;
+            /** Publication Lag Days */
+            publication_lag_days: number;
+            /** Stale */
+            stale: boolean;
+            /** Value */
+            value: number;
+        };
+        /** ReplayModel */
+        ReplayModel: {
+            /**
+             * Fold Year
+             * @description Walk-forward fold whose model produced the estimate.
+             */
+            fold_year: number;
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Run Id */
+            run_id: string;
+            /** Selection Note */
+            selection_note: string;
+            /**
+             * Split
+             * @enum {string}
+             */
+            split: "development" | "heldout" | "unlabelled";
+            /**
+             * Trained Through As Of
+             * @description Latest as-of quarter whose outcome the fold model was fitted on.
+             */
+            trained_through_as_of: string;
+            /** Training Rows */
+            training_rows: number | null;
+        };
+        /** ReplayOutcome */
+        ReplayOutcome: {
+            /** Events */
+            events: components["schemas"]["RecessionSpan"][];
+            /** Label */
+            label: number | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "observed" | "censored" | "missing";
+            /**
+             * Verdict
+             * @description At the 50 % threshold; None while the outcome is not observed.
+             */
+            verdict: ("hit" | "miss" | "false_alarm" | "correct_quiet") | null;
+            /** Window */
+            window: string[];
+        };
+        /** ReplayRange */
+        ReplayRange: {
+            /** First */
+            first: string;
+            /** Last */
+            last: string;
         };
         /** RiskBand */
         RiskBand: {
@@ -1862,6 +2149,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    get_episodes_api_history_episodes_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Quarters ahead: 2 or 4. */
+                horizon?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReplayEpisodes"];
+                };
+            };
+            /** @description No out-of-sample estimate for this quarter. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, horizon or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / synced data. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    presets_api_history_presets_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrisisPreset"][];
+                };
+            };
+        };
+    };
+    get_replay_api_history_replay_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Replay quarter. */
+                as_of: string;
+                /** @description Quarters ahead: 2 or 4. */
+                horizon?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Replay"];
+                };
+            };
+            /** @description No out-of-sample estimate for this quarter. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, horizon or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / synced data. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

@@ -98,7 +98,7 @@ The following is a **PLANNED entity allocation**, not a claim that migrations ex
 | Entity from CLAUDE.md §5 | Purpose | Planned phase |
 |---|---|---|
 | `indicator_definitions` | Kept in code (`packages/economics/indicators.py`), versioned with git and served by `/api/indicators/catalog`; a table only if runtime editing is ever needed | — |
-| `release_events` | Publication timing per observation; the current endpoints do not provide it, so it is deferred rather than filled with guesses | 8 (vintages / ALFRED) |
+| `release_events` | Publication timing per observation; the current endpoints do not provide it, so it is deferred rather than filled with guesses. Phase 8 uses documented publication lags instead and labels every replay an approximation | Deferred: needs a vintage source (ALFRED with a verified `FRED_API_KEY`) |
 | `feature_snapshots` | Not a table: snapshots are rebuilt deterministically from stored observations at training time (feature set version + data snapshot hash in `model_versions`) | 5 (implemented in code) |
 | `target_labels` | Not a table: labels are derived from stored GDP at training time; status counts and event dates are kept in each artifact's metadata | 5 (implemented in code) |
 | `model_versions` | Artifact, training cutoff, target/feature versions, sample counts, snapshot and evaluation method | 5 implemented (migration `0003`) |
@@ -166,6 +166,11 @@ series and origin. `services/scenarios.py` maps bounded shocks onto the model in
 published artifact and checks each input and the combination against the training distribution
 ([ADR-0017](../vault/30%20Decisions/ADR-0017%20Forecasts%20from%20rolling-origin%20backtests.md),
 [ADR-0018](../vault/30%20Decisions/ADR-0018%20Scenario%20lab%20as%20bounded%20model%20sensitivity.md)).
+Historical replay is **implemented** (Phase 8): `services/replay.py` serves the stored walk-forward estimate
+of the published model's fold for that year, rebuilds the inputs known at the cut-off and returns the outcome
+window as published later, plus warned / missed / false-alarm episodes. Every replay is a revised-data /
+release-lag approximation; no vintages are stored
+([ADR-0019](../vault/30%20Decisions/ADR-0019%20Replays%20are%20walk-forward%20fold%20estimates.md)).
 
 ```mermaid
 flowchart TD
@@ -188,7 +193,7 @@ flowchart TD
 | Training | Prevalence and interpretable baselines, scaled regularised Logistic Regression, then HistGradientBoosting and/or an installed boosted-tree challenger. Expanding/walk-forward splits with horizon-safe purge/gap and pooled-country temporal isolation; fit preprocessing on training data only |
 | Evaluation | Held-out Brier, log loss, ROC/PR-AUC where defined, calibration, thresholded confusion matrix/precision/recall, region/time diagnostics, event/sample counts and baseline comparison; undefined metrics are N/A with a reason |
 | Artifacts/inference | Record cutoff, target/feature version, dataset snapshot, seed/command and code revision when known; isolated calibration when sample counts support it. Expose version/date/coverage and limitations, or unavailable state |
-| Extensions | Rolling forecast baselines/challenger with tested interval method (7); non-causal sensitivity (7); vintage-aware replay with no future-trained model (8). Neural benchmarks only with defensible sample size |
+| Extensions | Rolling forecast baselines/challenger with tested interval method (7); non-causal sensitivity (7); replay with no future-trained model (8, implemented as revised-data / release-lag approximation; vintage-aware replay deferred). Neural benchmarks only with defensible sample size |
 
 ## 8. Security and reliability
 

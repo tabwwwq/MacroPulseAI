@@ -2,7 +2,7 @@
 type: phase
 phase: 9
 title: Analyst-grade PDF reports
-status: planned
+status: next
 started:
 completed:
 tags:

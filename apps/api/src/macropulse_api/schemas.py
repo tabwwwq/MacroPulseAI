@@ -644,3 +644,131 @@ class ScenarioResult(BaseModel):
     warnings: list[str]
     disclaimer: str
     computed_at: datetime
+
+
+# --- Crisis time machine (Phase 8 replay) -------------------------------------------------------
+
+
+class ReplayBasis(BaseModel):
+    kind: Literal["revised_data_release_lag_approximation"]
+    label: str
+    detail: str
+    vintages_available: bool
+    vintage_note: str
+    lag_assumptions_days: dict[str, int]
+
+
+class ReplayModel(BaseModel):
+    id: str
+    name: str
+    run_id: str
+    fold_year: int = Field(description="Walk-forward fold whose model produced the estimate.")
+    trained_through_as_of: str = Field(
+        description="Latest as-of quarter whose outcome the fold model was fitted on."
+    )
+    training_rows: int | None
+    split: Literal["development", "heldout", "unlabelled"]
+    selection_note: str
+
+
+class ReplayInput(BaseModel):
+    feature: str
+    label: str
+    value: float
+    period: str | None = Field(description="Reference period the value is based on.")
+    publication_lag_days: int
+    stale: bool
+
+
+class ReplayGdpPoint(BaseModel):
+    period: str
+    value: float
+    known_at_as_of: bool = Field(
+        description="Published by the as-of under the lag assumption (else published later)."
+    )
+
+
+class ReplayOutcome(BaseModel):
+    status: Literal["observed", "censored", "missing"]
+    label: int | None
+    window: list[str]
+    events: list[RecessionSpan]
+    verdict: Literal["hit", "miss", "false_alarm", "correct_quiet"] | None = Field(
+        description="At the 50 % threshold; None while the outcome is not observed."
+    )
+
+
+class ExternalReference(BaseModel):
+    name: str
+    months_in_window: int
+    months_known: int
+    window_months: int
+    source: str
+
+
+class ReplayRange(BaseModel):
+    first: str
+    last: str
+
+
+class Replay(BaseModel):
+    country: str
+    horizon: int
+    as_of: str
+    cutoff: date
+    event_definition: str
+    basis: ReplayBasis
+    model: ReplayModel
+    probability: float = Field(description="Walk-forward estimate made without later outcomes.")
+    band: str
+    baseline_probability: float | None
+    threshold: float
+    inputs: list[ReplayInput]
+    inputs_note: str | None
+    gdp: list[ReplayGdpPoint]
+    outcome: ReplayOutcome
+    nber: ExternalReference | None
+    range: ReplayRange
+    caveats: list[str]
+    computed_at: datetime
+
+
+class RecessionEpisode(BaseModel):
+    start: str
+    end: str
+    warning_as_of: list[str]
+    max_probability: float | None
+    max_at: str | None
+    status: Literal["warned", "missed", "not_evaluable"]
+    note: str | None
+
+
+class FalseAlarm(BaseModel):
+    start: str
+    end: str
+    quarters: int
+    max_probability: float
+    max_at: str
+    follows_recession: str | None = Field(
+        description="Technical recession it started during or within two quarters after."
+    )
+
+
+class ReplayEpisodes(BaseModel):
+    country: str
+    horizon: int
+    model_id: str
+    model_name: str
+    threshold: float
+    first_as_of: str
+    last_as_of: str
+    last_labelled_as_of: str | None
+    confusion: dict[str, int]
+    recessions: list[RecessionEpisode]
+    false_alarms: list[FalseAlarm]
+    note: str
+
+
+class CrisisPreset(BaseModel):
+    as_of: str
+    label: str

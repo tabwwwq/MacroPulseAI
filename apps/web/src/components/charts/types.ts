@@ -14,6 +14,8 @@ export interface ChartSeries {
   step?: boolean;
   /** Citation kept in CSV exports, e.g. "Eurostat · namq_10_gdp; retrieved 2026-11-09". */
   citation?: string;
+  /** Fixed colour when the palette order would suggest a meaning (e.g. green for bad news). */
+  color?: string;
 }
 
 export interface ChartShading {

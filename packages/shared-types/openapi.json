@@ -280,6 +280,24 @@
         "title": "CountrySupport",
         "type": "object"
       },
+      "CrisisPreset": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of",
+          "label"
+        ],
+        "title": "CrisisPreset",
+        "type": "object"
+      },
       "CurvePoint": {
         "properties": {
           "x": {
@@ -585,6 +603,85 @@
           "window"
         ],
         "title": "EstimateOutcome",
+        "type": "object"
+      },
+      "ExternalReference": {
+        "properties": {
+          "months_in_window": {
+            "title": "Months In Window",
+            "type": "integer"
+          },
+          "months_known": {
+            "title": "Months Known",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "window_months": {
+            "title": "Window Months",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "months_in_window",
+          "months_known",
+          "window_months",
+          "source"
+        ],
+        "title": "ExternalReference",
+        "type": "object"
+      },
+      "FalseAlarm": {
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "follows_recession": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Technical recession it started during or within two quarters after.",
+            "title": "Follows Recession"
+          },
+          "max_at": {
+            "title": "Max At",
+            "type": "string"
+          },
+          "max_probability": {
+            "title": "Max Probability",
+            "type": "number"
+          },
+          "quarters": {
+            "title": "Quarters",
+            "type": "integer"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "quarters",
+          "max_probability",
+          "max_at",
+          "follows_recession"
+        ],
+        "title": "FalseAlarm",
         "type": "object"
       },
       "ForecastBacktest": {
@@ -2121,6 +2218,78 @@
         "title": "ReadyResponse",
         "type": "object"
       },
+      "RecessionEpisode": {
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "max_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max At"
+          },
+          "max_probability": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Probability"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "warned",
+              "missed",
+              "not_evaluable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "warning_as_of": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warning As Of",
+            "type": "array"
+          }
+        },
+        "required": [
+          "start",
+          "end",
+          "warning_as_of",
+          "max_probability",
+          "max_at",
+          "status",
+          "note"
+        ],
+        "title": "RecessionEpisode",
+        "type": "object"
+      },
       "RecessionEstimate": {
         "properties": {
           "as_of": {
@@ -2383,6 +2552,478 @@
           "end"
         ],
         "title": "RecessionSpan",
+        "type": "object"
+      },
+      "Replay": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "baseline_probability": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Probability"
+          },
+          "basis": {
+            "$ref": "#/components/schemas/ReplayBasis"
+          },
+          "caveats": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Caveats",
+            "type": "array"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "cutoff": {
+            "format": "date",
+            "title": "Cutoff",
+            "type": "string"
+          },
+          "event_definition": {
+            "title": "Event Definition",
+            "type": "string"
+          },
+          "gdp": {
+            "items": {
+              "$ref": "#/components/schemas/ReplayGdpPoint"
+            },
+            "title": "Gdp",
+            "type": "array"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "inputs": {
+            "items": {
+              "$ref": "#/components/schemas/ReplayInput"
+            },
+            "title": "Inputs",
+            "type": "array"
+          },
+          "inputs_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inputs Note"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ReplayModel"
+          },
+          "nber": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ExternalReference"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/ReplayOutcome"
+          },
+          "probability": {
+            "description": "Walk-forward estimate made without later outcomes.",
+            "title": "Probability",
+            "type": "number"
+          },
+          "range": {
+            "$ref": "#/components/schemas/ReplayRange"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "as_of",
+          "cutoff",
+          "event_definition",
+          "basis",
+          "model",
+          "probability",
+          "band",
+          "baseline_probability",
+          "threshold",
+          "inputs",
+          "inputs_note",
+          "gdp",
+          "outcome",
+          "nber",
+          "range",
+          "caveats",
+          "computed_at"
+        ],
+        "title": "Replay",
+        "type": "object"
+      },
+      "ReplayBasis": {
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          },
+          "kind": {
+            "const": "revised_data_release_lag_approximation",
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "lag_assumptions_days": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Lag Assumptions Days",
+            "type": "object"
+          },
+          "vintage_note": {
+            "title": "Vintage Note",
+            "type": "string"
+          },
+          "vintages_available": {
+            "title": "Vintages Available",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "kind",
+          "label",
+          "detail",
+          "vintages_available",
+          "vintage_note",
+          "lag_assumptions_days"
+        ],
+        "title": "ReplayBasis",
+        "type": "object"
+      },
+      "ReplayEpisodes": {
+        "properties": {
+          "confusion": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Confusion",
+            "type": "object"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "false_alarms": {
+            "items": {
+              "$ref": "#/components/schemas/FalseAlarm"
+            },
+            "title": "False Alarms",
+            "type": "array"
+          },
+          "first_as_of": {
+            "title": "First As Of",
+            "type": "string"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "last_as_of": {
+            "title": "Last As Of",
+            "type": "string"
+          },
+          "last_labelled_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Labelled As Of"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "model_name": {
+            "title": "Model Name",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "recessions": {
+            "items": {
+              "$ref": "#/components/schemas/RecessionEpisode"
+            },
+            "title": "Recessions",
+            "type": "array"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "model_id",
+          "model_name",
+          "threshold",
+          "first_as_of",
+          "last_as_of",
+          "last_labelled_as_of",
+          "confusion",
+          "recessions",
+          "false_alarms",
+          "note"
+        ],
+        "title": "ReplayEpisodes",
+        "type": "object"
+      },
+      "ReplayGdpPoint": {
+        "properties": {
+          "known_at_as_of": {
+            "description": "Published by the as-of under the lag assumption (else published later).",
+            "title": "Known At As Of",
+            "type": "boolean"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "value",
+          "known_at_as_of"
+        ],
+        "title": "ReplayGdpPoint",
+        "type": "object"
+      },
+      "ReplayInput": {
+        "properties": {
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reference period the value is based on.",
+            "title": "Period"
+          },
+          "publication_lag_days": {
+            "title": "Publication Lag Days",
+            "type": "integer"
+          },
+          "stale": {
+            "title": "Stale",
+            "type": "boolean"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "value",
+          "period",
+          "publication_lag_days",
+          "stale"
+        ],
+        "title": "ReplayInput",
+        "type": "object"
+      },
+      "ReplayModel": {
+        "properties": {
+          "fold_year": {
+            "description": "Walk-forward fold whose model produced the estimate.",
+            "title": "Fold Year",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "selection_note": {
+            "title": "Selection Note",
+            "type": "string"
+          },
+          "split": {
+            "enum": [
+              "development",
+              "heldout",
+              "unlabelled"
+            ],
+            "title": "Split",
+            "type": "string"
+          },
+          "trained_through_as_of": {
+            "description": "Latest as-of quarter whose outcome the fold model was fitted on.",
+            "title": "Trained Through As Of",
+            "type": "string"
+          },
+          "training_rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Rows"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "run_id",
+          "fold_year",
+          "trained_through_as_of",
+          "training_rows",
+          "split",
+          "selection_note"
+        ],
+        "title": "ReplayModel",
+        "type": "object"
+      },
+      "ReplayOutcome": {
+        "properties": {
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/RecessionSpan"
+            },
+            "title": "Events",
+            "type": "array"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "status": {
+            "enum": [
+              "observed",
+              "censored",
+              "missing"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "enum": [
+                  "hit",
+                  "miss",
+                  "false_alarm",
+                  "correct_quiet"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "At the 50 % threshold; None while the outcome is not observed.",
+            "title": "Verdict"
+          },
+          "window": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Window",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "label",
+          "window",
+          "events",
+          "verdict"
+        ],
+        "title": "ReplayOutcome",
+        "type": "object"
+      },
+      "ReplayRange": {
+        "properties": {
+          "first": {
+            "title": "First",
+            "type": "string"
+          },
+          "last": {
+            "title": "Last",
+            "type": "string"
+          }
+        },
+        "required": [
+          "first",
+          "last"
+        ],
+        "title": "ReplayRange",
         "type": "object"
       },
       "RiskBand": {
@@ -3853,6 +4494,197 @@
         "summary": "Liveness probe",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/history/episodes": {
+      "get": {
+        "operationId": "get_episodes_api_history_episodes_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 2 or 4.",
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "description": "Quarters ahead: 2 or 4.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReplayEpisodes"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No out-of-sample estimate for this quarter."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, horizon or as-of."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / synced data."
+          }
+        },
+        "summary": "Realised technical recessions (warned / missed) and false alarms, out of sample",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/history/presets": {
+      "get": {
+        "operationId": "presets_api_history_presets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CrisisPreset"
+                  },
+                  "title": "Response Presets Api History Presets Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Suggested crisis dates",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/history/replay": {
+      "get": {
+        "operationId": "get_replay_api_history_replay_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Replay quarter.",
+            "in": "query",
+            "name": "as_of",
+            "required": true,
+            "schema": {
+              "description": "Replay quarter.",
+              "pattern": "^\\d{4}-Q[1-4]$",
+              "title": "As Of",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 2 or 4.",
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "description": "Quarters ahead: 2 or 4.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Replay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No out-of-sample estimate for this quarter."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, horizon or as-of."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / synced data."
+          }
+        },
+        "summary": "What the walk-forward model said at a past as-of quarter, and what followed",
+        "tags": [
+          "history"
         ]
       }
     },

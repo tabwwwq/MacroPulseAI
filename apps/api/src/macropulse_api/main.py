@@ -23,6 +23,7 @@ from macropulse_api.routers import (
     models,
     quality,
     recession,
+    replay,
     scenarios,
     series,
     sources,
@@ -85,4 +86,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(recession.router)
     app.include_router(forecasts.router)
     app.include_router(scenarios.router)
+    app.include_router(replay.router)
     return app

@@ -93,8 +93,9 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
     const { periods, columns } = alignSeries(series);
     const times = periods.map(periodTime);
     const labels = new Map(times.map((time, index) => [time, periods[index]]));
-    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id, step }, index) => ({
+    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id, step, color }, index) => ({
       id,
+      ...(color ? { itemStyle: { color } } : {}),
       name: columns[index]?.label,
       type: kind,
       data: times.map((time, pointIndex) => [time, columns[index]?.values[pointIndex] ?? null]),
@@ -107,6 +108,7 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
             showSymbol: times.length <= 150, // dense series: line only, values on hover
             symbolSize: 4,
             ...(step ? { step: "end" as const } : {}),
+            ...(color ? { lineStyle: { color } } : {}),
           }
         : {}),
     }));

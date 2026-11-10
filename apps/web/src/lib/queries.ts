@@ -24,6 +24,9 @@ export const queryKeys = {
   forecast: (iso2: string, metric: string, horizon: number, asOf: string | null) =>
     ["forecasts", iso2.toUpperCase(), metric, horizon, asOf ?? "latest"] as const,
   scenarioSpec: ["scenarios", "spec"] as const,
+  replay: (iso2: string, horizon: number, asOf: string) => ["history", "replay", iso2.toUpperCase(), horizon, asOf] as const,
+  episodes: (iso2: string, horizon: number) => ["history", "episodes", iso2.toUpperCase(), horizon] as const,
+  presets: ["history", "presets"] as const,
   scenario: (r: ScenarioRequest | null) =>
     ["scenarios", "evaluate", r?.country ?? "", r?.horizon ?? 0, r?.as_of ?? "latest", JSON.stringify(r?.shocks ?? {})] as const,
 };
@@ -94,6 +97,36 @@ export function useScenarioEvaluation(request: ScenarioRequest | null) {
     placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
     retry: retryUnlessAnswer,
+  });
+}
+
+/** Walk-forward estimate at a past as-of quarter with the inputs known then and what followed. */
+export function useReplay(iso2: string, horizon: 2 | 4, asOf: string) {
+  return useQuery({
+    queryKey: queryKeys.replay(iso2, horizon, asOf),
+    queryFn: () =>
+      unwrap(api.GET("/api/history/replay", { params: { query: { country: iso2, horizon, as_of: asOf } } })),
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** Realised technical recessions (warned / missed / not evaluable) and false alarms. */
+export function useReplayEpisodes(iso2: string, horizon: 2 | 4) {
+  return useQuery({
+    queryKey: queryKeys.episodes(iso2, horizon),
+    queryFn: () => unwrap(api.GET("/api/history/episodes", { params: { query: { country: iso2, horizon } } })),
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+export function useCrisisPresets() {
+  return useQuery({
+    queryKey: queryKeys.presets,
+    queryFn: () => unwrap(api.GET("/api/history/presets")),
+    staleTime: Infinity,
   });
 }
 

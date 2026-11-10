@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { ModulePlaceholder } from "@/components/data/module-placeholder";
+import { Skeleton } from "@/components/ui/skeleton";
+import { HistoryView } from "@/components/views/history-view";
 
 export const metadata: Metadata = { title: "Crisis time machine" };
 
 export default function HistoryPage() {
-  return <ModulePlaceholder moduleId="history" />;
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
+      <HistoryView />
+    </Suspense>
+  );
 }

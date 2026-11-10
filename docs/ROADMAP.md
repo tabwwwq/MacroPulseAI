@@ -153,19 +153,24 @@ Acceptance criteria:
 
 ## Phase 8 — Historical Crisis Time Machine
 
-**Status:** Planned; `/history` is a not-built route.
+**Status:** ✅ Complete (2026-11-10). `/history` replays any quarter with a walk-forward estimate (2000-Q1 or 2002-Q1
+onwards, by horizon) for all five countries: the estimate of the fold model fitted only on outcomes published before
+that year, the inputs as known at the cut-off, the outcome window as published later, and every realised recession
+marked warned / missed / not evaluable plus every false alarm. `pnpm smoke`: 2818/2818 checks including 40 crisis
+replays. Result stated plainly: the 2-quarter model warned in the quarter before onset for **0 of 20** evaluable
+recessions; the 4-quarter model for **6 of 22**, with 26 false-alarm episodes (10 right after a recession).
 **Goal:** Replay eligible historical information without future-data or future-training leakage.
 **Deliverables:** Time scrubber, known-at-date panel, predicted versus subsequently realized
 events, misses/false alarms, ALFRED vintages where verified and European approximation labels.
 
 Acceptance criteria:
 
-- [ ] Temporal tests exclude features and model-training outcomes unavailable at the replay date.
-- [ ] Verify ALFRED vintage/release access using server-side credentials before claiming true US point-in-time replay.
-- [ ] European/latest-revision replay prominently states “revised-data / release-lag approximation”; document exact lag assumptions and missing vintage evidence.
-- [ ] Scrubber changes eligible inputs and outputs; realized outcomes are clearly subsequent observations, separate from NBER reference dates.
-- [ ] Show traceable event markers and actual false-positive/false-negative examples where evaluable; insufficient history produces unavailable state.
-- [ ] Temporal-leakage tests, replay API/UI checks and build pass.
+- [x] Temporal tests exclude features and model-training outcomes unavailable at the replay date. *(`packages/ml/tests/test_replay_leakage.py`: deleting every observation published after the replay date — inputs and the outcomes later models learn from — reproduces the walk-forward probability of every model exactly; every training outcome of a fold was published by its first test quarter. A mutation without the horizon purge is detected.)*
+- [x] Verify ALFRED vintage/release access using server-side credentials before claiming true US point-in-time replay. *(Not claimed: `FRED_API_KEY` is not configured, so ALFRED could not be verified and vintage replay is not implemented; the US banner says so and US replays are labelled approximations like the European ones.)*
+- [x] European/latest-revision replay prominently states “revised-data / release-lag approximation”; document exact lag assumptions and missing vintage evidence. *(Banner, page badge and API `basis` with the lag table: GDP 60 d, inflation 30 d, unemployment 45 d, ECB decisions 0 d, FEDFUNDS 7 d, monthly rates 30 d; Eurostat/ECB serve latest revisions only.)*
+- [x] Scrubber changes eligible inputs and outputs; realized outcomes are clearly subsequent observations, separate from NBER reference dates. *(Scrubber, presets and episode links set the as-of in the URL; "Published by" vs "Published later" GDP; NBER months in a separate, labelled US box.)*
+- [x] Show traceable event markers and actual false-positive/false-negative examples where evaluable; insufficient history produces unavailable state. *(Each recession and false alarm links to its replay; recessions before the first fold are "not evaluable"; replays before it return 404 `replay_unavailable` with the reason.)*
+- [x] Temporal-leakage tests, replay API/UI checks and build pass. *(234 pytest, 97 Vitest, `next build`; browser: presets, scrubber, horizon switch, episode links, unavailable state, 375 px.)*
 
 ## Phase 9 — Analyst-grade PDF reports
 

@@ -19,6 +19,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import date, timedelta
 from typing import Any
 
 EXPECTED_ABSENCE = {404, 503}
@@ -263,6 +264,58 @@ def check_scenarios(s: Smoke, countries: list[str]) -> None:
     print(f"scenarios: {evaluated} country/horizon pairs evaluated")
 
 
+def _end(period: str) -> date:
+    y, rest = int(period[:4]), period[5:]
+    if rest.startswith("Q"):
+        m = int(rest[1]) * 3
+    elif len(rest) == 2:
+        m = int(rest)
+    else:
+        return date.fromisoformat(period)
+    nxt = date(y + (m == 12), m % 12 + 1, 1)
+    return nxt - timedelta(days=1)
+
+
+def check_replay(s: Smoke, countries: list[str]) -> None:
+    """Replays equal the walk-forward history, inputs respect their lags, outcomes come later."""
+    _, presets = s.json("/api/history/presets")
+    replayed = 0
+    for iso in countries:
+        for h in (2, 4):
+            status, eps = s.json(f"/api/history/episodes?country={iso}&horizon={h}", {404, 503})
+            if status != 200:
+                continue
+            c = eps["confusion"]
+            s.check(all(v >= 0 for v in c.values()), f"episodes {iso}/H{h}: negative count")
+            _, hist = s.json(f"/api/recession/history?country={iso}&horizon={h}")
+            wf = {p["as_of"]: p["probability"] for p in hist["points"] if p["split"] != "live"}
+            for pre in presets:
+                q = pre["as_of"]
+                st, r = s.json(f"/api/history/replay?country={iso}&horizon={h}&as_of={q}", {404})
+                if st != 200:
+                    s.check(r["error"]["code"] == "replay_unavailable", f"replay {iso}/{q}: code")
+                    continue
+                replayed += 1
+                tag = f"replay {iso}/H{h}/{q}"
+                s.check(
+                    abs(r["probability"] - wf.get(q, -1)) < 1e-9,
+                    f"{tag}: not the walk-forward value",
+                )
+                s.check("approximation" in r["basis"]["label"], f"{tag}: basis label missing")
+                cutoff = date.fromisoformat(r["cutoff"])
+                for i in r["inputs"]:
+                    ok = _end(i["period"]) + timedelta(days=i["publication_lag_days"]) <= cutoff
+                    s.check(ok, f"{tag}: {i['feature']} not published by the cut-off")
+                s.check(
+                    all(w > q for w in r["outcome"]["window"]), f"{tag}: window not after as-of"
+                )
+                s.check(int(r["model"]["trained_through_as_of"][:4]) < int(q[:4]), f"{tag}: fold")
+                s.check((r["nber"] is not None) == (iso == "US"), f"{tag}: NBER reference scope")
+    status, body = s.json("/api/history/replay?country=DE&horizon=3&as_of=2008-Q2", {422})
+    s.check(status == 422 and body["error"]["code"] == "unsupported_horizon", "replay H=3 accepted")
+    print(f"replay: {replayed} crisis replays checked")
+
+
 def run(base: str) -> Smoke:
     s = Smoke(base)
     _, health = s.json("/api/health")
@@ -276,6 +329,7 @@ def run(base: str) -> Smoke:
     check_models(s, isos)
     check_forecasts(s, isos)
     check_scenarios(s, isos)
+    check_replay(s, isos)
     status, body = s.json("/api/countries/XX/summary", {422})
     s.check(status == 422 and body["error"]["code"] == "unsupported_country", "XX not rejected")
     status, _ = s.json("/api/countries/DE/summary?as_of=2999-Q1", {422})

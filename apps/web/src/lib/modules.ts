@@ -141,12 +141,13 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: RotateCcwClock,
     phase: 8,
-    state: "planned",
+    state: "built",
     summary: "Replay what a model could have known at a past as-of date versus what happened next.",
     capabilities: [
-      "Strict temporal eligibility of features at the chosen as-of date",
-      "Vintage-backed vs 'revised-data / release-lag approximation' labelling",
-      "Predicted risk vs realised technical-recession outcome, including misses",
+      "Walk-forward estimate from the fold model fitted only on outcomes published before that year",
+      "Inputs as known at the cut-off with their reference periods and assumed publication lags",
+      "Outcome window as published later, verdict at 50 %, NBER months as a separate US reference",
+      "Warned / missed recessions and false alarms with one-click replay; labelled a revised-data / release-lag approximation",
     ],
     prerequisites: ["Trained and evaluated model (Phase 5)", "As-of feature snapshots (Phase 5)"],
   },
@@ -214,4 +215,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 7, name: "Forecasts & scenario lab", total: 10 } as const;
+export const CURRENT_PHASE = { number: 8, name: "Crisis time machine", total: 10 } as const;
