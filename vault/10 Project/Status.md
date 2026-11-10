@@ -19,7 +19,7 @@ tags:
 - ✅ **Phase 7 — Forecasts & scenario lab** done (2026-11-10): rolling-origin forecasts with measured interval coverage, scenario lab with bounded shocks and plausibility checks. Intervals under-cover ([[F-011 Forecast intervals under-cover]]). See [[Phase 07 — Forecasts & scenario lab]].
 - ✅ **Phase 8 — Crisis time machine** done (2026-11-10): walk-forward replays with inputs as known then, outcomes as published later, warned / missed / false alarms; revised-data / release-lag approximation, no vintages. Most recessions were missed ([[F-013 Replays show most recessions were missed]]). See [[Phase 08 — Crisis time machine]].
 - ⏭️ **Phase 9 — Analyst-grade PDF reports** is next. See [[Phase 09 — Analyst-grade PDF reports]].
-- CI: run 42838837827 for `ebfc4d4` (Phase 7) passed all jobs — Web, API, Docker images. (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
+- CI: run 42843134743 for `3311fb9` (Phase 8) passed all jobs — Web, API, Docker images (Phase 7: run 42838837827 for `ebfc4d4`, green). (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
 
 ## Working (verified 2026-11-10)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.

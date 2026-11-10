@@ -34,3 +34,4 @@ Historic as-of replay with strict temporal eligibility.
 - 2026-11-10 — `FRED_API_KEY` not configured → no ALFRED; replays labelled approximations everywhere.
 - 2026-11-10 — Real-data tally: 2Q warned 0 / 20, 4Q 6 / 22, 26 false-alarm episodes → [[F-013 Replays show most recessions were missed]].
 - 2026-11-10 — UI fixes after screenshots: full-width scrubber, one-quarter replay marker, neutral colour for "published later", scroll to the result after an episode link.
+- 2026-11-10 — Committed `3311fb9`; CI run 42843134743 green (Web, API, Docker images).
