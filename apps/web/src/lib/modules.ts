@@ -90,13 +90,13 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: Gauge,
     phase: 6,
-    state: "foundation",
+    state: "built",
     summary:
       "Estimated probability of a technical recession within the next 2 or 4 quarters at an explicit as-of date.",
     capabilities: [
-      "Calibrated probability with model name, version, as-of date and data freshness",
-      "Contributors via SHAP or permutation importance, with methodology and limitations",
-      "An explicit 'model not trained' state — never a fabricated risk number",
+      "Live inference from stored data and the saved artifact, with model version, as-of date and freshness",
+      "Feature contributions (exact log-odds for logistic, local sensitivity otherwise), track record and limitations",
+      "Walk-forward risk timeline with realised technical recessions; 'model not trained' state when absent",
     ],
     prerequisites: ["Observations ingested (Phase 3)", "Trained and evaluated model (Phase 5)"],
   },
@@ -155,12 +155,12 @@ export const MODULES: AppModule[] = [
     group: "Platform",
     icon: FlaskConical,
     phase: 6,
-    state: "planned",
+    state: "built",
     summary: "Models, baselines, walk-forward evaluation, calibration and explanations.",
     capabilities: [
-      "Comparison table with Brier score, log loss, ROC/PR-AUC (N/A when undefined) and calibration",
-      "Split timeline, confusion matrix at a stated threshold and sample/event counts",
-      "Reproducibility card: command, seed, dataset snapshot and model version",
+      "Comparison table with Brier score, skill, ROC/PR-AUC (N/A when undefined) for every model and split",
+      "Calibration, ROC and PR curves, confusion matrix at 0.5, per-country metrics and fold timeline",
+      "Reproducibility card: command, seed, code revision, dataset snapshot and model version",
     ],
     prerequisites: ["Trained and evaluated model (Phase 5)"],
   },
@@ -212,4 +212,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 5, name: "Recession target & first model", total: 10 } as const;
+export const CURRENT_PHASE = { number: 6, name: "Explainable risk & ML lab", total: 10 } as const;

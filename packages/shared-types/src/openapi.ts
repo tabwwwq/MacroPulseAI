@@ -160,6 +160,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/models/{model_id}/curves": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** ROC and precision-recall curves from the stored out-of-sample predictions */
+        get: operations["model_curves_api_models__model_id__curves_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/models/{model_id}/metrics": {
         parameters: {
             query?: never;
@@ -214,6 +231,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/recession/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Out-of-sample walk-forward probabilities with realised technical recessions */
+        get: operations["history_api_recession_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/recession/predict": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Probability of a technical recession within 2 or 4 quarters (live inference) */
+        get: operations["predict_api_recession_predict_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/sources/status": {
         parameters: {
             query?: never;
@@ -240,6 +291,33 @@ export interface components {
             indicator: components["schemas"]["IndicatorDefinition"];
             ingestion: components["schemas"]["IngestionState"];
             mapping: components["schemas"]["SourceMappingInfo"];
+        };
+        /** Contribution */
+        Contribution: {
+            /** Contribution */
+            contribution: number;
+            /** Feature */
+            feature: string;
+            /** Label */
+            label: string;
+            /** Outside Training Range */
+            outside_training_range: boolean;
+            /**
+             * Period
+             * @description Reference period of the input value.
+             */
+            period: string | null;
+            /** Standardised Value */
+            standardised_value?: number | null;
+            /** Training Mean */
+            training_mean: number | null;
+            /**
+             * Unusual
+             * @description Outside the 5th to 95th percentile of the training sample.
+             */
+            unusual: boolean;
+            /** Value */
+            value: number;
         };
         /** Country */
         Country: {
@@ -317,6 +395,13 @@ export interface components {
             /** @description Level the project aims to support for this country. */
             target: components["schemas"]["SupportLevel"];
         };
+        /** CurvePoint */
+        CurvePoint: {
+            /** X */
+            x: number;
+            /** Y */
+            y: number;
+        };
         /** DataQualityReport */
         DataQualityReport: {
             /** Country */
@@ -362,6 +447,64 @@ export interface components {
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
         };
+        /** EstimateExplanation */
+        EstimateExplanation: {
+            /** Intercept */
+            intercept: number | null;
+            /** Items */
+            items: components["schemas"]["Contribution"][];
+            /** Method */
+            method: string;
+            /** Note */
+            note: string;
+            /**
+             * Unit
+             * @description log-odds (additive) or probability (local sensitivity)
+             */
+            unit: string;
+        };
+        /** EstimateModel */
+        EstimateModel: {
+            /** Code Revision */
+            code_revision: string | null;
+            /** Feature Set Version */
+            feature_set_version: string;
+            /** Gdp Observed To */
+            gdp_observed_to: string | null;
+            /** Id */
+            id: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Run Id */
+            run_id: string;
+            /** Target Version */
+            target_version: string;
+            /** Trained At */
+            trained_at: string | null;
+            /** Training Events */
+            training_events: number | null;
+            /**
+             * Training Last As Of
+             * @description Latest as-of quarter whose label was used.
+             */
+            training_last_as_of: string | null;
+            /** Training Rows */
+            training_rows: number | null;
+        };
+        /** EstimateOutcome */
+        EstimateOutcome: {
+            /** Label */
+            label: number | null;
+            /**
+             * Status
+             * @description observed, censored (future not yet known) or missing
+             */
+            status: string;
+            /** Window */
+            window: string[];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -385,6 +528,19 @@ export interface components {
             time_utc: string;
             /** Version */
             version: string;
+        };
+        /** HistoryPoint */
+        HistoryPoint: {
+            /** As Of */
+            as_of: string;
+            /** Fold Year */
+            fold_year: number | null;
+            /** Label */
+            label: number | null;
+            /** Probability */
+            probability: number;
+            /** Split */
+            split: string;
         };
         /** IndicatorCatalog */
         IndicatorCatalog: {
@@ -550,6 +706,13 @@ export interface components {
              * @description NULL when undefined for this split; see `note`.
              */
             value: number | null;
+        };
+        /** ModelCurves */
+        ModelCurves: {
+            /** Model Id */
+            model_id: string;
+            /** Splits */
+            splits: components["schemas"]["SplitCurves"][];
         };
         /** ModelDetail */
         ModelDetail: {
@@ -759,6 +922,117 @@ export interface components {
              */
             status: "ready" | "not_ready";
         };
+        /** RecessionEstimate */
+        RecessionEstimate: {
+            /** As Of */
+            as_of: string;
+            /** Band */
+            band: string;
+            /** Bands */
+            bands: components["schemas"]["RiskBand"][];
+            /**
+             * Base Rate
+             * @description Event rate in the model's training sample.
+             */
+            base_rate: number | null;
+            /** Country */
+            country: string;
+            /**
+             * Cutoff
+             * Format: date
+             */
+            cutoff: string;
+            /**
+             * Data Freshness
+             * @description Latest fetch of the inputs used.
+             */
+            data_freshness: string | null;
+            /** Event Definition */
+            event_definition: string;
+            explanation: components["schemas"]["EstimateExplanation"];
+            /** Horizon */
+            horizon: number;
+            /**
+             * In Sample
+             * @description True when this as-of quarter's outcome was in the training data: a fit, not a forecast. Use the walk-forward probability for an honest historical estimate.
+             */
+            in_sample: boolean;
+            /** Inputs Stale */
+            inputs_stale: string[];
+            /** Limitations */
+            limitations: string[];
+            model: components["schemas"]["EstimateModel"];
+            outcome: components["schemas"]["EstimateOutcome"];
+            /**
+             * Prediction Timestamp
+             * Format: date-time
+             */
+            prediction_timestamp: string;
+            /** Probability */
+            probability: number;
+            /** Requested As Of */
+            requested_as_of: string | null;
+            /** Selection Note */
+            selection_note: string | null;
+            /**
+             * Stored Estimate
+             * @description Probability stored at training time for this as-of (round-trip check).
+             */
+            stored_estimate: number | null;
+            /**
+             * Track Record
+             * @description Development and held-out Brier/skill/AUC.
+             */
+            track_record: {
+                [key: string]: unknown;
+            };
+            /** Walk Forward Probability */
+            walk_forward_probability: number | null;
+            /** Walk Forward Split */
+            walk_forward_split: string | null;
+        };
+        /** RecessionHistory */
+        RecessionHistory: {
+            /**
+             * Baseline
+             * @description Prevalence baseline, same folds.
+             */
+            baseline: components["schemas"]["HistoryPoint"][];
+            /** Country */
+            country: string;
+            /** Horizon */
+            horizon: number;
+            /** Model Id */
+            model_id: string;
+            /** Model Name */
+            model_name: string;
+            /** Note */
+            note: string;
+            /** Points */
+            points: components["schemas"]["HistoryPoint"][];
+            /**
+             * Recessions
+             * @description Technical recessions in stored GDP.
+             */
+            recessions: components["schemas"]["RecessionSpan"][];
+        };
+        /** RecessionSpan */
+        RecessionSpan: {
+            /** End */
+            end: string;
+            /** Start */
+            start: string;
+        };
+        /** RiskBand */
+        RiskBand: {
+            /** Name */
+            name: string;
+            /**
+             * Upper
+             * @description Probabilities below this value fall in the band.
+             */
+            upper: number;
+        };
         /** SeriesPoint */
         SeriesPoint: {
             /** Period */
@@ -886,6 +1160,27 @@ export interface components {
             generated_at: string;
             /** Items */
             items: components["schemas"]["SourceStatus"][];
+        };
+        /** SplitCurves */
+        SplitCurves: {
+            /** Events */
+            events: number;
+            /** N */
+            n: number;
+            /** Note */
+            note: string | null;
+            /**
+             * Pr
+             * @description Recall (x) vs precision (y).
+             */
+            pr: components["schemas"]["CurvePoint"][] | null;
+            /**
+             * Roc
+             * @description False-positive rate (x) vs recall (y).
+             */
+            roc: components["schemas"]["CurvePoint"][] | null;
+            /** Split */
+            split: string;
         };
         /** StoredSeries */
         StoredSeries: {
@@ -1258,6 +1553,46 @@ export interface operations {
             };
         };
     };
+    model_curves_api_models__model_id__curves_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                model_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelCurves"];
+                };
+            };
+            /** @description Unknown model version. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     model_metrics_api_models__model_id__metrics_get: {
         parameters: {
             query?: never;
@@ -1373,6 +1708,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ReadyResponse"];
+                };
+            };
+        };
+    };
+    history_api_recession_history_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Quarters ahead: 2 or 4. */
+                horizon: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecessionHistory"];
+                };
+            };
+            /** @description Inputs not available for this as-of quarter. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, horizon or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / artifact / synced data. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    predict_api_recession_predict_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Quarters ahead: 2 or 4. */
+                horizon: number;
+                /** @description As-of quarter; omit for the latest available. */
+                as_of?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecessionEstimate"];
+                };
+            };
+            /** @description Inputs not available for this as-of quarter. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, horizon or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / artifact / synced data. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

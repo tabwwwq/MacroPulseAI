@@ -1,6 +1,5 @@
 "use client";
 
-import { Gauge } from "lucide-react";
 import Link from "next/link";
 
 import type { MappingStatus, StoredSeries } from "@macropulse/shared-types";
@@ -10,6 +9,7 @@ import { IndicatorChart } from "@/components/data/indicator-chart";
 import { KpiGrid } from "@/components/data/kpi-grid";
 import { ModuleRoadmap } from "@/components/data/module-roadmap";
 import { RangeControl, useRange } from "@/components/data/range-control";
+import { RiskSummaryCard } from "@/components/model/risk-summary";
 import { SourceRegistry } from "@/components/data/source-registry";
 import { SystemStatus } from "@/components/data/system-status";
 import { Badge } from "@/components/ui/badge";
@@ -17,13 +17,12 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { WidgetBoundary } from "@/components/ui/error-boundary";
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EmptyState, ErrorState, Notice } from "@/components/ui/states";
+import { ErrorState, Notice } from "@/components/ui/states";
 import { formatAsOf } from "@/lib/as-of";
 import { useAppContext } from "@/lib/context";
 import { formatRelative } from "@/lib/format";
 import { MAPPING_STATUS } from "@/lib/mapping";
-import { modelState, modelSummaryText } from "@/lib/models";
-import { useCatalog, useCountries, useDataQuality, useModels, useSourcesStatus } from "@/lib/queries";
+import { useCatalog, useCountries, useDataQuality, useSourcesStatus } from "@/lib/queries";
 
 const STATUS_ORDER: MappingStatus[] = ["verified", "partial", "stale", "not_published", "unmapped"];
 const HEALTH_TONE = { pass: "ok", warn: "warn", fail: "danger", not_synced: "neutral" } as const;
@@ -95,7 +94,6 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
   const { hrefWithContext } = useAppContext();
   const catalog = useCatalog(iso2);
   const [range] = useRange();
-  const models = modelState(useModels().data);
   const entries = catalog.data?.countries[0]?.items ?? [];
   const counts = STATUS_ORDER.map((s) => ({ s, n: entries.filter((e) => e.mapping.status === s).length })).filter((c) => c.n > 0);
   const storedIndicators = entries.filter((e) => e.ingestion.observations > 0).length;
@@ -128,18 +126,9 @@ function CountryDashboard({ iso2, asOf }: { iso2: string; asOf: string | null })
           </WidgetBoundary>
         </div>
         <div className="flex min-w-0 flex-col gap-4">
-          <Card>
-            <CardHeader title="Technical-recession risk" />
-            <CardBody>
-              <EmptyState
-                icon={<Gauge className="size-5" aria-hidden />}
-                title={models.trained ? "Model trained — display in Phase 6" : "No trained model yet"}
-              >
-                {modelSummaryText(models)} No probability is shown here until it can be presented with its
-                version, as-of date, explanation and measured track record.
-              </EmptyState>
-            </CardBody>
-          </Card>
+          <WidgetBoundary label="Recession risk">
+            <RiskSummaryCard iso2={iso2} />
+          </WidgetBoundary>
           <Card>
             <CardHeader
               title="Data coverage"

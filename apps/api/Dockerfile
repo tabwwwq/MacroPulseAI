@@ -16,18 +16,24 @@ WORKDIR /app
 COPY pyproject.toml uv.lock .python-version ./
 COPY apps/api/pyproject.toml apps/api/pyproject.toml
 COPY packages/economics/pyproject.toml packages/economics/pyproject.toml
+COPY packages/ml/pyproject.toml packages/ml/pyproject.toml
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages --no-install-workspace
 
 # 2) workspace sources
 COPY apps/api apps/api
 COPY packages/economics packages/economics
+COPY packages/ml packages/ml
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages
 
-RUN useradd --create-home --uid 10001 app && mkdir -p /app/data && chown -R app /app/data
+RUN useradd --create-home --uid 10001 app \
+    && mkdir -p /app/data /app/models/artifacts \
+    && chown -R app /app/data /app/models
 USER app
-ENV PATH="/app/.venv/bin:${PATH}"
+# Trained artifacts live on a volume (compose: `models`); train with `docker compose exec api macropulse train`.
+ENV PATH="/app/.venv/bin:${PATH}" \
+    MODELS_DIR=/app/models/artifacts
 
 EXPOSE 8000
 HEALTHCHECK --interval=15s --timeout=3s --start-period=20s --retries=5 \

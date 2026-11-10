@@ -113,19 +113,22 @@ Acceptance criteria:
 
 ## Phase 6 — Explainable risk dashboard and model laboratory
 
-**Status:** Planned; `/recession` and `/lab` are not-built routes.
+**Status:** ✅ Complete (2026-11-09). `/recession` serves live inference from stored data and the saved artifact
+(round trip verified for 5 countries × 2 horizons by `pnpm smoke`, 495/495 checks); `/lab` shows every model of the
+latest run with measured out-of-sample metrics. Both state that the published models do not beat the base rate on
+the 2015+ held-out years.
 **Goal:** Expose actual evaluated inference and transparent diagnostics.
 **Deliverables:** Inference/model APIs, horizon selector, risk timeline, explanation charts,
 split/calibration/ROC/PR views, baseline comparison and reproducibility card.
 
 Acceptance criteria:
 
-- [ ] Demonstrate one inference round-trip from stored data and saved artifact to displayed probability, with model version, as-of date, prediction timestamp, freshness and coverage.
-- [ ] 2Q/4Q selection requests the corresponding target/model; unsupported countries/horizons are covered by validation tests.
-- [ ] Missing model/data/metrics return actionable unavailable states and no invented probability.
-- [ ] Explanations use working SHAP or a documented coefficient/permutation fallback; risk categories and uncertainty limits are explained.
-- [ ] Lab displays actual baseline/model metrics, sample/event counts, temporal splits, thresholded confusion matrix and N/A for undefined curves/metrics.
-- [ ] Reproducibility card includes command, seed, snapshot, version and code revision when known; UI/API tests and build pass.
+- [x] Demonstrate one inference round-trip from stored data and saved artifact to displayed probability, with model version, as-of date, prediction timestamp, freshness and coverage. *(`GET /api/recession/predict` rebuilds the as-of snapshot, loads the joblib artifact (only from `models_dir`) and returns the probability with all of these; the recomputed value equals the one stored at training for every country and horizon.)*
+- [x] 2Q/4Q selection requests the corresponding target/model; unsupported countries/horizons are covered by validation tests. *(`unsupported_country`, `unsupported_horizon`, `invalid_as_of`, `features_unavailable` tested.)*
+- [x] Missing model/data/metrics return actionable unavailable states and no invented probability. *(`model_not_trained`, `model_artifact_missing`, `model_artifact_untrusted`, `model_incompatible` → 503 with the CLI hint; the UI shows "Model not trained".)*
+- [x] Explanations use working SHAP or a documented coefficient/permutation fallback; risk categories and uncertainty limits are explained. *(SHAP is not installed: exact additive log-odds contributions for logistic, local sensitivity to the training mean for trees; fixed bands < 15/30/50 %; no interval, with the reason stated; a P(4Q) < P(2Q) contradiction between the separate horizon models is flagged.)*
+- [x] Lab displays actual baseline/model metrics, sample/event counts, temporal splits, thresholded confusion matrix and N/A for undefined curves/metrics.
+- [x] Reproducibility card includes command, seed, snapshot, version and code revision when known; UI/API tests and build pass. *(185 pytest, 79 Vitest, `next build`.)*
 
 ## Phase 7 — Forecasts and scenario simulator
 

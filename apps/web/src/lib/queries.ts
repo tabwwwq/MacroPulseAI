@@ -14,7 +14,61 @@ export const queryKeys = {
   summary: (iso2: string, asOf: string | null) => ["countries", iso2.toUpperCase(), "summary", asOf ?? "latest"] as const,
   quality: (iso2: string | null) => ["data-quality", iso2 ?? "all"] as const,
   models: ["models", "latest"] as const,
+  estimate: (iso2: string, horizon: number, asOf: string | null) =>
+    ["recession", "predict", iso2.toUpperCase(), horizon, asOf ?? "latest"] as const,
+  history: (iso2: string, horizon: number) => ["recession", "history", iso2.toUpperCase(), horizon] as const,
+  modelDetail: (id: string) => ["models", id, "metrics"] as const,
+  modelCurves: (id: string) => ["models", id, "curves"] as const,
 };
+
+/** 404/503 are answers (not trained, inputs not published), not transient failures. */
+function retryUnlessAnswer(count: number, error: unknown): boolean {
+  return !(error instanceof ApiError && [404, 422, 503].includes(error.status)) && count < 2;
+}
+
+/** Live inference: the published model's probability for one country, horizon and as-of. */
+export function useRecessionEstimate(iso2: string, horizon: 2 | 4, asOf: string | null) {
+  return useQuery({
+    queryKey: queryKeys.estimate(iso2, horizon, asOf),
+    queryFn: () =>
+      unwrap(
+        api.GET("/api/recession/predict", {
+          params: { query: { country: iso2, horizon, ...(asOf ? { as_of: asOf } : {}) } },
+        }),
+      ),
+    enabled: /^[A-Za-z]{2}$/.test(iso2),
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** Out-of-sample walk-forward probabilities plus realised technical recessions. */
+export function useRecessionHistory(iso2: string, horizon: 2 | 4) {
+  return useQuery({
+    queryKey: queryKeys.history(iso2, horizon),
+    queryFn: () => unwrap(api.GET("/api/recession/history", { params: { query: { country: iso2, horizon } } })),
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+export function useModelDetail(id: string | null) {
+  return useQuery({
+    queryKey: queryKeys.modelDetail(id ?? ""),
+    queryFn: () => unwrap(api.GET("/api/models/{model_id}/metrics", { params: { path: { model_id: id ?? "" } } })),
+    enabled: Boolean(id),
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useModelCurves(id: string | null) {
+  return useQuery({
+    queryKey: queryKeys.modelCurves(id ?? ""),
+    queryFn: () => unwrap(api.GET("/api/models/{model_id}/curves", { params: { path: { model_id: id ?? "" } } })),
+    enabled: Boolean(id),
+    staleTime: 5 * 60_000,
+  });
+}
 
 /** Model versions of the latest training run (empty list + note when nothing is trained). */
 export function useModels() {

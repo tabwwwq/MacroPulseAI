@@ -5,11 +5,12 @@ import type { CatalogEntry, KpiValue } from "@macropulse/shared-types";
 import { KpiCard } from "@/components/data/kpi-card";
 import { ProvenanceDetails } from "@/components/data/provenance";
 import { ErrorState } from "@/components/ui/states";
-import { formatAsOf } from "@/lib/as-of";
 import { formatRelative } from "@/lib/format";
 import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
 import { modelState, modelSummaryText } from "@/lib/models";
-import { useCatalog, useCountrySummary, useModels } from "@/lib/queries";
+import { useCatalog, useCountrySummary, useModels, useRecessionEstimate } from "@/lib/queries";
+import { BANDS, formatProbability } from "@/lib/risk";
+import { ApiError } from "@/lib/api";
 import { flagLabel, provenanceLabel } from "@/lib/series";
 
 /** Change unit: percentage points for rates, otherwise the indicator unit. */
@@ -56,6 +57,7 @@ export function KpiGrid({ iso2, asOf }: { iso2: string; asOf: string | null }) {
   const summary = useCountrySummary(iso2, asOf);
   const catalog = useCatalog(iso2);
   const models = modelState(useModels().data);
+  const risk = useRecessionEstimate(iso2, 2, asOf);
 
   if (summary.isError) return <ErrorState error={summary.error} onRetry={() => void summary.refetch()} />;
 
@@ -71,16 +73,36 @@ export function KpiGrid({ iso2, asOf }: { iso2: string; asOf: string | null }) {
           ))}
       {summary.data ? (
         <>
-          <KpiCard
-            label="Recession risk · next 2Q"
-            value={null}
-            badge={models.trained ? { label: "Model trained", tone: "warn" } : { label: "No model", tone: "neutral" }}
-            note={
-              models.trained
-                ? `${modelSummaryText(models)} Probabilities are shown with their diagnostics on the Recession risk page from Phase 6 (as of ${formatAsOf(asOf)}).`
-                : modelSummaryText(models)
-            }
-          />
+          {risk.data ? (
+            <KpiCard
+              label="Recession risk · next 2Q"
+              unit="%"
+              value={Math.round(risk.data.probability * 1000) / 10}
+              period={`as of ${risk.data.as_of}`}
+              badge={{
+                label: BANDS[risk.data.band]?.label ?? risk.data.band,
+                tone: BANDS[risk.data.band]?.tone ?? "neutral",
+              }}
+              note={[
+                `Technical-recession probability · base rate ${formatProbability(risk.data.base_rate)}.`,
+                risk.data.track_record.beats_baseline_heldout === false
+                  ? "Does not beat the base rate on 2015+ held-out years."
+                  : "",
+                risk.data.in_sample ? "In-sample fit for this as-of quarter." : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              source={`Model · ${risk.data.model.id}`}
+            />
+          ) : (
+            <KpiCard
+              label="Recession risk · next 2Q"
+              value={null}
+              isLoading={risk.isPending && models.trained}
+              badge={models.trained ? { label: "No estimate", tone: "warn" } : { label: "No model", tone: "neutral" }}
+              note={risk.error instanceof ApiError ? risk.error.message : modelSummaryText(models)}
+            />
+          )}
           <KpiCard
             label="Data freshness"
             value={null}

@@ -20,49 +20,19 @@ from sqlalchemy import func, select
 from macropulse_api.errors import ApiError
 from macropulse_api.models import ModelMetric, ModelPrediction, ModelVersion
 from macropulse_api.services import training
-from macropulse_economics.periods import shift
 from macropulse_ml.features import FEATURE_NAMES, CountryInputs
 
-
-def _inputs(country: str, seed: int) -> CountryInputs:
-    rng = np.random.default_rng(seed)
-    quarters = [f"{y}-Q{q}" for y in range(1985, 2027) for q in (1, 2, 3, 4)][
-        : (2026 - 1985) * 4 + 3
-    ]
-    growth = 0.5 + 0.3 * rng.standard_normal(len(quarters))
-    stress = np.zeros(len(quarters))
-    for start in range(10, len(quarters) - 3, 22):
-        growth[start : start + 2] = [-0.6, -0.4]
-        stress[start - 4 : start + 2] = np.linspace(0.2, 1.4, 6)
-    gdp_qoq = {p: float(g) for p, g in zip(quarters, growth, strict=True)}
-    level = np.cumprod(1 + growth / 100)
-    gdp_yoy = {
-        quarters[i]: float((level[i] / level[i - 4] - 1) * 100) for i in range(4, len(quarters))
-    }
-    months: list[str] = []
-    m = "1985-01"
-    while m != "2026-10":
-        months.append(m)
-        m = shift(m, 1)
-    s = np.repeat(stress, 3)[: len(months)]
-    noise = rng.standard_normal(len(months))
-    return CountryInputs(
-        country=country,
-        gdp_qoq=gdp_qoq,
-        gdp_yoy=gdp_yoy,
-        inflation={mm: 2 + 0.3 * n for mm, n in zip(months, noise, strict=True)},
-        unemployment={mm: 6 + v for mm, v in zip(months, s, strict=True)},
-        policy_rate={mm: 3 - v for mm, v in zip(months, s, strict=True)},
-        policy_rate_event_dated=False,
-        bond_yield={mm: 4.5 - 2 * v for mm, v in zip(months, s, strict=True)},
-        short_rate={mm: 3 - v for mm, v in zip(months, s, strict=True)},
-    )
+from .fixture_sources import synthetic_country_inputs
 
 
 @pytest.fixture
 def synthetic(monkeypatch: pytest.MonkeyPatch) -> None:
     def fake_load(_session: object) -> tuple[list[CountryInputs], dict[str, str], str]:
-        return [_inputs("DE", 1), _inputs("US", 2)], {"FR": "test: not loaded"}, "sha256:test"
+        return (
+            [synthetic_country_inputs("DE", 1), synthetic_country_inputs("US", 2)],
+            {"FR": "test: not loaded"},
+            "sha256:test",
+        )
 
     monkeypatch.setattr(training, "load_inputs", fake_load)
 

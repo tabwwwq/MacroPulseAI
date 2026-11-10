@@ -353,3 +353,128 @@ class ModelDetail(ModelSummary):
     coefficients: dict[str, Any] | None
     calibrated_folds: int | None
     metrics: list[MetricValue]
+
+
+# ------------------------------------------------------------------ recession estimates (Phase 6)
+
+
+class RiskBand(BaseModel):
+    upper: float = Field(description="Probabilities below this value fall in the band.")
+    name: str
+
+
+class EstimateModel(BaseModel):
+    id: str
+    name: str
+    key: str
+    run_id: str
+    trained_at: datetime | None
+    training_rows: int | None
+    training_events: int | None
+    training_last_as_of: str | None = Field(
+        description="Latest as-of quarter whose label was used."
+    )
+    gdp_observed_to: str | None
+    target_version: str
+    feature_set_version: str
+    code_revision: str | None
+
+
+class Contribution(BaseModel):
+    feature: str
+    label: str
+    value: float
+    period: str | None = Field(description="Reference period of the input value.")
+    contribution: float
+    standardised_value: float | None = None
+    training_mean: float | None
+    outside_training_range: bool
+    unusual: bool = Field(description="Outside the 5th to 95th percentile of the training sample.")
+
+
+class EstimateExplanation(BaseModel):
+    method: str
+    unit: str = Field(description="log-odds (additive) or probability (local sensitivity)")
+    intercept: float | None
+    note: str
+    items: list[Contribution]
+
+
+class EstimateOutcome(BaseModel):
+    status: str = Field(description="observed, censored (future not yet known) or missing")
+    label: int | None
+    window: list[str]
+
+
+class RecessionEstimate(BaseModel):
+    country: str
+    horizon: int
+    as_of: str
+    requested_as_of: str | None
+    cutoff: date
+    probability: float
+    band: str
+    bands: list[RiskBand]
+    base_rate: float | None = Field(description="Event rate in the model's training sample.")
+    model: EstimateModel
+    prediction_timestamp: datetime
+    data_freshness: datetime | None = Field(description="Latest fetch of the inputs used.")
+    inputs_stale: list[str]
+    explanation: EstimateExplanation
+    track_record: dict[str, Any] = Field(description="Development and held-out Brier/skill/AUC.")
+    selection_note: str | None
+    in_sample: bool = Field(
+        description="True when this as-of quarter's outcome was in the training data: a fit, not a "
+        "forecast. Use the walk-forward probability for an honest historical estimate."
+    )
+    outcome: EstimateOutcome
+    walk_forward_probability: float | None
+    walk_forward_split: str | None
+    stored_estimate: float | None = Field(
+        description="Probability stored at training time for this as-of (round-trip check)."
+    )
+    event_definition: str
+    limitations: list[str]
+
+
+class HistoryPoint(BaseModel):
+    as_of: str
+    probability: float
+    label: int | None
+    split: str
+    fold_year: int | None
+
+
+class RecessionSpan(BaseModel):
+    start: str
+    end: str
+
+
+class RecessionHistory(BaseModel):
+    country: str
+    horizon: int
+    model_id: str
+    model_name: str
+    points: list[HistoryPoint]
+    baseline: list[HistoryPoint] = Field(description="Prevalence baseline, same folds.")
+    recessions: list[RecessionSpan] = Field(description="Technical recessions in stored GDP.")
+    note: str
+
+
+class CurvePoint(BaseModel):
+    x: float
+    y: float
+
+
+class SplitCurves(BaseModel):
+    split: str
+    n: int
+    events: int
+    roc: list[CurvePoint] | None = Field(description="False-positive rate (x) vs recall (y).")
+    pr: list[CurvePoint] | None = Field(description="Recall (x) vs precision (y).")
+    note: str | None
+
+
+class ModelCurves(BaseModel):
+    model_id: str
+    splits: list[SplitCurves]

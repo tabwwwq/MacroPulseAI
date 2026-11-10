@@ -112,9 +112,9 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
     }));
     const sources = [...new Set(series.map((s) => s.source).filter((s): s is string => Boolean(s)))];
     // Separate, explicitly labelled reference series keep shading in the legend and PNG.
-    const references: LineSeriesOption[] = shading.map(({ from, to, label }, index) => ({
+    const references: LineSeriesOption[] = shading.map(({ from, to, label, prefix = "External reference" }, index) => ({
       id: `external-reference-${index}`,
-      name: `External reference: ${label}`,
+      name: `${prefix}: ${label}`,
       type: "line",
       data: [],
       itemStyle: { color: theme.referenceColor },
@@ -122,8 +122,8 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
         silent: false,
         itemStyle: { color: theme.referenceColor, opacity: 0.14, borderColor: theme.referenceColor, borderWidth: 1, borderType: "dashed" },
         label: { show: false },
-        tooltip: { trigger: "item", formatter: () => `External reference: ${label}\n${from} – ${to}` },
-        data: [[{ name: `External reference: ${label}`, xAxis: periodTime(from) }, { xAxis: periodTime(to) }]],
+        tooltip: { trigger: "item", formatter: () => `${prefix}: ${label}\n${from} – ${to}` },
+        data: [[{ name: `${prefix}: ${label}`, xAxis: periodTime(from) }, { xAxis: periodTime(to) }]],
       },
     }));
     const option: ChartOption = {
@@ -151,7 +151,7 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
             });
           const referenceLabels = shading
             .filter(({ from, to }) => time >= periodTime(from) && time <= periodTime(to))
-            .map(({ label }) => `External reference: ${label}`);
+            .map(({ label, prefix = "External reference" }) => `${prefix}: ${label}`);
           const sourceLines = sources.length ? [`Source: ${sources.join("; ")}`] : [];
           return [period, ...values, ...referenceLabels, ...sourceLines].join("\n");
         },

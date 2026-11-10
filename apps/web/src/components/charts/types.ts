@@ -20,6 +20,8 @@ export interface ChartShading {
   from: string;
   to: string;
   label: string;
+  /** Legend/tooltip prefix; defaults to "External reference" (e.g. NBER dates). */
+  prefix?: string;
 }
 
 export interface ChartSource {

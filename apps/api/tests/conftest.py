@@ -20,6 +20,7 @@ def make_settings(tmp_path: Path, **overrides: object) -> Settings:
         "database_url": f"sqlite:///{(tmp_path / 'test.db').as_posix()}",
         "api_cors_origins": ["http://localhost:3000"],
         "fred_api_key": None,
+        "models_dir": tmp_path / "artifacts",
     }
     values.update(overrides)
     return Settings(_env_file=None, **values)  # type: ignore[call-arg]

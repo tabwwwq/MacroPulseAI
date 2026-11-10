@@ -160,7 +160,7 @@ def _cmd_train(args: argparse.Namespace) -> int:
                 build_sessionmaker(engine),
                 horizons=horizons,
                 seed=args.seed,
-                artifacts_root=None if args.no_artifacts else REPO_ROOT / "models" / "artifacts",
+                artifacts_root=None if args.no_artifacts else get_settings().models_dir,
                 command=command.strip(),
                 code_revision=git_revision(),
             )

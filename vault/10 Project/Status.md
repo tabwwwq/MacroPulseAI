@@ -1,8 +1,8 @@
 ---
 type: status
-phase: 6
-phase_name: Explainable risk dashboard & ML lab
-updated: 2026-11-09
+phase: 7
+phase_name: Forecasts & scenario lab
+updated: 2026-11-10
 tags:
   - project
 ---
@@ -14,24 +14,26 @@ tags:
 - ✅ **Phase 2 — Production-grade UI system** done (2026-11-09). See [[Phase 02 — Production-grade UI system]].
 - ✅ **Phase 3 — Economic data ingestion & metadata** done (`90e0e91`, 2026-11-09). See [[Phase 03 — Economic data ingestion & metadata]].
 - ✅ **Phase 4 — Data coverage & real dashboards** done (`51fb279`, 2026-11-09). See [[Phase 04 — Data coverage & real dashboards]].
-- ✅ **Phase 5 — Recession target, features & first model** done (2026-11-09): labels, as-of features, walk-forward backtest, published models — **with no skill against the base rate on 2015–2026** ([[F-008 No model beats the base rate on held-out years]]). See [[Phase 05 — Recession target, features & first model]].
-- ⏭️ **Phase 6 — Explainable risk dashboard & ML lab** is next. See [[Phase 06 — Explainable risk dashboard & ML lab]].
-- Repository: GitHub `tabwwwq/MacroPulseAI`; CI green on `51fb279`.
+- ✅ **Phase 5 — Recession target, features & first model** done (`ed7a1ab`, 2026-11-09) — published models do **not** beat the base rate on 2015+ held-out years ([[F-008 No model beats the base rate on held-out years]]). See [[Phase 05 — Recession target, features & first model]].
+- ✅ **Phase 6 — Explainable risk dashboard & ML lab** done (2026-11-10): live inference round trip, explanations, risk timeline, ML laboratory. See [[Phase 06 — Explainable risk dashboard & ML lab]].
+- ⏭️ **Phase 7 — Forecasts & scenario lab** is next. See [[Phase 07 — Forecasts & scenario lab]].
+- CI: the Docker job failed on `ed7a1ab` and is fixed in the Phase 6 commit ([[F-010 Docker build broke when the ML package was added]]) — confirm on GitHub after the push.
 
-## Working (verified 2026-11-09)
-- Data: `pnpm data:sync` — 31 native series, 25,702 observations (Eurostat 21, ECB 1, FRED 9 series). BE/DE/FR/NL `full`, US `partial`.
-- Models: `pnpm train` — run `20261109T173231Z`: H=2 HistGradientBoosting (dev skill +0.099, held-out −0.448), H=4 Logistic Regression (+0.032, −0.754); artifacts with metadata; `/api/models` read-only.
-- API/web: dashboards on stored data with provenance; model state shown truthfully (no probability displayed before Phase 6).
-- Checks: 173 pytest (+1 PostgreSQL in CI, +16 live), ruff, mypy `--strict`, ESLint, tsc, 73 Vitest, `next build`, `pnpm smoke` 416/416.
+## Working (verified 2026-11-10)
+- Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.
+- Models: run `20261109T182857Z` — H=2 HistGradientBoosting, H=4 Logistic Regression; artifacts in `models/artifacts`.
+- API: `/api/recession/predict` (round trip, explanation, track record, in-sample flag), `/api/recession/history`, `/api/models` + `/metrics` + `/curves`, plus all data endpoints.
+- Web: Overview (live 2Q/4Q estimates with caveats), Countries, Compare, Data observatory, **Recession risk**, **ML laboratory**.
+- Checks: 185 pytest (+1 PostgreSQL in CI, +16 live), 79 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build`, `pnpm smoke` 495/495.
 
 ## Blockers & risks
-- [[F-008 No model beats the base rate on held-out years]] — probabilities need a prominent track-record warning; held-out period no longer pristine.
-- [[F-006 US October 2025 observations missing]] — handled by the one-month staleness rule (tested).
-- [[F-002 OECD CLI missing for Belgium and Netherlands]] — no OECD connector; fewer leading indicators.
-- No vintages / publication dates → replays stay *revised-data approximations*.
-- FRED metadata and ALFRED vintages need a server-side `FRED_API_KEY` → US stays `partial`.
-- [[F-007 OneDrive locks the virtual environment]]; uvicorn `--reload` does not see OneDrive edits (restart the API after code changes).
-- Browser-level E2E tests not automated; Docker not installed locally.
+- [[F-008 No model beats the base rate on held-out years]] — shown next to every probability.
+- [[F-009 Separate horizon models can contradict each other]] — flagged in the UI, not resolved.
+- [[F-006 US October 2025 observations missing]] — handled by the one-month staleness rule.
+- [[F-002 OECD CLI missing for Belgium and Netherlands]] — no OECD connector.
+- No vintages / publication dates → replays stay *revised-data approximations*; `FRED_API_KEY` not configured → US `partial`.
+- [[F-007 OneDrive locks the virtual environment]] — also stale dev-server reloads; restart servers after edits.
+- Browser-level E2E tests not automated; Docker not installed locally (CI builds the images).
 
 ## Next
-1. Phase 6: `/api/recession/predict` and `/history` from stored predictions and the saved artifact (round trip), 2Q/4Q selector, probability with model version / as-of / track record, risk timeline (OOS backtest + current), explanations (standardised coefficients / permutation importance), ML lab with comparison table, calibration and confusion views, reproducibility card.
+1. Phase 7: GDP growth / inflation / unemployment forecasts — naive and seasonal-naive baselines plus a challenger, rolling-origin backtests, empirical intervals; Scenario lab with bounded sliders, baseline vs scenario risk, contribution deltas and out-of-distribution warnings (training feature ranges are already stored).

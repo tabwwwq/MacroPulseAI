@@ -74,6 +74,7 @@ class HorizonResult:
     live: list[Prediction] = field(default_factory=list)
     coefficients: dict[str, float] = field(default_factory=dict)
     selection_note: str = ""
+    feature_summary: dict[str, dict[str, float]] = field(default_factory=dict)
 
 
 def _fit(
@@ -201,6 +202,23 @@ def _metric_set(preds: list[Prediction], reference: dict[tuple[str, str], float]
     return evaluate(y, prob, ref)
 
 
+def feature_summary(x: NDArray[np.float64], names: tuple[str, ...]) -> dict[str, dict[str, float]]:
+    """Distribution of each feature in the final training sample: the reference point for
+    explanations (feature at its training mean) and for out-of-distribution warnings."""
+    out: dict[str, dict[str, float]] = {}
+    for j, name in enumerate(names):
+        col = x[:, j]
+        out[name] = {
+            "mean": float(col.mean()),
+            "std": float(col.std()),
+            "min": float(col.min()),
+            "p05": float(np.percentile(col, 5)),
+            "p95": float(np.percentile(col, 95)),
+            "max": float(col.max()),
+        }
+    return out
+
+
 def _final_fit(out: HorizonResult, panel: Panel, seed: int) -> None:
     labelled = panel.labelled(out.horizon)
     if not labelled:
@@ -208,6 +226,7 @@ def _final_fit(out: HorizonResult, panel: Panel, seed: int) -> None:
     out.final_n = len(labelled)
     out.final_events = int(panel.target(labelled, out.horizon).sum())
     out.final_last_as_of = panel.rows[max(labelled, key=lambda i: panel.rows[i].q)].as_of
+    out.feature_summary = feature_summary(panel.matrix(labelled), panel.feature_names)
 
     # Standardised logistic coefficients: an honest, inspectable explanation of the linear model.
     lr = logistic(seed).fit(panel.matrix(labelled), panel.target(labelled, out.horizon))

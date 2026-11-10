@@ -2,7 +2,7 @@
 type: phase
 phase: 7
 title: Forecasts & scenario lab
-status: planned
+status: next
 started:
 completed:
 tags:

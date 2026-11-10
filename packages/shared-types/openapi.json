@@ -21,6 +21,81 @@
         "title": "CatalogEntry",
         "type": "object"
       },
+      "Contribution": {
+        "properties": {
+          "contribution": {
+            "title": "Contribution",
+            "type": "number"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "outside_training_range": {
+            "title": "Outside Training Range",
+            "type": "boolean"
+          },
+          "period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Reference period of the input value.",
+            "title": "Period"
+          },
+          "standardised_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Standardised Value"
+          },
+          "training_mean": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Mean"
+          },
+          "unusual": {
+            "description": "Outside the 5th to 95th percentile of the training sample.",
+            "title": "Unusual",
+            "type": "boolean"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "value",
+          "period",
+          "contribution",
+          "training_mean",
+          "outside_training_range",
+          "unusual"
+        ],
+        "title": "Contribution",
+        "type": "object"
+      },
       "Country": {
         "properties": {
           "currency": {
@@ -205,6 +280,24 @@
         "title": "CountrySupport",
         "type": "object"
       },
+      "CurvePoint": {
+        "properties": {
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "CurvePoint",
+        "type": "object"
+      },
       "DataQualityReport": {
         "properties": {
           "country": {
@@ -304,6 +397,196 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "EstimateExplanation": {
+        "properties": {
+          "intercept": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Intercept"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Contribution"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "method": {
+            "title": "Method",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "unit": {
+            "description": "log-odds (additive) or probability (local sensitivity)",
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "method",
+          "unit",
+          "intercept",
+          "note",
+          "items"
+        ],
+        "title": "EstimateExplanation",
+        "type": "object"
+      },
+      "EstimateModel": {
+        "properties": {
+          "code_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code Revision"
+          },
+          "feature_set_version": {
+            "title": "Feature Set Version",
+            "type": "string"
+          },
+          "gdp_observed_to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gdp Observed To"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "target_version": {
+            "title": "Target Version",
+            "type": "string"
+          },
+          "trained_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trained At"
+          },
+          "training_events": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Events"
+          },
+          "training_last_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest as-of quarter whose label was used.",
+            "title": "Training Last As Of"
+          },
+          "training_rows": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Rows"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "key",
+          "run_id",
+          "trained_at",
+          "training_rows",
+          "training_events",
+          "training_last_as_of",
+          "gdp_observed_to",
+          "target_version",
+          "feature_set_version",
+          "code_revision"
+        ],
+        "title": "EstimateModel",
+        "type": "object"
+      },
+      "EstimateOutcome": {
+        "properties": {
+          "label": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "status": {
+            "description": "observed, censored (future not yet known) or missing",
+            "title": "Status",
+            "type": "string"
+          },
+          "window": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Window",
+            "type": "array"
+          }
+        },
+        "required": [
+          "status",
+          "label",
+          "window"
+        ],
+        "title": "EstimateOutcome",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -350,6 +633,53 @@
           "time_utc"
         ],
         "title": "HealthResponse",
+        "type": "object"
+      },
+      "HistoryPoint": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "fold_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fold Year"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "as_of",
+          "probability",
+          "label",
+          "split",
+          "fold_year"
+        ],
+        "title": "HistoryPoint",
         "type": "object"
       },
       "IndicatorCatalog": {
@@ -769,6 +1099,27 @@
           "events"
         ],
         "title": "MetricValue",
+        "type": "object"
+      },
+      "ModelCurves": {
+        "properties": {
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "splits": {
+            "items": {
+              "$ref": "#/components/schemas/SplitCurves"
+            },
+            "title": "Splits",
+            "type": "array"
+          }
+        },
+        "required": [
+          "model_id",
+          "splits"
+        ],
+        "title": "ModelCurves",
         "type": "object"
       },
       "ModelDetail": {
@@ -1326,6 +1677,289 @@
         "title": "ReadyResponse",
         "type": "object"
       },
+      "RecessionEstimate": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/RiskBand"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
+          "base_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Event rate in the model's training sample.",
+            "title": "Base Rate"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "cutoff": {
+            "format": "date",
+            "title": "Cutoff",
+            "type": "string"
+          },
+          "data_freshness": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Latest fetch of the inputs used.",
+            "title": "Data Freshness"
+          },
+          "event_definition": {
+            "title": "Event Definition",
+            "type": "string"
+          },
+          "explanation": {
+            "$ref": "#/components/schemas/EstimateExplanation"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "in_sample": {
+            "description": "True when this as-of quarter's outcome was in the training data: a fit, not a forecast. Use the walk-forward probability for an honest historical estimate.",
+            "title": "In Sample",
+            "type": "boolean"
+          },
+          "inputs_stale": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Inputs Stale",
+            "type": "array"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "model": {
+            "$ref": "#/components/schemas/EstimateModel"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/EstimateOutcome"
+          },
+          "prediction_timestamp": {
+            "format": "date-time",
+            "title": "Prediction Timestamp",
+            "type": "string"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          },
+          "requested_as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested As Of"
+          },
+          "selection_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selection Note"
+          },
+          "stored_estimate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Probability stored at training time for this as-of (round-trip check).",
+            "title": "Stored Estimate"
+          },
+          "track_record": {
+            "additionalProperties": true,
+            "description": "Development and held-out Brier/skill/AUC.",
+            "title": "Track Record",
+            "type": "object"
+          },
+          "walk_forward_probability": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walk Forward Probability"
+          },
+          "walk_forward_split": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walk Forward Split"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "as_of",
+          "requested_as_of",
+          "cutoff",
+          "probability",
+          "band",
+          "bands",
+          "base_rate",
+          "model",
+          "prediction_timestamp",
+          "data_freshness",
+          "inputs_stale",
+          "explanation",
+          "track_record",
+          "selection_note",
+          "in_sample",
+          "outcome",
+          "walk_forward_probability",
+          "walk_forward_split",
+          "stored_estimate",
+          "event_definition",
+          "limitations"
+        ],
+        "title": "RecessionEstimate",
+        "type": "object"
+      },
+      "RecessionHistory": {
+        "properties": {
+          "baseline": {
+            "description": "Prevalence baseline, same folds.",
+            "items": {
+              "$ref": "#/components/schemas/HistoryPoint"
+            },
+            "title": "Baseline",
+            "type": "array"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "model_name": {
+            "title": "Model Name",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "recessions": {
+            "description": "Technical recessions in stored GDP.",
+            "items": {
+              "$ref": "#/components/schemas/RecessionSpan"
+            },
+            "title": "Recessions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "model_id",
+          "model_name",
+          "points",
+          "baseline",
+          "recessions",
+          "note"
+        ],
+        "title": "RecessionHistory",
+        "type": "object"
+      },
+      "RecessionSpan": {
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "RecessionSpan",
+        "type": "object"
+      },
+      "RiskBand": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "upper": {
+            "description": "Probabilities below this value fall in the band.",
+            "title": "Upper",
+            "type": "number"
+          }
+        },
+        "required": [
+          "upper",
+          "name"
+        ],
+        "title": "RiskBand",
+        "type": "object"
+      },
       "SeriesPoint": {
         "properties": {
           "period": {
@@ -1731,6 +2365,73 @@
           "generated_at"
         ],
         "title": "SourceStatusList",
+        "type": "object"
+      },
+      "SplitCurves": {
+        "properties": {
+          "events": {
+            "title": "Events",
+            "type": "integer"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "pr": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CurvePoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Recall (x) vs precision (y).",
+            "title": "Pr"
+          },
+          "roc": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/CurvePoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "False-positive rate (x) vs recall (y).",
+            "title": "Roc"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "n",
+          "events",
+          "roc",
+          "pr",
+          "note"
+        ],
+        "title": "SplitCurves",
         "type": "object"
       },
       "StoredSeries": {
@@ -2424,6 +3125,59 @@
         ]
       }
     },
+    "/api/models/{model_id}/curves": {
+      "get": {
+        "operationId": "model_curves_api_models__model_id__curves_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "pattern": "^[0-9]{8}T[0-9]{6}Z-h[24]-[a-z_]{2,40}$",
+              "title": "Model Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelCurves"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unknown model version."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "ROC and precision-recall curves from the stored out-of-sample predictions",
+        "tags": [
+          "models"
+        ]
+      }
+    },
     "/api/models/{model_id}/metrics": {
       "get": {
         "operationId": "model_metrics_api_models__model_id__metrics_get",
@@ -2568,6 +3322,177 @@
         "summary": "Readiness probe",
         "tags": [
           "health"
+        ]
+      }
+    },
+    "/api/recession/history": {
+      "get": {
+        "operationId": "history_api_recession_history_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 2 or 4.",
+            "in": "query",
+            "name": "horizon",
+            "required": true,
+            "schema": {
+              "description": "Quarters ahead: 2 or 4.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecessionHistory"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Inputs not available for this as-of quarter."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, horizon or as-of."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / artifact / synced data."
+          }
+        },
+        "summary": "Out-of-sample walk-forward probabilities with realised technical recessions",
+        "tags": [
+          "recession"
+        ]
+      }
+    },
+    "/api/recession/predict": {
+      "get": {
+        "operationId": "predict_api_recession_predict_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 2 or 4.",
+            "in": "query",
+            "name": "horizon",
+            "required": true,
+            "schema": {
+              "description": "Quarters ahead: 2 or 4.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          },
+          {
+            "description": "As-of quarter; omit for the latest available.",
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-Q[1-4]$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "As-of quarter; omit for the latest available.",
+              "title": "As Of"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecessionEstimate"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Inputs not available for this as-of quarter."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, horizon or as-of."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / artifact / synced data."
+          }
+        },
+        "summary": "Probability of a technical recession within 2 or 4 quarters (live inference)",
+        "tags": [
+          "recession"
         ]
       }
     },

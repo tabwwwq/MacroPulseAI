@@ -135,6 +135,42 @@ def check_lineage(s: Smoke) -> None:
     )
 
 
+def check_models(s: Smoke, countries: list[str]) -> None:
+    """Inference round trip for every country and horizon, plus history and curves. Skipped (and
+    reported) when no model is trained — a 503 with a training hint is the expected answer then."""
+    status, models = s.json("/api/models")
+    if not models or not models.get("items"):
+        status, body = s.json("/api/recession/predict?country=DE&horizon=2", {503})
+        s.check(status == 503 and body["error"]["code"] == "model_not_trained", "untrained not 503")
+        print("models: none trained (predict correctly answers 503)")
+        return
+    for iso in countries:
+        for h in (2, 4):
+            status, e = s.json(f"/api/recession/predict?country={iso}&horizon={h}", {404})
+            if status != 200:
+                continue
+            p = e["probability"]
+            s.check(0 <= p <= 1, f"{iso}/H{h}: probability out of range")
+            s.check(bool(e["model"]["id"]) and bool(e["as_of"]), f"{iso}/H{h}: no model/as-of")
+            if e["stored_estimate"] is not None:
+                s.check(abs(e["stored_estimate"] - p) < 1e-9, f"{iso}/H{h}: round trip mismatch")
+            s.check(len(e["explanation"]["items"]) > 0, f"{iso}/H{h}: no explanation")
+            status, hist = s.json(f"/api/recession/history?country={iso}&horizon={h}")
+            s.check(
+                bool(hist)
+                and all(pt["split"] != "live" or pt["label"] is None for pt in hist["points"]),
+                f"{iso}/H{h}: history live point carries a label",
+            )
+    for m in models["items"]:
+        if m["status"] == "evaluated" and m["selected"]:
+            _, curves = s.json(f"/api/models/{m['id']}/curves")
+            for c in curves["splits"]:
+                s.check(c["roc"] is not None or bool(c["note"]), f"{m['id']}: curve without note")
+    status, body = s.json("/api/recession/predict?country=DE&horizon=3", {422})
+    s.check(status == 422 and body["error"]["code"] == "unsupported_horizon", "H=3 not rejected")
+    print(f"models: run {models['run_id']}, {len(models['items'])} versions, inference checked")
+
+
 def run(base: str) -> Smoke:
     s = Smoke(base)
     _, health = s.json("/api/health")
@@ -144,6 +180,7 @@ def run(base: str) -> Smoke:
     for country in countries["items"]:
         check_country(s, country, catalog)
     check_lineage(s)
+    check_models(s, [c["iso2"] for c in countries["items"]])
     status, body = s.json("/api/countries/XX/summary", {422})
     s.check(status == 422 and body["error"]["code"] == "unsupported_country", "XX not rejected")
     status, _ = s.json("/api/countries/DE/summary?as_of=2999-Q1", {422})

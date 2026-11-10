@@ -5,13 +5,24 @@ from __future__ import annotations
 
 from typing import Annotated
 
+import numpy as np
 from fastapi import APIRouter, Path, Query
+from sklearn.metrics import precision_recall_curve, roc_curve
 from sqlalchemy import select
 
 from macropulse_api.deps import SessionDep
 from macropulse_api.errors import ApiError
-from macropulse_api.models import ModelMetric, ModelVersion
-from macropulse_api.schemas import ErrorResponse, MetricValue, ModelDetail, ModelList, ModelSummary
+from macropulse_api.models import ModelMetric, ModelPrediction, ModelVersion
+from macropulse_api.schemas import (
+    CurvePoint,
+    ErrorResponse,
+    MetricValue,
+    ModelCurves,
+    ModelDetail,
+    ModelList,
+    ModelSummary,
+    SplitCurves,
+)
 
 router = APIRouter(prefix="/api/models", tags=["models"])
 
@@ -80,6 +91,61 @@ def list_models(
         "choose a model. Probabilities are analytical estimates, not forecasts of certainty."
     )
     return ModelList(run_id=latest, items=items, note=note)
+
+
+@router.get(
+    "/{model_id}/curves",
+    response_model=ModelCurves,
+    summary="ROC and precision-recall curves from the stored out-of-sample predictions",
+    responses={404: {"model": ErrorResponse, "description": "Unknown model version."}},
+)
+def model_curves(
+    session: SessionDep,
+    model_id: Annotated[str, Path(pattern=r"^[0-9]{8}T[0-9]{6}Z-h[24]-[a-z_]{2,40}$")],
+) -> ModelCurves:
+    v = session.get(ModelVersion, model_id)
+    if v is None:
+        raise ApiError(404, "model_not_found", f"Model version '{model_id}' does not exist.")
+    splits: list[SplitCurves] = []
+    for split in ("development", "heldout"):
+        rows = session.scalars(
+            select(ModelPrediction).where(
+                ModelPrediction.model_version_id == v.id,
+                ModelPrediction.split == split,
+                ModelPrediction.label.is_not(None),
+            )
+        ).all()
+        y = np.array([r.label for r in rows], dtype=np.int64)
+        p = np.array([r.probability for r in rows], dtype=np.float64)
+        events = int(y.sum())
+        if not rows or events in (0, len(rows)):
+            splits.append(
+                SplitCurves(
+                    split=split,
+                    n=len(rows),
+                    events=events,
+                    roc=None,
+                    pr=None,
+                    note="Only one class in this split: curves are undefined.",
+                )
+            )
+            continue
+        fpr, tpr, _ = roc_curve(y, p)
+        precision, recall, _ = precision_recall_curve(y, p)
+        splits.append(
+            SplitCurves(
+                split=split,
+                n=len(rows),
+                events=events,
+                roc=[CurvePoint(x=float(a), y=float(b)) for a, b in zip(fpr, tpr, strict=True)],
+                pr=[
+                    CurvePoint(x=float(r), y=float(q))
+                    for r, q in zip(recall[::-1], precision[::-1], strict=True)
+                ],
+                note=None,
+            )
+        )
+    return ModelCurves(model_id=v.id, splits=splits)
 
 
 @router.get(

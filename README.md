@@ -12,16 +12,20 @@ next 2 or 4 quarters, with transparent, walk-forward-evaluated and calibrated mo
 
 ![MacroPulse overview — real screenshot of the Phase 4 production build with stored official data](docs/screenshots/overview.png)
 
-| Country explorer (US, NBER reference bands) | Compare (HICP vs CPI) | Data observatory |
+| Recession risk (DE, 4 quarters) | ML laboratory | Country explorer (US, NBER reference bands) |
 | --- | --- | --- |
-| ![Country explorer](docs/screenshots/country-de.png) | ![Compare](docs/screenshots/compare.png) | ![Data observatory](docs/screenshots/data-observatory.png) |
+| ![Recession risk](docs/screenshots/recession.png) | ![ML laboratory](docs/screenshots/lab.png) | ![Country explorer](docs/screenshots/country-de.png) |
+
+| Compare (HICP vs CPI) | Data observatory |
+| --- | --- |
+| ![Compare](docs/screenshots/compare.png) | ![Data observatory](docs/screenshots/data-observatory.png) |
 
 ## Status
 
-The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–5 are complete:**
-foundation, production-grade UI system, official-data ingestion, dashboards on the stored data, and the
-technical-recession target with time-aware features and a first evaluated model. Phase 6 (explainable risk
-dashboard and ML laboratory) is next.
+The project is built in ten verified phases ([roadmap](docs/ROADMAP.md)). **Phases 1–6 are complete:**
+foundation, production-grade UI system, official-data ingestion, dashboards on the stored data, the
+technical-recession target with a first evaluated model, and the explainable risk dashboard with the ML
+laboratory. Phase 7 (forecasts and scenario lab) is next.
 
 > [!IMPORTANT]
 > **Model result, stated plainly.** The published models beat the historical base rate on the 2000–2014
@@ -34,17 +38,16 @@ dashboard and ML laboratory) is next.
 | --- | --- | --- |
 | Monorepo | pnpm + uv workspaces, pinned deps, lockfiles, `.env.example`, CI, Dockerfiles, compose | — |
 | Official data | `macropulse data-sync`: Eurostat (JSON-stat), ECB (SDMX CSV) and FRED connectors with timeouts, retries/backoff, `Retry-After`, throttling, response validation, idempotent upserts, per-series quality checks and partial-failure runs. **Live run 2026-11-09: 25,702 observations from 31 series** (incl. 10-year yields and 3-month rates), all runs succeeded | OECD and World Bank connectors; FRED API-key metadata/ALFRED vintages |
-| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, `/api/indicators?country=&indicator=&start=&end=` (derived series + provenance + quality checks), **`/api/countries/{iso2}/summary?as_of=`** (KPI values, change, staleness, provenance), **`/api/countries/{iso2}/data-quality`**, **`/api/data-quality`**, **`/api/observations/export`** (raw CSV), **`/api/models`**, **`/api/models/{id}/metrics`** (read-only; training is a CLI operation); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Inference and history endpoints (Phase 6) |
-| Web (Next.js 16) | **Overview, Country Explorer, Compare and Data Observatory on stored official data:** KPI tiles with value, change, source flag and provenance tooltip; ECharts with hover source, history window, as-of cut-off, NBER reference bands (US, labelled as external), step lines for rate decisions, table view, CSV (with citations) and PNG export; compare up to four countries as published or as spread vs a baseline, with comparability warnings; per-series lineage with quality checks and raw-row CSV. URL-shareable context; loading / error-with-retry / not-synced / not-built states; no overflow at 375 px | Risk gauge and ML lab once a model exists (Phases 5–6) |
+| API (FastAPI) | `/api/health`, `/api/ready`, `/api/countries` (support levels computed from stored data: BE/DE/FR/NL `full`, US `partial`), `/api/sources/status`, `/api/indicators/catalog`, `/api/indicators?country=&indicator=&start=&end=` (derived series + provenance + quality checks), **`/api/countries/{iso2}/summary?as_of=`** (KPI values, change, staleness, provenance), **`/api/countries/{iso2}/data-quality`**, **`/api/data-quality`**, **`/api/observations/export`** (raw CSV), **`/api/recession/predict`** (live inference from the saved artifact, explanation, track record, in-sample flag), **`/api/recession/history`** (walk-forward estimates + realised recessions), **`/api/models`**, **`/api/models/{id}/metrics`**, **`/api/models/{id}/curves`** (read-only; training is a CLI operation); structured error contract, request ids, JSON logs, restricted CORS; Alembic migrations (SQLite ↔ PostgreSQL) | Forecast and scenario endpoints (Phase 7) |
+| Web (Next.js 16) | **Overview, Country Explorer, Compare and Data Observatory on stored official data:** KPI tiles with value, change, source flag and provenance tooltip; ECharts with hover source, history window, as-of cut-off, NBER reference bands (US, labelled as external), step lines for rate decisions, table view, CSV (with citations) and PNG export; compare up to four countries as published or as spread vs a baseline, with comparability warnings; per-series lineage with quality checks and raw-row CSV. **Recession risk:** probability gauge with bands and base rate, model version / as-of / freshness, contributions, walk-forward risk timeline with realised recessions, track record and limitations. **ML laboratory:** model comparison, calibration, ROC/PR, confusion matrix, per-country metrics, fold timeline, coefficients, reproducibility card. URL-shareable context; loading / error-with-retry / not-synced / not-trained states; no overflow at 375 px | Forecast studio and scenario lab (Phase 7) |
 | Data feasibility | 45 live probes of official endpoints → [`docs/DATA_FEASIBILITY.md`](docs/DATA_FEASIBILITY.md); HICP successor `prc_hicp_minr` verified | — |
-| Models | `macropulse train`: technical-recession labels (H = 2, 4) with censoring, as-of feature snapshots with conservative publication lags (GDP, inflation, unemployment, policy rate, term spread), yearly walk-forward backtest with horizon purge, prevalence and contraction-rule baselines, Logistic Regression, HistGradientBoosting (± temporal Platt calibration); per-split and per-country metrics, OOS predictions and versioned artifacts. Selection uses development data only and requires beating the baseline | Explanations, risk timeline and ML lab (Phase 6) |
+| Models | `macropulse train`: technical-recession labels (H = 2, 4) with censoring, as-of feature snapshots with conservative publication lags (GDP, inflation, unemployment, policy rate, term spread), yearly walk-forward backtest with horizon purge, prevalence and contraction-rule baselines, Logistic Regression, HistGradientBoosting (± temporal Platt calibration); per-split and per-country metrics, OOS predictions and versioned artifacts. Selection uses development data only and requires beating the baseline | Better leading indicators, vintages (later phases) |
 
-Verified on 2026-11-09 (Windows 11): 173 pytest tests (+1 PostgreSQL test that runs in CI, +16 opt-in live
-API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 73 Vitest tests and
-`next build`; a live `data-sync` against Eurostat, ECB and FRED (25,702 observations, idempotent re-runs);
-a real training run (`20261109T173231Z`, 17 s); `pnpm smoke` — 416/416 end-to-end API checks over the synced
-database; browser checks of all four data pages for every country at 1440 px and 375 px, including the
-as-of cut-off (e.g. US as of 2008-Q4).
+Verified on 2026-11-09 (Windows 11): 185 pytest tests (+1 PostgreSQL test that runs in CI, +16 opt-in live
+API tests run with `MACROPULSE_LIVE_TESTS=1`), ruff, mypy `--strict`; ESLint, `tsc`, 79 Vitest tests and
+`next build`; a live `data-sync` against Eurostat, ECB and FRED (25,702 observations); a real training run;
+`pnpm smoke` — 495/495 end-to-end API checks including the inference round trip for 5 countries × 2 horizons;
+browser checks of the data pages (1440 px and 375 px) and of the Recession risk and ML laboratory pages.
 **Not automated yet:** browser-level end-to-end tests (the page checks above were done by hand).
 **Not verified locally:** `docker compose up` (Docker is not installed on the development machine — CI builds
 the images).
@@ -69,6 +72,9 @@ With Docker (PostgreSQL + API + web):
 
 ```bash
 docker compose up --build
+# then, inside the API container (data and models persist in volumes):
+docker compose exec api macropulse data-sync
+docker compose exec api macropulse train
 ```
 
 ### Commands

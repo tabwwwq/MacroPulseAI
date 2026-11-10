@@ -20,6 +20,7 @@ from macropulse_api.routers import (
     indicators,
     models,
     quality,
+    recession,
     series,
     sources,
     summary,
@@ -77,4 +78,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(summary.router)
     app.include_router(quality.router)
     app.include_router(models.router)
+    app.include_router(recession.router)
     return app

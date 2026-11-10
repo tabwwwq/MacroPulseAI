@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     )
     # Server-side only. Never logged, never returned by the API (only whether it is configured).
     fred_api_key: SecretStr | None = None
+    # Trained model artifacts. The API only ever loads artifacts from inside this directory.
+    models_dir: Path = REPO_ROOT / "models" / "artifacts"
 
     @field_validator("api_cors_origins", mode="before")
     @classmethod

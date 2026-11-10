@@ -20,6 +20,7 @@ import joblib
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, sessionmaker
 
+from macropulse_api.db import as_utc
 from macropulse_api.errors import ApiError
 from macropulse_api.models import ModelMetric, ModelPrediction, ModelVersion, Observation
 from macropulse_api.services.series_data import load_indicator, resolve_indicator
@@ -67,6 +68,34 @@ def latest_complete_quarter(today: date) -> str:
     return current if period_end(current) <= today else shift(current, -1)
 
 
+def country_inputs(session: Session, iso2: str) -> tuple[CountryInputs, datetime | None]:
+    """Model inputs for one country from stored observations, and the latest fetch time behind
+    them. Raises ApiError (404/503) when an input is not published or not synced."""
+    series: dict[str, dict[str, float]] = {}
+    event_dated = False
+    fetched: list[datetime] = []
+    for ind_id in INPUT_INDICATORS:
+        data = load_indicator(session, iso2, resolve_indicator(ind_id))
+        series[ind_id] = dict(data.points)
+        stamp = as_utc(data.latest_row.retrieved_at)
+        if stamp is not None:
+            fetched.append(stamp)
+        if ind_id == "policy_rate":
+            event_dated = data.mapping.native_frequency.value == "event"
+    inputs = CountryInputs(
+        country=iso2,
+        gdp_qoq=series["real_gdp_qoq"],
+        gdp_yoy=series["real_gdp_yoy"],
+        inflation=series["inflation_yoy"],
+        unemployment=series["unemployment_rate"],
+        policy_rate=series["policy_rate"],
+        policy_rate_event_dated=event_dated,
+        bond_yield=series["bond_yield_10y"],
+        short_rate=series["short_rate_3m"],
+    )
+    return inputs, max(fetched) if fetched else None
+
+
 def load_inputs(session: Session) -> tuple[list[CountryInputs], dict[str, str], str]:
     """Country inputs from stored observations, the countries skipped (with reason) and a hash of
     exactly the values used (dataset snapshot)."""
@@ -74,33 +103,24 @@ def load_inputs(session: Session) -> tuple[list[CountryInputs], dict[str, str], 
     skipped: dict[str, str] = {}
     digest = hashlib.sha256()
     for country in COUNTRIES:
-        series: dict[str, dict[str, float]] = {}
-        event_dated = False
         try:
-            for ind_id in INPUT_INDICATORS:
-                data = load_indicator(session, country.iso2, resolve_indicator(ind_id))
-                series[ind_id] = dict(data.points)
-                if ind_id == "policy_rate":
-                    event_dated = data.mapping.native_frequency.value == "event"
+            c, _ = country_inputs(session, country.iso2)
         except ApiError as exc:
             skipped[country.iso2] = f"{exc.code}: {exc.message}"
             continue
+        named = {
+            "real_gdp_qoq": c.gdp_qoq,
+            "real_gdp_yoy": c.gdp_yoy,
+            "inflation_yoy": c.inflation,
+            "unemployment_rate": c.unemployment,
+            "policy_rate": c.policy_rate,
+            "bond_yield_10y": c.bond_yield,
+            "short_rate_3m": c.short_rate,
+        }
         for ind_id in INPUT_INDICATORS:
-            for period, value in sorted(series[ind_id].items()):
+            for period, value in sorted(named[ind_id].items()):
                 digest.update(f"{country.iso2}|{ind_id}|{period}|{value!r}\n".encode())
-        inputs.append(
-            CountryInputs(
-                country=country.iso2,
-                gdp_qoq=series["real_gdp_qoq"],
-                gdp_yoy=series["real_gdp_yoy"],
-                inflation=series["inflation_yoy"],
-                unemployment=series["unemployment_rate"],
-                policy_rate=series["policy_rate"],
-                policy_rate_event_dated=event_dated,
-                bond_yield=series["bond_yield_10y"],
-                short_rate=series["short_rate_3m"],
-            )
-        )
+        inputs.append(c)
     return inputs, skipped, f"sha256:{digest.hexdigest()[:32]}"
 
 
@@ -137,6 +157,7 @@ def heldout_check(result: HorizonResult) -> dict[str, Any]:
 def protocol(horizon: int, result: HorizonResult) -> dict[str, Any]:
     return {
         "heldout_check": heldout_check(result),
+        "training_feature_summary": result.feature_summary,
         "method": "expanding-window walk-forward, one fold per calendar year, pooled countries",
         "purge": f"training labels must end before the first test quarter (t + {horizon} <= s - 1)",
         "first_test_year": FIRST_TEST_YEAR,

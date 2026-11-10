@@ -155,8 +155,10 @@ Connectors, normalised observations and quality checks are **implemented** (Phas
 Labels, as-of feature snapshots, walk-forward training/evaluation and versioned artifacts are
 **implemented** in `packages/ml` and `macropulse train` (Phase 5; protocol in
 `vault/50 Methodology/Evaluation protocol.md`). Model results are stored in `model_versions`,
-`model_metrics` and `model_predictions` and read through `/api/models`. Serving inference with
-explanations is **PLANNED** for Phase 6.
+`model_metrics` and `model_predictions` and read through `/api/models`. Inference with explanations is
+**implemented** (Phase 6): `services/inference.py` rebuilds the as-of snapshot from stored data, loads the
+published artifact only from `MODELS_DIR` and returns the probability with version, explanation, track
+record and an in-sample flag (`/api/recession/predict`, `/api/recession/history`).
 
 ```mermaid
 flowchart TD
