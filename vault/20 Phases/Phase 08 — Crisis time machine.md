@@ -2,7 +2,7 @@
 type: phase
 phase: 8
 title: Crisis time machine
-status: planned
+status: next
 started:
 completed:
 tags:

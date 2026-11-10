@@ -23,6 +23,8 @@ Workaround used: `attrib -r` + `rmdir` on the two empty placeholder folders, the
 ## Also seen (2026-11-09)
 - `uvicorn --reload` did not pick up edits to `apps/api/src`; the API had to be restarted after code changes.
 - The Next.js dev server's SSR bundle kept an old `lib/queries.ts` (`useRecessionEstimate is not a function`) while the client bundle was current; a restart fixed it. Production builds are unaffected.
+- 2026-11-10 — Same again with `lib/modules.ts`: the server still rendered the old "Scheduled for phase 7" badge, the client the new one → hydration mismatch until the web server was restarted. Writes to vault notes also failed once with `OSError: [Errno 22]` while OneDrive synced; a retry succeeded.
+- 2026-11-10 — A plain `uv sync` (without `--all-packages`) began uninstalling the workspace dependencies; OneDrive blocked it after alembic's top-level files were already gone, leaving a broken import. Fix: `uv sync --all-packages --reinstall-package alembic`. Always sync with `--all-packages` (as `pnpm bootstrap` and CI do), with the API server stopped.
 - `uv` hardlinks from its cache can fail inside OneDrive (`os error 396`); `UV_LINK_MODE=copy` avoids it.
 
 Related: [[ADR-0001 pnpm + uv monorepo]]

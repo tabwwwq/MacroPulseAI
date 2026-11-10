@@ -158,6 +158,8 @@ def protocol(horizon: int, result: HorizonResult) -> dict[str, Any]:
     return {
         "heldout_check": heldout_check(result),
         "training_feature_summary": result.feature_summary,
+        # Covariance of the training features (order = `features`), for joint OOD checks.
+        "training_feature_covariance": result.feature_covariance,
         "method": "expanding-window walk-forward, one fold per calendar year, pooled countries",
         "purge": f"training labels must end before the first test quarter (t + {horizon} <= s - 1)",
         "first_test_year": FIRST_TEST_YEAR,

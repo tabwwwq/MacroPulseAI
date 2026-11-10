@@ -89,6 +89,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/forecasts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Forecast of real GDP growth, inflation or unemployment with backtest diagnostics */
+        get: operations["get_forecast_api_forecasts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/health": {
         parameters: {
             query?: never;
@@ -257,6 +274,40 @@ export interface paths {
         };
         /** Probability of a technical recession within 2 or 4 quarters (live inference) */
         get: operations["predict_api_recession_predict_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scenarios/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Baseline vs shocked recession probability (sensitivity, not causal simulation) */
+        post: operations["evaluate_scenario_api_scenarios_evaluate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/scenarios/spec": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Available shocks, bounds and mapping */
+        get: operations["scenario_spec_api_scenarios_spec_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -504,6 +555,165 @@ export interface components {
             status: string;
             /** Window */
             window: string[];
+        };
+        /** ForecastBacktest */
+        ForecastBacktest: {
+            /** First Origin */
+            first_origin: string | null;
+            /** Last Origin */
+            last_origin: string | null;
+            /** Metrics */
+            metrics: components["schemas"]["ForecastMetric"][];
+        };
+        /** ForecastErrorPoint */
+        ForecastErrorPoint: {
+            /** Actual */
+            actual: number;
+            /** Error */
+            error: number;
+            /** Forecast */
+            forecast: number;
+            /** Model */
+            model: string;
+            /** Origin */
+            origin: string;
+            /** Target */
+            target: string;
+        };
+        /** ForecastMetric */
+        ForecastMetric: {
+            /**
+             * Bias
+             * @description Mean of actual minus forecast.
+             */
+            bias: number | null;
+            /**
+             * Coverage
+             * @description Share of actuals inside the 80 % interval.
+             */
+            coverage: number | null;
+            /** Coverage N */
+            coverage_n: number;
+            /** Horizon Quarters */
+            horizon_quarters: number;
+            /** Mae */
+            mae: number | null;
+            /** Mean Width */
+            mean_width: number | null;
+            /** Model */
+            model: string;
+            /** N */
+            n: number;
+            /** Note */
+            note: string | null;
+            /**
+             * Rel Rmse
+             * @description RMSE divided by the naive RMSE on the same origins.
+             */
+            rel_rmse: number | null;
+            /** Rmse */
+            rmse: number | null;
+            /** Step */
+            step: number;
+        };
+        /** ForecastModel */
+        ForecastModel: {
+            /** Available */
+            available: boolean;
+            /** Description */
+            description: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /** Path */
+            path: components["schemas"]["ForecastPoint"][];
+            /** Reason */
+            reason: string | null;
+        };
+        /** ForecastPoint */
+        ForecastPoint: {
+            /**
+             * Lower
+             * @description Empirical 80 % interval (None: too few past errors).
+             */
+            lower: number | null;
+            /**
+             * N Errors
+             * @description Past backtest errors the interval is based on.
+             */
+            n_errors: number;
+            /** Period */
+            period: string;
+            /** Step */
+            step: number;
+            /** Upper */
+            upper: number | null;
+            /** Value */
+            value: number;
+        };
+        /** ForecastResponse */
+        ForecastResponse: {
+            /** Actuals */
+            actuals: components["schemas"]["ValuePoint"][];
+            /** As Of */
+            as_of: string | null;
+            /** Assumptions */
+            assumptions: string[];
+            backtest: components["schemas"]["ForecastBacktest"];
+            /** Country */
+            country: string;
+            /**
+             * Cutoff
+             * Format: date
+             */
+            cutoff: string;
+            /**
+             * Errors
+             * @description Backtest errors at the requested horizon.
+             */
+            errors: components["schemas"]["ForecastErrorPoint"][];
+            /** Frequency */
+            frequency: string;
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Horizon Quarters */
+            horizon_quarters: number;
+            /** Indicator Name */
+            indicator_name: string;
+            /** Metric */
+            metric: string;
+            /** Min Errors */
+            min_errors: number;
+            /** Models */
+            models: components["schemas"]["ForecastModel"][];
+            /** Nominal Coverage */
+            nominal_coverage: number;
+            /**
+             * Origin
+             * @description Last observation used (published by the cut-off).
+             */
+            origin: string;
+            provenance: components["schemas"]["SeriesProvenance"];
+            /**
+             * Realised
+             * @description Observations after the origin (past as-of).
+             */
+            realised: components["schemas"]["ValuePoint"][];
+            /**
+             * Steps
+             * @description Horizon in native periods (months for monthly series).
+             */
+            steps: number;
+            /** Transform */
+            transform: string;
+            /** Unit */
+            unit: string;
+            /** Version */
+            version: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -1033,6 +1243,142 @@ export interface components {
              */
             upper: number;
         };
+        /** ScenarioContribution */
+        ScenarioContribution: {
+            /** Baseline */
+            baseline: number;
+            /** Delta */
+            delta: number;
+            /** Feature */
+            feature: string;
+            /** Label */
+            label: string;
+            /** Scenario */
+            scenario: number;
+        };
+        /** ScenarioInput */
+        ScenarioInput: {
+            /** Baseline */
+            baseline: number;
+            /** Changed */
+            changed: boolean;
+            /** Feature */
+            feature: string;
+            /** Label */
+            label: string;
+            /** Outside Training Range */
+            outside_training_range: boolean;
+            /** Scenario */
+            scenario: number;
+            /** Training Max */
+            training_max: number | null;
+            /** Training Min */
+            training_min: number | null;
+            /** Unusual */
+            unusual: boolean;
+        };
+        /** ScenarioProbability */
+        ScenarioProbability: {
+            /** Band */
+            band: string;
+            /** Probability */
+            probability: number;
+        };
+        /** ScenarioRequest */
+        ScenarioRequest: {
+            /** As Of */
+            as_of?: string | null;
+            /** Country */
+            country: string;
+            /**
+             * Horizon
+             * @description 2 or 4 quarters
+             */
+            horizon: number;
+            shocks?: components["schemas"]["ScenarioShocks"];
+        };
+        /** ScenarioResult */
+        ScenarioResult: {
+            /** As Of */
+            as_of: string;
+            baseline: components["schemas"]["ScenarioProbability"];
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Contributions */
+            contributions: components["schemas"]["ScenarioContribution"][];
+            /** Country */
+            country: string;
+            /** Delta */
+            delta: number;
+            /** Disclaimer */
+            disclaimer: string;
+            /** Explanation Method */
+            explanation_method: string;
+            /** Explanation Unit */
+            explanation_unit: string;
+            /** Horizon */
+            horizon: number;
+            /** Inputs */
+            inputs: components["schemas"]["ScenarioInput"][];
+            /** Joint Check */
+            joint_check: {
+                [key: string]: unknown;
+            };
+            /** Model */
+            model: {
+                [key: string]: string;
+            };
+            scenario: components["schemas"]["ScenarioProbability"];
+            /** Shocks */
+            shocks: {
+                [key: string]: number;
+            };
+            /** Warnings */
+            warnings: string[];
+        };
+        /** ScenarioShocks */
+        ScenarioShocks: {
+            /**
+             * Gdp
+             * @description pp on latest q/q real-GDP growth
+             * @default 0
+             */
+            gdp: number;
+            /**
+             * Inflation
+             * @description pp on inflation
+             * @default 0
+             */
+            inflation: number;
+            /**
+             * Long Rate
+             * @description pp on the 10-year yield
+             * @default 0
+             */
+            long_rate: number;
+            /**
+             * Policy Rate
+             * @description pp on the policy rate
+             * @default 0
+             */
+            policy_rate: number;
+            /**
+             * Unemployment
+             * @description pp on the unemployment rate
+             * @default 0
+             */
+            unemployment: number;
+        };
+        /** ScenarioSpec */
+        ScenarioSpec: {
+            /** Disclaimer */
+            disclaimer: string;
+            /** Shocks */
+            shocks: components["schemas"]["ShockSpec"][];
+        };
         /** SeriesPoint */
         SeriesPoint: {
             /** Period */
@@ -1075,6 +1421,23 @@ export interface components {
              * @description Dataset update stamp reported by the source.
              */
             source_updated_at: string | null;
+        };
+        /** ShockSpec */
+        ShockSpec: {
+            /** Effect */
+            effect: string;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Maximum */
+            maximum: number;
+            /** Minimum */
+            minimum: number;
+            /** Step */
+            step: number;
+            /** Unit */
+            unit: string;
         };
         /** SourceMappingInfo */
         SourceMappingInfo: {
@@ -1266,6 +1629,13 @@ export interface components {
             /** Error Type */
             type: string;
         };
+        /** ValuePoint */
+        ValuePoint: {
+            /** Period */
+            period: string;
+            /** Value */
+            value: number;
+        };
     };
     responses: never;
     parameters: never;
@@ -1410,6 +1780,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DataQualityReport"];
+                };
+            };
+        };
+    };
+    get_forecast_api_forecasts_get: {
+        parameters: {
+            query: {
+                country: string;
+                metric: string;
+                /** @description Quarters ahead: 1, 2, 4 or 8. */
+                horizon?: number;
+                as_of?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ForecastResponse"];
+                };
+            };
+            /** @description Not enough published history. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, metric or horizon. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many compute requests. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Series not synced. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -1814,6 +2246,86 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    evaluate_scenario_api_scenarios_evaluate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ScenarioRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioResult"];
+                };
+            };
+            /** @description Inputs not available for the as-of. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Invalid country, horizon or shock. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many compute requests. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / artifact. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    scenario_spec_api_scenarios_spec_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ScenarioSpec"];
                 };
             };
         };

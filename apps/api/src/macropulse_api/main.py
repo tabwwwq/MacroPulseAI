@@ -14,13 +14,16 @@ from macropulse_api.db import build_engine, build_sessionmaker
 from macropulse_api.errors import install_error_handlers
 from macropulse_api.logging_config import configure_logging
 from macropulse_api.middleware import install_request_middleware
+from macropulse_api.ratelimit import RateLimiter
 from macropulse_api.routers import (
     countries,
+    forecasts,
     health,
     indicators,
     models,
     quality,
     recession,
+    scenarios,
     series,
     sources,
     summary,
@@ -58,6 +61,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = settings
     app.state.engine = engine
     app.state.sessionmaker = build_sessionmaker(engine)
+    app.state.compute_limiter = RateLimiter(settings.compute_requests_per_minute)
 
     app.add_middleware(
         CORSMiddleware,
@@ -79,4 +83,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(quality.router)
     app.include_router(models.router)
     app.include_router(recession.router)
+    app.include_router(forecasts.router)
+    app.include_router(scenarios.router)
     return app

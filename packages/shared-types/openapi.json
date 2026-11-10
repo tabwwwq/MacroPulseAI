@@ -587,6 +587,450 @@
         "title": "EstimateOutcome",
         "type": "object"
       },
+      "ForecastBacktest": {
+        "properties": {
+          "first_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Origin"
+          },
+          "last_origin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Origin"
+          },
+          "metrics": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastMetric"
+            },
+            "title": "Metrics",
+            "type": "array"
+          }
+        },
+        "required": [
+          "first_origin",
+          "last_origin",
+          "metrics"
+        ],
+        "title": "ForecastBacktest",
+        "type": "object"
+      },
+      "ForecastErrorPoint": {
+        "properties": {
+          "actual": {
+            "title": "Actual",
+            "type": "number"
+          },
+          "error": {
+            "title": "Error",
+            "type": "number"
+          },
+          "forecast": {
+            "title": "Forecast",
+            "type": "number"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "origin": {
+            "title": "Origin",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "model",
+          "origin",
+          "target",
+          "forecast",
+          "actual",
+          "error"
+        ],
+        "title": "ForecastErrorPoint",
+        "type": "object"
+      },
+      "ForecastMetric": {
+        "properties": {
+          "bias": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Mean of actual minus forecast.",
+            "title": "Bias"
+          },
+          "coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of actuals inside the 80 % interval.",
+            "title": "Coverage"
+          },
+          "coverage_n": {
+            "title": "Coverage N",
+            "type": "integer"
+          },
+          "horizon_quarters": {
+            "title": "Horizon Quarters",
+            "type": "integer"
+          },
+          "mae": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mae"
+          },
+          "mean_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Width"
+          },
+          "model": {
+            "title": "Model",
+            "type": "string"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "rel_rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "RMSE divided by the naive RMSE on the same origins.",
+            "title": "Rel Rmse"
+          },
+          "rmse": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rmse"
+          },
+          "step": {
+            "title": "Step",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "model",
+          "step",
+          "horizon_quarters",
+          "n",
+          "mae",
+          "rmse",
+          "bias",
+          "rel_rmse",
+          "coverage",
+          "coverage_n",
+          "mean_width",
+          "note"
+        ],
+        "title": "ForecastMetric",
+        "type": "object"
+      },
+      "ForecastModel": {
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "path": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastPoint"
+            },
+            "title": "Path",
+            "type": "array"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "description",
+          "available",
+          "reason",
+          "path"
+        ],
+        "title": "ForecastModel",
+        "type": "object"
+      },
+      "ForecastPoint": {
+        "properties": {
+          "lower": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Empirical 80 % interval (None: too few past errors).",
+            "title": "Lower"
+          },
+          "n_errors": {
+            "description": "Past backtest errors the interval is based on.",
+            "title": "N Errors",
+            "type": "integer"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "step": {
+            "title": "Step",
+            "type": "integer"
+          },
+          "upper": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "step",
+          "value",
+          "lower",
+          "upper",
+          "n_errors"
+        ],
+        "title": "ForecastPoint",
+        "type": "object"
+      },
+      "ForecastResponse": {
+        "properties": {
+          "actuals": {
+            "items": {
+              "$ref": "#/components/schemas/ValuePoint"
+            },
+            "title": "Actuals",
+            "type": "array"
+          },
+          "as_of": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Assumptions",
+            "type": "array"
+          },
+          "backtest": {
+            "$ref": "#/components/schemas/ForecastBacktest"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "cutoff": {
+            "format": "date",
+            "title": "Cutoff",
+            "type": "string"
+          },
+          "errors": {
+            "description": "Backtest errors at the requested horizon.",
+            "items": {
+              "$ref": "#/components/schemas/ForecastErrorPoint"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "string"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "horizon_quarters": {
+            "title": "Horizon Quarters",
+            "type": "integer"
+          },
+          "indicator_name": {
+            "title": "Indicator Name",
+            "type": "string"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "min_errors": {
+            "title": "Min Errors",
+            "type": "integer"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/ForecastModel"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "nominal_coverage": {
+            "title": "Nominal Coverage",
+            "type": "number"
+          },
+          "origin": {
+            "description": "Last observation used (published by the cut-off).",
+            "title": "Origin",
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/SeriesProvenance"
+          },
+          "realised": {
+            "description": "Observations after the origin (past as-of).",
+            "items": {
+              "$ref": "#/components/schemas/ValuePoint"
+            },
+            "title": "Realised",
+            "type": "array"
+          },
+          "steps": {
+            "description": "Horizon in native periods (months for monthly series).",
+            "title": "Steps",
+            "type": "integer"
+          },
+          "transform": {
+            "title": "Transform",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "country",
+          "metric",
+          "indicator_name",
+          "unit",
+          "frequency",
+          "horizon_quarters",
+          "steps",
+          "as_of",
+          "cutoff",
+          "origin",
+          "version",
+          "nominal_coverage",
+          "min_errors",
+          "actuals",
+          "realised",
+          "models",
+          "backtest",
+          "errors",
+          "assumptions",
+          "transform",
+          "provenance",
+          "generated_at"
+        ],
+        "title": "ForecastResponse",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1960,6 +2404,331 @@
         "title": "RiskBand",
         "type": "object"
       },
+      "ScenarioContribution": {
+        "properties": {
+          "baseline": {
+            "title": "Baseline",
+            "type": "number"
+          },
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "scenario": {
+            "title": "Scenario",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "baseline",
+          "scenario",
+          "delta"
+        ],
+        "title": "ScenarioContribution",
+        "type": "object"
+      },
+      "ScenarioInput": {
+        "properties": {
+          "baseline": {
+            "title": "Baseline",
+            "type": "number"
+          },
+          "changed": {
+            "title": "Changed",
+            "type": "boolean"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "outside_training_range": {
+            "title": "Outside Training Range",
+            "type": "boolean"
+          },
+          "scenario": {
+            "title": "Scenario",
+            "type": "number"
+          },
+          "training_max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Max"
+          },
+          "training_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Training Min"
+          },
+          "unusual": {
+            "title": "Unusual",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "baseline",
+          "scenario",
+          "changed",
+          "training_min",
+          "training_max",
+          "outside_training_range",
+          "unusual"
+        ],
+        "title": "ScenarioInput",
+        "type": "object"
+      },
+      "ScenarioProbability": {
+        "properties": {
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "probability": {
+            "title": "Probability",
+            "type": "number"
+          }
+        },
+        "required": [
+          "probability",
+          "band"
+        ],
+        "title": "ScenarioProbability",
+        "type": "object"
+      },
+      "ScenarioRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-Q[1-4]$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "country": {
+            "pattern": "^[A-Za-z]{2}$",
+            "title": "Country",
+            "type": "string"
+          },
+          "horizon": {
+            "description": "2 or 4 quarters",
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "shocks": {
+            "$ref": "#/components/schemas/ScenarioShocks"
+          }
+        },
+        "required": [
+          "country",
+          "horizon"
+        ],
+        "title": "ScenarioRequest",
+        "type": "object"
+      },
+      "ScenarioResult": {
+        "properties": {
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "baseline": {
+            "$ref": "#/components/schemas/ScenarioProbability"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "contributions": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioContribution"
+            },
+            "title": "Contributions",
+            "type": "array"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "delta": {
+            "title": "Delta",
+            "type": "number"
+          },
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "explanation_method": {
+            "title": "Explanation Method",
+            "type": "string"
+          },
+          "explanation_unit": {
+            "title": "Explanation Unit",
+            "type": "string"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "inputs": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioInput"
+            },
+            "title": "Inputs",
+            "type": "array"
+          },
+          "joint_check": {
+            "additionalProperties": true,
+            "title": "Joint Check",
+            "type": "object"
+          },
+          "model": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Model",
+            "type": "object"
+          },
+          "scenario": {
+            "$ref": "#/components/schemas/ScenarioProbability"
+          },
+          "shocks": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Shocks",
+            "type": "object"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "as_of",
+          "model",
+          "shocks",
+          "baseline",
+          "scenario",
+          "delta",
+          "explanation_unit",
+          "explanation_method",
+          "inputs",
+          "contributions",
+          "joint_check",
+          "warnings",
+          "disclaimer",
+          "computed_at"
+        ],
+        "title": "ScenarioResult",
+        "type": "object"
+      },
+      "ScenarioShocks": {
+        "additionalProperties": false,
+        "properties": {
+          "gdp": {
+            "default": 0.0,
+            "description": "pp on latest q/q real-GDP growth",
+            "maximum": 5.0,
+            "minimum": -5.0,
+            "title": "Gdp",
+            "type": "number"
+          },
+          "inflation": {
+            "default": 0.0,
+            "description": "pp on inflation",
+            "maximum": 5.0,
+            "minimum": -5.0,
+            "title": "Inflation",
+            "type": "number"
+          },
+          "long_rate": {
+            "default": 0.0,
+            "description": "pp on the 10-year yield",
+            "maximum": 3.0,
+            "minimum": -3.0,
+            "title": "Long Rate",
+            "type": "number"
+          },
+          "policy_rate": {
+            "default": 0.0,
+            "description": "pp on the policy rate",
+            "maximum": 4.0,
+            "minimum": -4.0,
+            "title": "Policy Rate",
+            "type": "number"
+          },
+          "unemployment": {
+            "default": 0.0,
+            "description": "pp on the unemployment rate",
+            "maximum": 4.0,
+            "minimum": -4.0,
+            "title": "Unemployment",
+            "type": "number"
+          }
+        },
+        "title": "ScenarioShocks",
+        "type": "object"
+      },
+      "ScenarioSpec": {
+        "properties": {
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "shocks": {
+            "items": {
+              "$ref": "#/components/schemas/ShockSpec"
+            },
+            "title": "Shocks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "shocks",
+          "disclaimer"
+        ],
+        "title": "ScenarioSpec",
+        "type": "object"
+      },
       "SeriesPoint": {
         "properties": {
           "period": {
@@ -2076,6 +2845,49 @@
           "native_observations"
         ],
         "title": "SeriesProvenance",
+        "type": "object"
+      },
+      "ShockSpec": {
+        "properties": {
+          "effect": {
+            "title": "Effect",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "maximum": {
+            "title": "Maximum",
+            "type": "number"
+          },
+          "minimum": {
+            "title": "Minimum",
+            "type": "number"
+          },
+          "step": {
+            "title": "Step",
+            "type": "number"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "unit",
+          "minimum",
+          "maximum",
+          "step",
+          "effect"
+        ],
+        "title": "ShockSpec",
         "type": "object"
       },
       "SourceMappingInfo": {
@@ -2677,6 +3489,24 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "ValuePoint": {
+        "properties": {
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "period",
+          "value"
+        ],
+        "title": "ValuePoint",
+        "type": "object"
       }
     }
   },
@@ -2889,6 +3719,118 @@
         "summary": "Lineage and latest quality checks of every mapped native series",
         "tags": [
           "data quality"
+        ]
+      }
+    },
+    "/api/forecasts": {
+      "get": {
+        "operationId": "get_forecast_api_forecasts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "metric",
+            "required": true,
+            "schema": {
+              "pattern": "^[a-z0-9_]{2,40}$",
+              "title": "Metric",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 1, 2, 4 or 8.",
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "description": "Quarters ahead: 1, 2, 4 or 8.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "as_of",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^\\d{4}-Q[1-4]$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "As Of"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not enough published history."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, metric or horizon."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many compute requests."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Series not synced."
+          }
+        },
+        "summary": "Forecast of real GDP growth, inflation or unemployment with backtest diagnostics",
+        "tags": [
+          "forecasts"
         ]
       }
     },
@@ -3493,6 +4435,98 @@
         "summary": "Probability of a technical recession within 2 or 4 quarters (live inference)",
         "tags": [
           "recession"
+        ]
+      }
+    },
+    "/api/scenarios/evaluate": {
+      "post": {
+        "operationId": "evaluate_scenario_api_scenarios_evaluate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScenarioRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioResult"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Inputs not available for the as-of."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Invalid country, horizon or shock."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many compute requests."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / artifact."
+          }
+        },
+        "summary": "Baseline vs shocked recession probability (sensitivity, not causal simulation)",
+        "tags": [
+          "scenarios"
+        ]
+      }
+    },
+    "/api/scenarios/spec": {
+      "get": {
+        "operationId": "scenario_spec_api_scenarios_spec_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioSpec"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Available shocks, bounds and mapping",
+        "tags": [
+          "scenarios"
         ]
       }
     },

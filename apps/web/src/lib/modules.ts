@@ -107,12 +107,13 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: ChartSpline,
     phase: 7,
-    state: "foundation",
+    state: "built",
     summary: "Multi-step forecasts for GDP growth, inflation and unemployment with empirical intervals.",
     capabilities: [
-      "Naive baselines plus a stronger challenger, evaluated with rolling backtests",
-      "Historical actuals, dashed projections and empirically calibrated interval ribbons",
-      "Error diagnostics and downloads; N/A rather than invented values",
+      "Naive and rolling-mean baselines plus a direct ridge AR challenger, scored in rolling-origin backtests",
+      "Published history, dashed projection and an empirical 80 % interval built from past errors only",
+      "MAE, RMSE vs naive and measured interval coverage per horizon; past as-of with later-published values",
+      "CSV/PNG downloads with units, origin and source; N/A where history is too short",
     ],
     prerequisites: ["Observations ingested (Phase 3)", "Forecast backtests (Phase 7)"],
   },
@@ -123,12 +124,13 @@ export const MODULES: AppModule[] = [
     group: "Models",
     icon: SlidersHorizontal,
     phase: 7,
-    state: "planned",
+    state: "built",
     summary: "Exploratory model sensitivity analysis — not a causal economic simulation.",
     capabilities: [
-      "Sliders for inflation, unemployment, policy-rate and GDP shocks with bounded inputs",
-      "Baseline vs scenario risk and feature-contribution deltas",
-      "Out-of-distribution warnings, reset, save and export",
+      "Bounded sliders for GDP, inflation, unemployment, policy-rate and long-rate shocks",
+      "Baseline vs scenario probability of the published model and contribution deltas",
+      "Per-input training-range flags and a joint (Mahalanobis) plausibility check",
+      "Reset, shareable URL, save in this browser and JSON export",
     ],
     prerequisites: ["Trained and evaluated model (Phase 5)"],
   },
@@ -212,4 +214,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 6, name: "Explainable risk & ML lab", total: 10 } as const;
+export const CURRENT_PHASE = { number: 7, name: "Forecasts & scenario lab", total: 10 } as const;

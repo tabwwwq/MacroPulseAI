@@ -132,19 +132,24 @@ Acceptance criteria:
 
 ## Phase 7 — Forecasts and scenario simulator
 
-**Status:** Planned; `/forecasts` and `/scenarios` are not-built routes.
+**Status:** ✅ Complete (2026-11-10). `/forecasts` serves rolling-origin backtested forecasts of real GDP growth,
+inflation and unemployment for all 15 country/indicator series; `/scenarios` re-scores the published recession
+model under bounded input shocks. `pnpm smoke`: 2105/2105 checks, including every forecast series and a scenario
+round trip for 5 countries × 2 horizons. Result stated plainly: the 80 % intervals **under-cover** (median measured
+coverage 74 % one quarter ahead, 71 % at eight quarters, 50 % at worst) and the AR challenger beats the naive
+forecast one quarter ahead for only 8 of 15 series.
 **Goal:** Provide evaluated indicator forecasts and bounded non-causal sensitivity analysis.
 **Deliverables:** GDP growth/inflation/unemployment forecasts, naive baselines and stronger
 challenger, rolling backtests, empirical intervals and functional scenario controls.
 
 Acceptance criteria:
 
-- [ ] Run reproducible rolling backtests for supported forecast series; show actual errors and baseline comparisons or explicit insufficiency reasons.
-- [ ] Forecasts distinguish actuals/projections and use documented, empirically tested intervals with stated assumptions.
-- [ ] Scenario inputs are validated/bounded, requests debounced, and slider changes alter real model calculations with baseline/delta shown.
-- [ ] Display “Exploratory model sensitivity analysis, not a causal economic simulation” and out-of-distribution/unsupported-combination warnings.
-- [ ] Reset/save/export actions work and preserve country/as-of/model context; unavailable calculations stay unavailable.
-- [ ] Demonstrate one complete forecast/scenario interaction; API/UI tests and build pass.
+- [x] Run reproducible rolling backtests for supported forecast series; show actual errors and baseline comparisons or explicit insufficiency reasons. *(`packages/ml/forecast.py`: naive, rolling mean and a direct ridge AR refitted at every origin on data known then; MAE, RMSE, RMSE vs naive on common origins, bias and coverage per horizon; fewer than 20 scored errors → N/A with the reason; 404 `forecast_unavailable` when history is too short. Deterministic, no random state.)*
+- [x] Forecasts distinguish actuals/projections and use documented, empirically tested intervals with stated assumptions. *(Solid published history, dashed projection, 80 % ribbon from the 10th/90th percentiles of the model's own past errors; coverage is measured with intervals built only from errors already known at each origin, shown per horizon and flagged "under" when > 10 points below nominal; assumptions listed on the page and in the API.)*
+- [x] Scenario inputs are validated/bounded, requests debounced, and slider changes alter real model calculations with baseline/delta shown. *(Pydantic bounds with `extra="forbid"`; 350 ms debounce; the published artifact scores baseline and shocked inputs; documented mechanical mapping per shock.)*
+- [x] Display “Exploratory model sensitivity analysis, not a causal economic simulation” and out-of-distribution/unsupported-combination warnings. *(Banner on the page and `disclaimer` in every response; per-input training min/max and 5–95 % flags; joint squared-Mahalanobis check against the training covariance with a χ²(11) 99 % line.)*
+- [x] Reset/save/export actions work and preserve country/as-of/model context; unavailable calculations stay unavailable. *(Shocks, horizon, country and as-of in the URL; saved scenarios in this browser's localStorage with model version; JSON export with request, result and disclaimer; untrained horizon → 503 "Model not available".)*
+- [x] Demonstrate one complete forecast/scenario interaction; API/UI tests and build pass. *(Browser: DE/US/FR/BE forecasts incl. US unemployment as of 2019-Q4 against the COVID spike; NL 2Q scenario GDP −1.5 pp, unemployment +2 pp: 2.3 % → 20.6 %, saved, reloaded, loaded, reset, deleted. 217 pytest, 92 Vitest, `next build`.)*
 
 ## Phase 8 — Historical Crisis Time Machine
 

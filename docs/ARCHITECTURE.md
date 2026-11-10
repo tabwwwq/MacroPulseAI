@@ -104,7 +104,7 @@ The following is a **PLANNED entity allocation**, not a claim that migrations ex
 | `model_versions` | Artifact, training cutoff, target/feature versions, sample counts, snapshot and evaluation method | 5 implemented (migration `0003`) |
 | `model_metrics` | Walk-forward/baseline/calibration results and undefined-metric reasons | 5 implemented; display in 6 |
 | `prediction_runs`, `predictions` | `model_predictions` stores out-of-sample backtest and current (`live`) estimates per model version (5); on-request inference runs in 6 | 5–6 |
-| `scenario_runs` | Bounded sensitivity inputs, baseline/delta and warnings | 7 |
+| `scenario_runs` | Not a table: evaluation is stateless and recomputed on request; saved scenarios stay in the browser (localStorage) and export as JSON with request, result and disclaimer | 7 (no server-side persistence) |
 | `report_exports` | Export selection, generation status, citations and artifact metadata | 9 |
 
 Country support is computed from stored observations: `full` needs verified, fresh real GDP,
@@ -158,7 +158,14 @@ Labels, as-of feature snapshots, walk-forward training/evaluation and versioned 
 `model_metrics` and `model_predictions` and read through `/api/models`. Inference with explanations is
 **implemented** (Phase 6): `services/inference.py` rebuilds the as-of snapshot from stored data, loads the
 published artifact only from `MODELS_DIR` and returns the probability with version, explanation, track
-record and an in-sample flag (`/api/recession/predict`, `/api/recession/history`).
+record and an in-sample flag (`/api/recession/predict`, `/api/recession/history`). Forecasts and scenarios
+are **implemented** (Phase 7): `packages/ml/forecast.py` runs a deterministic rolling-origin backtest (naive,
+rolling mean, direct ridge AR) and builds empirical 80 % intervals from past errors only;
+`services/forecasts.py` cuts the series at the as-of with the publication lags and caches results per stored
+series and origin. `services/scenarios.py` maps bounded shocks onto the model inputs, re-scores them with the
+published artifact and checks each input and the combination against the training distribution
+([ADR-0017](../vault/30%20Decisions/ADR-0017%20Forecasts%20from%20rolling-origin%20backtests.md),
+[ADR-0018](../vault/30%20Decisions/ADR-0018%20Scenario%20lab%20as%20bounded%20model%20sensitivity.md)).
 
 ```mermaid
 flowchart TD
@@ -188,11 +195,11 @@ flowchart TD
 | Area | Exists now | Planned / still to verify |
 |---|---|---|
 | Secrets | Server-side `SecretStr` FRED setting; source API exposes configured boolean only | Bundle/history/deployment secret audit in 10 |
-| Request boundary | Pydantic country validation, parameterized ORM queries, explicit CORS origins, wildcard rejected, credentials disabled | Bounds for dates/metrics/scenarios/exports as introduced |
+| Request boundary | Pydantic country validation, parameterized ORM queries, explicit CORS origins, wildcard rejected, credentials disabled; bounded forecast metric/horizon/as-of and scenario shocks (`extra="forbid"`) | Bounds for reports/exports as introduced |
 | Browser boundary | Same-origin proxy; nosniff, frame denial, referrer and permissions headers | Production deployment verification in 10 |
 | Failures/observability | Request IDs, JSON logs, safe error envelope, DB error-class logging, readiness diagnostics and retry UI | Job run metrics, safe connector error summaries, monitoring and broader log audit |
 | Data reliability | Metadata registry, migrations and ingestion bookkeeping | Actual sync, quality checks, provenance, freshness and partial-failure handling in 3–4 |
-| Expensive operations | No sync/train/scenario/report mutation endpoints currently registered | Rate limiting and restricted job execution before exposing costly operations; no arbitrary shell, URL fetch or unsafe upload |
+| Expensive operations | No sync/train/report mutation endpoints registered; forecast and scenario computation is read-only, cached where possible and limited in process (`COMPUTE_REQUESTS_PER_MINUTE`, default 240 per client address, 429 with `Retry-After`) | A shared limiter for multi-instance deployments; restricted job execution; no arbitrary shell, URL fetch or unsafe upload |
 | Persistence | SQLAlchemy naming convention, SQLite foreign keys, SQLite batch migrations | PostgreSQL/compose runtime validation; backup/deployment procedures |
 | Verification | Lead-reported local Phase 1 checks | Docker/compose and full release E2E checks remain unverified |
 

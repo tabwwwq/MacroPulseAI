@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     fred_api_key: SecretStr | None = None
     # Trained model artifacts. The API only ever loads artifacts from inside this directory.
     models_dir: Path = REPO_ROOT / "models" / "artifacts"
+    # Forecast and scenario requests per client address and minute (0 disables the limit).
+    compute_requests_per_minute: int = Field(default=240, ge=0, le=100_000)
 
     @field_validator("api_cors_origins", mode="before")
     @classmethod

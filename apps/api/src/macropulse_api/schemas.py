@@ -478,3 +478,169 @@ class SplitCurves(BaseModel):
 class ModelCurves(BaseModel):
     model_id: str
     splits: list[SplitCurves]
+
+
+# ------------------------------------------------------------------ forecasts (Phase 7)
+
+
+class ValuePoint(BaseModel):
+    period: str
+    value: float
+
+
+class ForecastPoint(BaseModel):
+    period: str
+    step: int
+    value: float
+    lower: float | None = Field(description="Empirical 80 % interval (None: too few past errors).")
+    upper: float | None
+    n_errors: int = Field(description="Past backtest errors the interval is based on.")
+
+
+class ForecastModel(BaseModel):
+    key: str
+    name: str
+    description: str
+    available: bool
+    reason: str | None
+    path: list[ForecastPoint]
+
+
+class ForecastMetric(BaseModel):
+    model: str
+    step: int
+    horizon_quarters: int
+    n: int
+    mae: float | None
+    rmse: float | None
+    bias: float | None = Field(description="Mean of actual minus forecast.")
+    rel_rmse: float | None = Field(
+        description="RMSE divided by the naive RMSE on the same origins."
+    )
+    coverage: float | None = Field(description="Share of actuals inside the 80 % interval.")
+    coverage_n: int
+    mean_width: float | None
+    note: str | None
+
+
+class ForecastBacktest(BaseModel):
+    first_origin: str | None
+    last_origin: str | None
+    metrics: list[ForecastMetric]
+
+
+class ForecastErrorPoint(BaseModel):
+    model: str
+    origin: str
+    target: str
+    forecast: float
+    actual: float
+    error: float
+
+
+class ForecastResponse(BaseModel):
+    country: str
+    metric: str
+    indicator_name: str
+    unit: str
+    frequency: str
+    horizon_quarters: int
+    steps: int = Field(description="Horizon in native periods (months for monthly series).")
+    as_of: str | None
+    cutoff: date
+    origin: str = Field(description="Last observation used (published by the cut-off).")
+    version: str
+    nominal_coverage: float
+    min_errors: int
+    actuals: list[ValuePoint]
+    realised: list[ValuePoint] = Field(description="Observations after the origin (past as-of).")
+    models: list[ForecastModel]
+    backtest: ForecastBacktest
+    errors: list[ForecastErrorPoint] = Field(
+        description="Backtest errors at the requested horizon."
+    )
+    assumptions: list[str]
+    transform: str
+    provenance: SeriesProvenance
+    generated_at: datetime
+
+
+# ------------------------------------------------------------------ scenarios (Phase 7)
+
+
+class ScenarioShocks(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    gdp: float = Field(0.0, ge=-5, le=5, description="pp on latest q/q real-GDP growth")
+    inflation: float = Field(0.0, ge=-5, le=5, description="pp on inflation")
+    unemployment: float = Field(0.0, ge=-4, le=4, description="pp on the unemployment rate")
+    policy_rate: float = Field(0.0, ge=-4, le=4, description="pp on the policy rate")
+    long_rate: float = Field(0.0, ge=-3, le=3, description="pp on the 10-year yield")
+
+
+class ScenarioRequest(BaseModel):
+    model_config = {"extra": "forbid"}
+
+    country: str = Field(pattern=r"^[A-Za-z]{2}$")
+    horizon: int = Field(description="2 or 4 quarters")
+    as_of: str | None = Field(default=None, pattern=r"^\d{4}-Q[1-4]$")
+    shocks: ScenarioShocks = Field(default_factory=ScenarioShocks)
+
+
+class ShockSpec(BaseModel):
+    key: str
+    label: str
+    unit: str
+    minimum: float
+    maximum: float
+    step: float
+    effect: str
+
+
+class ScenarioSpec(BaseModel):
+    shocks: list[ShockSpec]
+    disclaimer: str
+
+
+class ScenarioProbability(BaseModel):
+    probability: float
+    band: str
+
+
+class ScenarioInput(BaseModel):
+    feature: str
+    label: str
+    baseline: float
+    scenario: float
+    changed: bool
+    training_min: float | None
+    training_max: float | None
+    outside_training_range: bool
+    unusual: bool
+
+
+class ScenarioContribution(BaseModel):
+    feature: str
+    label: str
+    baseline: float
+    scenario: float
+    delta: float
+
+
+class ScenarioResult(BaseModel):
+    country: str
+    horizon: int
+    as_of: str
+    model: dict[str, str]
+    shocks: dict[str, float]
+    baseline: ScenarioProbability
+    scenario: ScenarioProbability
+    delta: float
+    explanation_unit: str
+    explanation_method: str
+    inputs: list[ScenarioInput]
+    contributions: list[ScenarioContribution]
+    joint_check: dict[str, Any]
+    warnings: list[str]
+    disclaimer: str
+    computed_at: datetime

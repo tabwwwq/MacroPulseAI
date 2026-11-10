@@ -1,4 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+
+import type { ScenarioRequest } from "@macropulse/shared-types";
 
 import { api, ApiError, fetchReady, unwrap } from "@/lib/api";
 
@@ -19,6 +21,11 @@ export const queryKeys = {
   history: (iso2: string, horizon: number) => ["recession", "history", iso2.toUpperCase(), horizon] as const,
   modelDetail: (id: string) => ["models", id, "metrics"] as const,
   modelCurves: (id: string) => ["models", id, "curves"] as const,
+  forecast: (iso2: string, metric: string, horizon: number, asOf: string | null) =>
+    ["forecasts", iso2.toUpperCase(), metric, horizon, asOf ?? "latest"] as const,
+  scenarioSpec: ["scenarios", "spec"] as const,
+  scenario: (r: ScenarioRequest | null) =>
+    ["scenarios", "evaluate", r?.country ?? "", r?.horizon ?? 0, r?.as_of ?? "latest", JSON.stringify(r?.shocks ?? {})] as const,
 };
 
 /** 404/503 are answers (not trained, inputs not published), not transient failures. */
@@ -47,6 +54,44 @@ export function useRecessionHistory(iso2: string, horizon: 2 | 4) {
   return useQuery({
     queryKey: queryKeys.history(iso2, horizon),
     queryFn: () => unwrap(api.GET("/api/recession/history", { params: { query: { country: iso2, horizon } } })),
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** Forecast paths of every model, empirical intervals and rolling-origin backtest diagnostics. */
+export function useForecast(iso2: string | null, metric: string, horizon: number, asOf: string | null) {
+  return useQuery({
+    queryKey: queryKeys.forecast(iso2 ?? "", metric, horizon, asOf),
+    queryFn: () =>
+      unwrap(
+        api.GET("/api/forecasts", {
+          params: { query: { country: iso2 ?? "", metric, horizon, ...(asOf ? { as_of: asOf } : {}) } },
+        }),
+      ),
+    enabled: Boolean(iso2 && /^[A-Za-z]{2}$/.test(iso2)),
+    staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** Shocks the scenario lab accepts, with their bounds and how each maps onto model inputs. */
+export function useScenarioSpec() {
+  return useQuery({
+    queryKey: queryKeys.scenarioSpec,
+    queryFn: () => unwrap(api.GET("/api/scenarios/spec")),
+    staleTime: Infinity,
+  });
+}
+
+/** Baseline vs shocked probability of the published model. Keeps the previous answer on screen
+ *  while a new slider position is evaluated. */
+export function useScenarioEvaluation(request: ScenarioRequest | null) {
+  return useQuery({
+    queryKey: queryKeys.scenario(request),
+    queryFn: () => unwrap(api.POST("/api/scenarios/evaluate", { body: request as ScenarioRequest })),
+    enabled: request !== null,
+    placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
     retry: retryUnlessAnswer,
   });

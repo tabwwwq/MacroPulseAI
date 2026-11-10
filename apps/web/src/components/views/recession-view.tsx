@@ -1,8 +1,7 @@
 "use client";
 
-import { Gauge, TriangleExclamationPoint } from "lucide-react";
+import { Gauge } from "lucide-react";
 import Link from "next/link";
-import type { ReactNode } from "react";
 
 import type { RecessionEstimate } from "@macropulse/shared-types";
 
@@ -12,6 +11,7 @@ import { ProbabilityGauge } from "@/components/model/probability-gauge";
 import { CountryRequired } from "@/components/views/country-required";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
+import { Fact, Warning } from "@/components/ui/facts";
 import { WidgetBoundary } from "@/components/ui/error-boundary";
 import { PageHeader } from "@/components/ui/page-header";
 import { Segmented } from "@/components/ui/segmented";
@@ -33,24 +33,6 @@ import {
 } from "@/lib/risk";
 
 type Horizon = 2 | 4;
-
-function Fact({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-line/60 py-1.5 text-xs last:border-0">
-      <dt className="shrink-0 text-fg-subtle">{label}</dt>
-      <dd className="min-w-0 break-words text-right font-mono text-fg">{children}</dd>
-    </div>
-  );
-}
-
-function Warning({ children }: { children: ReactNode }) {
-  return (
-    <div role="note" className="flex gap-2 rounded-lg border border-warn/30 bg-warn/[0.07] p-3 text-xs leading-relaxed text-fg-muted">
-      <TriangleExclamationPoint className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
-      <div>{children}</div>
-    </div>
-  );
-}
 
 function outcomeText(e: RecessionEstimate): string {
   if (e.outcome.status === "censored") return `not known yet (window ${e.outcome.window.join(", ")})`;

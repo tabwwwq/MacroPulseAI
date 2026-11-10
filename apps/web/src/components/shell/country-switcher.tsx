@@ -6,14 +6,20 @@ import { Check, ChevronDown, Globe } from "lucide-react";
 import { SupportBadge } from "@/components/data/support-badge";
 import { useAppContext } from "@/lib/context";
 import { useCountries } from "@/lib/queries";
+import { useHydrated } from "@/lib/use-hydrated";
 
 /**
  * Global country selection. On a country page it navigates to the chosen country; on every other
  * page it sets ?country= so module views (risk, forecasts, …) follow the selection.
  */
 export function CountrySwitcher() {
-  const { data, isPending, isError } = useCountries();
+  const query = useCountries();
   const { country, setCountry } = useAppContext();
+  // Until hydrated, render exactly what the server rendered (the query was pending there).
+  const hydrated = useHydrated();
+  const data = hydrated ? query.data : undefined;
+  const isPending = !hydrated || query.isPending;
+  const isError = hydrated && query.isError;
   const unavailable = isPending || isError || !data;
   const supported = data?.items.some((c) => c.iso2 === country) ?? false;
 

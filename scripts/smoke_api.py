@@ -51,6 +51,27 @@ class Smoke:
             self.check(False, f"{path}: body is not JSON")
             return status, None
 
+    def post_json(
+        self, path: str, payload: Any, allowed: set[int] | None = None
+    ) -> tuple[int, Any]:
+        req = urllib.request.Request(  # noqa: S310 - scheme validated in __init__
+            self.base + path,
+            data=json.dumps(payload).encode(),
+            headers={"User-Agent": "macropulse-smoke", "Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+                status, body = r.status, r.read()
+        except urllib.error.HTTPError as e:
+            status, body = e.code, e.read()
+        self.check(status in {200} | (allowed or set()), f"POST {path}: HTTP {status}")
+        try:
+            return status, json.loads(body)
+        except ValueError:
+            self.check(False, f"POST {path}: body is not JSON")
+            return status, None
+
     def check(self, condition: bool, message: str) -> None:
         self.checks += 1
         if not condition:
@@ -171,6 +192,77 @@ def check_models(s: Smoke, countries: list[str]) -> None:
     print(f"models: run {models['run_id']}, {len(models['items'])} versions, inference checked")
 
 
+def check_forecasts(s: Smoke, countries: list[str]) -> None:
+    """Every country x forecast metric at one horizon, plus a past as-of: paths start after the
+    origin, intervals contain the point, nothing after the cut-off is used as input."""
+    served = 0
+    for iso in countries:
+        for metric in sorted(CORE):
+            status, fc = s.json(
+                f"/api/forecasts?country={iso}&metric={metric}&horizon=4", {404, 503}
+            )
+            if status != 200:
+                continue
+            served += 1
+            tag = f"forecast {iso}/{metric}"
+            s.check(fc["actuals"][-1]["period"] == fc["origin"], f"{tag}: actuals pass origin")
+            s.check(fc["realised"] == [], f"{tag}: latest forecast has realised values")
+            for m in fc["models"]:
+                s.check(len(m["path"]) == fc["steps"] or not m["available"], f"{tag}: path length")
+                for pt in m["path"]:
+                    s.check(pt["period"] > fc["origin"], f"{tag}: path before origin")
+                    s.check(finite(pt["value"]), f"{tag}: non-finite forecast")
+                    if pt["lower"] is not None:
+                        s.check(pt["lower"] <= pt["value"] <= pt["upper"], f"{tag}: bad interval")
+            for row in fc["backtest"]["metrics"]:
+                cov = row["coverage"]
+                s.check(cov is None or 0 <= cov <= 1, f"{tag}: coverage out of range")
+    s.check(served > 0, "no forecast served for any country")
+    status, past = s.json("/api/forecasts?country=US&metric=real_gdp_qoq&horizon=4&as_of=2008-Q2")
+    if status == 200:
+        s.check(past["origin"] <= "2008-Q2", "past as-of forecast uses later data")
+        s.check(len(past["realised"]) == 4, "past as-of lacks realised values")
+    status, body = s.json("/api/forecasts?country=DE&metric=real_gdp_qoq&horizon=3", {422})
+    s.check(
+        status == 422 and body["error"]["code"] == "unsupported_horizon", "forecast H=3 accepted"
+    )
+    print(f"forecasts: {served} country/metric series served")
+
+
+def check_scenarios(s: Smoke, countries: list[str]) -> None:
+    """Zero shock reproduces the live estimate; bounded shocks move only their mapped inputs."""
+    _, spec = s.json("/api/scenarios/spec")
+    s.check(bool(spec) and "not a causal" in spec["disclaimer"], "scenario disclaimer missing")
+    evaluated = 0
+    for iso in countries:
+        for h in (2, 4):
+            status, est = s.json(f"/api/recession/predict?country={iso}&horizon={h}", {404, 503})
+            if status != 200:
+                continue
+            body = {"country": iso, "horizon": h}
+            _, base = s.post_json("/api/scenarios/evaluate", body)
+            s.check(
+                abs(base["baseline"]["probability"] - est["probability"]) < 1e-9,
+                f"scenario {iso}/H{h}: baseline differs from live estimate",
+            )
+            s.check(base["delta"] == 0, f"scenario {iso}/H{h}: zero shock moved the estimate")
+            _, shocked = s.post_json(
+                "/api/scenarios/evaluate", body | {"shocks": {"policy_rate": 1.0}}
+            )
+            changed = {i["feature"] for i in shocked["inputs"] if i["changed"]}
+            s.check(
+                changed <= {"rate", "rate_chg_4q", "term_spread"},
+                f"scenario {iso}/H{h}: unexpected inputs moved {changed}",
+            )
+            s.check(0 <= shocked["scenario"]["probability"] <= 1, f"scenario {iso}/H{h}: range")
+            evaluated += 1
+    status, _ = s.post_json(
+        "/api/scenarios/evaluate", {"country": "DE", "horizon": 4, "shocks": {"gdp": 50}}, {422}
+    )
+    s.check(status == 422, "out-of-bounds shock accepted")
+    print(f"scenarios: {evaluated} country/horizon pairs evaluated")
+
+
 def run(base: str) -> Smoke:
     s = Smoke(base)
     _, health = s.json("/api/health")
@@ -180,7 +272,10 @@ def run(base: str) -> Smoke:
     for country in countries["items"]:
         check_country(s, country, catalog)
     check_lineage(s)
-    check_models(s, [c["iso2"] for c in countries["items"]])
+    isos = [c["iso2"] for c in countries["items"]]
+    check_models(s, isos)
+    check_forecasts(s, isos)
+    check_scenarios(s, isos)
     status, body = s.json("/api/countries/XX/summary", {422})
     s.check(status == 422 and body["error"]["code"] == "unsupported_country", "XX not rejected")
     status, _ = s.json("/api/countries/DE/summary?as_of=2999-Q1", {422})

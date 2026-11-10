@@ -75,6 +75,7 @@ class HorizonResult:
     coefficients: dict[str, float] = field(default_factory=dict)
     selection_note: str = ""
     feature_summary: dict[str, dict[str, float]] = field(default_factory=dict)
+    feature_covariance: list[list[float]] = field(default_factory=list)
 
 
 def _fit(
@@ -227,6 +228,7 @@ def _final_fit(out: HorizonResult, panel: Panel, seed: int) -> None:
     out.final_events = int(panel.target(labelled, out.horizon).sum())
     out.final_last_as_of = panel.rows[max(labelled, key=lambda i: panel.rows[i].q)].as_of
     out.feature_summary = feature_summary(panel.matrix(labelled), panel.feature_names)
+    out.feature_covariance = np.cov(panel.matrix(labelled), rowvar=False).tolist()
 
     # Standardised logistic coefficients: an honest, inspectable explanation of the linear model.
     lr = logistic(seed).fit(panel.matrix(labelled), panel.target(labelled, out.horizon))
