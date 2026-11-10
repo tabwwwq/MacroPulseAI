@@ -38,3 +38,4 @@ Indicator forecasts with empirical intervals and bounded, non-causal sensitivity
 - 2026-11-10 — Backtest across 15 series: AR coverage median 74 % (1Q) / 71 % (8Q), worst 50 % → [[F-011 Forecast intervals under-cover]].
 - 2026-11-10 — Scenario lab shows the 4Q logistic model lowering risk when unemployment rises → [[F-012 Recession model lowers risk when unemployment rises]].
 - 2026-11-10 — Added basic rate limiting before shipping the compute endpoints (CLAUDE.md §10).
+- 2026-11-10 — Committed `ebfc4d4`; CI run 42838837827 green (Web, API, Docker images).

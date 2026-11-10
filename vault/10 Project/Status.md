@@ -18,7 +18,7 @@ tags:
 - ✅ **Phase 6 — Explainable risk dashboard & ML lab** done (2026-11-10): live inference round trip, explanations, risk timeline, ML laboratory. See [[Phase 06 — Explainable risk dashboard & ML lab]].
 - ✅ **Phase 7 — Forecasts & scenario lab** done (2026-11-10): rolling-origin forecasts with measured interval coverage, scenario lab with bounded shocks and plausibility checks. Intervals under-cover ([[F-011 Forecast intervals under-cover]]). See [[Phase 07 — Forecasts & scenario lab]].
 - ⏭️ **Phase 8 — Crisis time machine** is next. See [[Phase 08 — Crisis time machine]].
-- CI: the Docker job failed on `ed7a1ab`; fixed in `b6987da`, whose CI run passed all jobs including Docker images ([[F-010 Docker build broke when the ML package was added]]).
+- CI: run 42838837827 for `ebfc4d4` (Phase 7) passed all jobs — Web, API, Docker images. (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
 
 ## Working (verified 2026-11-10)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.
