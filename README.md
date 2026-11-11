@@ -70,7 +70,7 @@ Prerequisites: **Node.js ≥ 22.12** with **pnpm** (`npm i -g pnpm`), **Python 3
 **Try it offline, without any key** (genuine data snapshot of 2026-11-09, clearly labelled):
 
 ```powershell
-pnpm demo         # install, migrate, load the snapshot, train the models, start API + web
+pnpm demo         # install, migrate, load the snapshot, train the models, start API + web (~4 min on a fresh clone)
 ```
 
 **Live data** (needs internet; Eurostat, ECB and FRED need no key):
@@ -78,7 +78,7 @@ pnpm demo         # install, migrate, load the snapshot, train the models, start
 ```powershell
 pnpm bootstrap    # pnpm install + uv sync + migrate the local SQLite database
 pnpm data:sync    # fetch the official series, ~15 s
-pnpm train        # walk-forward backtest and the published models, a few minutes
+pnpm train        # walk-forward backtest and the published models, ~15 s
 pnpm dev          # API on http://127.0.0.1:8000, web on http://localhost:3000
 ```
 
@@ -101,7 +101,7 @@ pnpm dev          # API on http://127.0.0.1:8000, web on http://localhost:3000
 | `pnpm smoke` | End-to-end checks of a running API over the stored data |
 | `pnpm lint` | ruff, ruff format, mypy, ESLint, tsc |
 | `pnpm build` | Next.js production build |
-| `uv run python scripts/security_scan.py --history` | Secret scan of the git history (also `--tree`, `--bundle apps/web/.next/static`) |
+| `uv run python scripts/security_scan.py --history` | Secret scan of the git history (also `--tree <files…>`, `--bundle apps/web/.next/static`) |
 | `pnpm gen:types` | Regenerate TypeScript API types from the FastAPI OpenAPI schema |
 | `$env:MACROPULSE_LIVE_TESTS = "1"; uv run pytest -m live` | Opt-in checks against the real APIs (not run in CI) |
 

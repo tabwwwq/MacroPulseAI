@@ -194,20 +194,22 @@ Acceptance criteria:
 
 ## Phase 10 — Production hardening, audit and GitHub-ready release
 
-**Status:** Planned; local Phase 1 checks are not a release audit.
+**Status:** ✅ Complete (2026-11-11). Release audit in [SECURITY.md](SECURITY.md), deployment in
+[DEPLOY.md](DEPLOY.md), truthful inventory in the README ("What works, what partly works, what is not
+implemented").
 **Goal:** Verify reproducible setup, deployment, security, accessibility and truthful release documentation.
 **Deliverables:** Full audit/fixes, CI, realistic E2E/smoke tests, verified containers/deploy
 guide, README/methodology/limitations and a working/partial/not-implemented inventory.
 
 Acceptance criteria:
 
-- [ ] Run backend/frontend tests, lint/type checks and production build; fix failures and record actual outputs.
-- [ ] Run realistic core-page E2E tests on desktop/mobile, keyboard navigation and stale/offline/error paths; fix broken routes/controls and overflow.
-- [ ] Execute compose image builds/startup, migrations and PostgreSQL readiness in a Docker-capable environment; document environment and results.
-- [ ] Audit secrets/client bundle/history, CORS, validation, query safety, dependencies, logs and export handling; expensive jobs are bounded/restricted before exposure.
-- [ ] Clean-clone setup and documented migration/sync/train/test/build/demo commands work; credential-free demo is prominently labeled and uses attributed genuine fixtures.
-- [ ] README/deployment guide includes accurate Windows instructions, source attribution, target/methodology, limitations and only real screenshots/measured scores.
-- [ ] Publish a truthful working/partly-working/not-implemented table; no release completion claim while major checks fail.
+- [x] Run backend/frontend tests, lint/type checks and production build; fix failures and record actual outputs. *(283 pytest, 104 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build` — recorded in the README.)*
+- [x] Run realistic core-page E2E tests on desktop/mobile, keyboard navigation and stale/offline/error paths; fix broken routes/controls and overflow. *(Playwright, 58 tests against the production build: every page at 1440 px and 375 px without console errors or overflow, axe WCAG A/AA, skip link and arrow-key controls, API unreachable with retry, not synced, not trained, and the full forecast/scenario/replay/PDF flows. The first run found a missing favicon, contrast failures, keyboard-unreachable scroll regions and a colour-only link — all fixed.)*
+- [x] Execute compose image builds/startup, migrations and PostgreSQL readiness in a Docker-capable environment; document environment and results. *(CI `docker` job on `ubuntu-latest`: build, `up --wait`, `db current`, `/api/ready`, web and proxied API, demo load into PostgreSQL served through the API. Docker is not installed on the development machine.)*
+- [x] Audit secrets/client bundle/history, CORS, validation, query safety, dependencies, logs and export handling; expensive jobs are bounded/restricted before exposure. *(SECURITY.md: scanner on history, tree and bundle; credential redaction; body limits; security headers and CSP; pip-audit and pnpm audit clean.)*
+- [x] Clean-clone setup and documented migration/sync/train/test/build/demo commands work; credential-free demo is prominently labeled and uses attributed genuine fixtures. *(Fresh clone outside the working copy: `git clone` of `75c88b5` → `pnpm bootstrap` 3 min 28 s (database at revision 0004), `demo-load` 6.6 s (25,702 observations), `train` 12.8 s (12 model versions, held-out warnings printed), then 283 pytest, 104 Vitest, `pnpm lint`, `pnpm build` and `pnpm smoke` 2883/2883 against the clone's own API — all passed on Windows 11. Demo: genuine 2026-11-09 snapshot, attributed in `data/demo/README.md`, DEMO banner.)*
+- [x] README/deployment guide includes accurate Windows instructions, source attribution, target/methodology, limitations and only real screenshots/measured scores.
+- [x] Publish a truthful working/partly-working/not-implemented table; no release completion claim while major checks fail. *(CI for the release commits: pending at the time of writing.)*
 
 ## Country targets and data gates
 

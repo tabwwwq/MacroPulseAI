@@ -201,16 +201,18 @@ flowchart TD
 
 ## 8. Security and reliability
 
-| Area | Exists now | Planned / still to verify |
+Release audit with evidence: [`SECURITY.md`](SECURITY.md); deployment: [`DEPLOY.md`](DEPLOY.md).
+
+| Area | In place (verified) | Remaining limits |
 |---|---|---|
-| Secrets | Server-side `SecretStr` FRED setting; source API exposes configured boolean only | Bundle/history/deployment secret audit in 10 |
-| Request boundary | Pydantic country validation, parameterized ORM queries, explicit CORS origins, wildcard rejected, credentials disabled; bounded forecast metric/horizon/as-of and scenario shocks (`extra="forbid"`) | Bounds for reports/exports as introduced |
-| Browser boundary | Same-origin proxy; nosniff, frame denial, referrer and permissions headers | Production deployment verification in 10 |
-| Failures/observability | Request IDs, JSON logs, safe error envelope, DB error-class logging, readiness diagnostics and retry UI | Job run metrics, safe connector error summaries, monitoring and broader log audit |
-| Data reliability | Metadata registry, migrations and ingestion bookkeeping | Actual sync, quality checks, provenance, freshness and partial-failure handling in 3–4 |
-| Expensive operations | No sync/train/report mutation endpoints registered; forecast and scenario computation is read-only, cached where possible and limited in process (`COMPUTE_REQUESTS_PER_MINUTE`, default 240 per client address, 429 with `Retry-After`) | A shared limiter for multi-instance deployments; restricted job execution; no arbitrary shell, URL fetch or unsafe upload |
-| Persistence | SQLAlchemy naming convention, SQLite foreign keys, SQLite batch migrations | PostgreSQL/compose runtime validation; backup/deployment procedures |
-| Verification | Lead-reported local Phase 1 checks | Docker/compose and full release E2E checks remain unverified |
+| Secrets | Server-side `SecretStr` FRED setting, only "configured" exposed; credentials redacted from stored URLs, error summaries and check details; secret scan of history, tracked files and the client bundle in CI | `'unsafe-inline'` scripts (Next.js without nonces) |
+| Request boundary | Patterns/bounds on every parameter, `extra="forbid"` bodies, explicit CORS origins (wildcard refused), 64 KiB body limit (411/413), parameterised ORM queries | — |
+| Browser boundary | Same-origin proxy; nosniff, frame denial, referrer and permissions headers; production Content-Security-Policy | TLS terminated by the operator's reverse proxy |
+| Failures/observability | Request IDs, one JSON log line per request (path only), safe error envelope, error classes not messages, readiness diagnostics, retry UI | No metrics/alerting stack included |
+| Data reliability | Ingestion runs (live or snapshot), per-series quality checks, provenance, freshness = last successful fetch or snapshot capture time, partial-failure handling | No scheduler included (cron / Task Scheduler) |
+| Expensive operations | No sync/train endpoints (CLI only); forecast, scenario and report computation rate-limited in process (`COMPUTE_REQUESTS_PER_MINUTE`, 429 + `Retry-After`) | A shared limiter for several API instances |
+| Persistence | SQLite locally, PostgreSQL in compose and CI; migrations run on API start; backup procedure in `DEPLOY.md` | Backups are the operator's job |
+| Verification | CI: lint, types, unit/integration tests (SQLite + PostgreSQL), OpenAPI/type drift, build, 58 Playwright E2E incl. axe on the demo snapshot, compose stack on PostgreSQL, security audit | Docker not installed on the development machine: compose verified in CI only |
 
 ## 9. Decision log
 

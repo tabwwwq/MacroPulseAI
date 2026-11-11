@@ -25,7 +25,6 @@ next-env.d.ts
 coverage/
 playwright-report/
 test-results/
-playwright-report/
 
 # --- data & models (generated; never commit large or restricted datasets) ---
 data/local/
