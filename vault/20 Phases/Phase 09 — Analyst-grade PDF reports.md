@@ -33,4 +33,5 @@ Dated, source-cited reports with methodology and uncertainty notes.
 - 2026-11-10 — q8_0 KV cache + flash attention fell back to the CPU on Vulkan (prompt 6.7 tok/s); f16 cache: ~410 tok/s prompt, ~30 tok/s generation.
 - 2026-11-10 — Codex `-Local` agentic run on the charts task: 31 min of reading, nothing written → [[F-014 Agentic Codex on the local model was unproductive]].
 - 2026-11-11 — Switched to single-file delegation (`local_task.py`). Charts 2 rounds, CSV 1, PDF 3, page 1; every review issue recorded in `docs/LOCAL_MODEL.md`.
+- 2026-11-11 — Committed `baf7a97`; CI run 43012635167 green (Web, API, Docker images).
 - 2026-11-11 — Own bugs found in review: in-sample estimates presented as forecasts in the summary (fixed + test), long native units, band note without bands, microseconds in timestamps, SDMX flag "A" shown as a flag.

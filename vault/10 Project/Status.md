@@ -20,7 +20,7 @@ tags:
 - ✅ **Phase 8 — Crisis time machine** done (2026-11-10): walk-forward replays with inputs as known then, outcomes as published later, warned / missed / false alarms; revised-data / release-lag approximation, no vintages. Most recessions were missed ([[F-013 Replays show most recessions were missed]]). See [[Phase 08 — Crisis time machine]].
 - ✅ **Phase 9 — Analyst-grade PDF reports** done (2026-11-11): PDF / CSV / JSON country reports from the API's own services; renderers written by the **local model** (Qwen3.8-27B on the RX 7800 XT) and reviewed ([[ADR-0021 Local model as a reviewed single-file worker]]). See [[Phase 09 — Analyst-grade PDF reports]].
 - ⏭️ **Phase 10 — Hardening & release** is next. See [[Phase 10 — Hardening & release]].
-- CI: run 42843134743 for `3311fb9` (Phase 8) passed all jobs — Web, API, Docker images (Phase 7: run 42838837827 for `ebfc4d4`, green). (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
+- CI: run 43012635167 for `baf7a97` (Phase 9) passed all jobs — Web, API, Docker images (with reportlab + matplotlib). Earlier phases green as well. (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
 
 ## Working (verified 2026-11-10)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.
