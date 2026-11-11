@@ -38,7 +38,7 @@ LATEST_BASIS = (
 )
 
 
-def _as_of_basis(cutoff: date) -> str:
+def as_of_basis(cutoff: date) -> str:
     return (
         f"Latest revised values for reference periods that ended on or before {cutoff}. "
         "Publication lags are not applied and no historical vintages are used, so some of these "
@@ -132,7 +132,7 @@ def country_summary(session: SessionDep, iso2: Iso2, as_of: AsOfQuery = None) ->
         country=iso,
         as_of=as_of,
         cutoff=cutoff,
-        data_basis=LATEST_BASIS if as_of is None else _as_of_basis(cutoff),
+        data_basis=LATEST_BASIS if as_of is None else as_of_basis(cutoff),
         freshness=max(fetched) if fetched else None,
         kpis=kpis,
         generated_at=now,

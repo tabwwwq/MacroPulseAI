@@ -16,6 +16,10 @@
 
 .EXAMPLE
   ./scripts/agents/codex-task.ps1 -Name api-review -Sandbox read-only -Prompt "Review apps/api for bugs; do not edit files."
+
+.EXAMPLE
+  # Same, but executed by the local open-weight model served by llama.cpp (see docs/LOCAL_MODEL.md).
+  ./scripts/agents/codex-task.ps1 -Name report-charts -PromptFile .agents/briefs/report-charts.md -Local
 #>
 [CmdletBinding()]
 param(
@@ -36,7 +40,17 @@ param(
     [string]$Model,
 
     [ValidateSet('', 'low', 'medium', 'high', 'xhigh')]
-    [string]$Effort = ''
+    [string]$Effort = '',
+
+    # Run on the local model behind an OpenAI-compatible server (llama.cpp `llama-server`) instead of
+    # OpenAI. Configured per call with -c overrides; ~/.codex/config.toml is left untouched.
+    [switch]$Local,
+
+    [string]$LocalUrl = 'http://127.0.0.1:8080/v1',
+
+    [string]$LocalModel = 'qwen3.8-27b',
+
+    [int]$LocalContext = 32768
 )
 
 $ErrorActionPreference = 'Stop'
@@ -78,11 +92,26 @@ function Quote([string]$s) { if ($s -match '[\s"]') { '"' + ($s -replace '"', '\
 $argv = @('exec', '--cd', (Quote $root), '--sandbox', $Sandbox, '--skip-git-repo-check',
     '--color', 'never', '--output-last-message', (Quote "$base.result.md"))
 if ($Network) { $argv += @('-c', 'sandbox_workspace_write.network_access=true') }
-if ($Model) { $argv += @('-m', (Quote $Model)) }
+if ($Local) {
+    try {
+        Invoke-WebRequest -UseBasicParsing -TimeoutSec 5 -Uri ($LocalUrl -replace '/v1$', '/health') | Out-Null
+    } catch {
+        throw "Local model server not reachable at $LocalUrl. Start it first (docs/LOCAL_MODEL.md)."
+    }
+    $argv += @(
+        '-c', 'model_provider=local',
+        '-c', 'model_providers.local.name="llama.cpp (local)"',
+        '-c', "model_providers.local.base_url=`"$LocalUrl`"",
+        '-c', 'model_providers.local.wire_api="responses"',
+        '-c', "model_context_window=$LocalContext",
+        '-m', $LocalModel
+    )
+} elseif ($Model) { $argv += @('-m', (Quote $Model)) }
 if ($Effort) { $argv += @('-c', "model_reasoning_effort=$Effort") }
 $argv += '-'   # read the prompt from stdin
 
-Write-Host "[codex-task] $Name -> $base.*  (sandbox=$Sandbox, network=$($Network.IsPresent))"
+$engine = if ($Local) { "local:$LocalModel" } else { 'openai' }
+Write-Host "[codex-task] $Name -> $base.*  (engine=$engine, sandbox=$Sandbox, network=$($Network.IsPresent))"
 $proc = Start-Process -FilePath $exe -ArgumentList $argv -WorkingDirectory $root -NoNewWindow -Wait -PassThru `
     -RedirectStandardInput "$base.prompt.md" -RedirectStandardOutput "$base.log" -RedirectStandardError "$base.err.log"
 

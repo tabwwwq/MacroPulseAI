@@ -2,7 +2,7 @@
 type: phase
 phase: 10
 title: Hardening & release
-status: planned
+status: next
 started:
 completed:
 tags:

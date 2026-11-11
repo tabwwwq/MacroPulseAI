@@ -316,6 +316,54 @@ def check_replay(s: Smoke, countries: list[str]) -> None:
     print(f"replay: {replayed} crisis replays checked")
 
 
+def _post_raw(s: Smoke, path: str, payload: Any) -> tuple[int, bytes, dict[str, str]]:
+    req = urllib.request.Request(  # noqa: S310 - scheme validated in Smoke.__init__
+        s.base + path,
+        data=json.dumps(payload).encode(),
+        headers={"User-Agent": "macropulse-smoke", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=120) as r:  # noqa: S310
+            return r.status, r.read(), {k.lower(): v for k, v in r.headers.items()}
+    except urllib.error.HTTPError as e:
+        return e.code, e.read(), {k.lower(): v for k, v in e.headers.items()}
+
+
+def check_reports(s: Smoke, countries: list[str]) -> None:
+    """JSON reports match the KPI summary; PDF and CSV downloads are well-formed and named."""
+    for iso in countries:
+        status, raw, headers = _post_raw(
+            s, "/api/reports/generate", {"country": iso, "format": "json"}
+        )
+        s.check(status == 200, f"report {iso}: HTTP {status}")
+        if status != 200:
+            continue
+        body = json.loads(raw)
+        _, summary = s.json(f"/api/countries/{iso}/summary")
+        expected = {k["indicator"]["name"]: k["value"] for k in summary["kpis"]}
+        for row in body["kpis"]:
+            s.check(row["value"] == expected.get(row["label"]), f"report {iso}: {row['label']}")
+            s.check(row["value"] is not None or bool(row["note"]), f"report {iso}: gap unlabelled")
+        s.check(bool(body["citations"]), f"report {iso}: no citations")
+        disposition = headers.get("content-disposition", "")
+        s.check(f"macropulse-report-{iso.lower()}-latest-" in disposition, f"report {iso}: name")
+    status, pdf, headers = _post_raw(s, "/api/reports/generate", {"country": "DE", "format": "pdf"})
+    s.check(status == 200 and pdf[:5] == b"%PDF-", "report DE: PDF not generated")
+    s.check(headers.get("content-type") == "application/pdf", "report DE: PDF media type")
+    status, csv_raw, _ = _post_raw(
+        s, "/api/reports/generate", {"country": "US", "as_of": "2008-Q2", "format": "csv"}
+    )
+    rows = list(csv.reader(io.StringIO(csv_raw.decode("utf-8")))) if status == 200 else []
+    s.check(bool(rows) and rows[0][0] == "chart", "report US 2008-Q2: CSV header")
+    s.check(
+        all(r[8] == "2008-Q2" for r in rows[1:]) and len(rows) > 1, "report US 2008-Q2: CSV as-of"
+    )
+    status, _, _ = _post_raw(s, "/api/reports/generate", {"country": "XX", "format": "pdf"})
+    s.check(status == 422, "report XX accepted")
+    print(f"reports: {len(countries)} JSON reports, 1 PDF and 1 CSV checked")
+
+
 def run(base: str) -> Smoke:
     s = Smoke(base)
     _, health = s.json("/api/health")
@@ -330,6 +378,7 @@ def run(base: str) -> Smoke:
     check_forecasts(s, isos)
     check_scenarios(s, isos)
     check_replay(s, isos)
+    check_reports(s, isos)
     status, body = s.json("/api/countries/XX/summary", {422})
     s.check(status == 422 and body["error"]["code"] == "unsupported_country", "XX not rejected")
     status, _ = s.json("/api/countries/DE/summary?as_of=2999-Q1", {422})

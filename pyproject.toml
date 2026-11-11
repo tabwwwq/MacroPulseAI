@@ -17,6 +17,7 @@ dev = [
     "pytest-cov>=6.0",
     "ruff>=0.11",
     "mypy>=1.15",
+    "pypdf>=5.0",
 ]
 
 # ---------------------------------------------------------------- ruff
@@ -57,8 +58,8 @@ warn_unreachable = true
 exclude = ['/migrations/']
 
 [[tool.mypy.overrides]]
-# scikit-learn, joblib and xgboost ship no type information.
-module = ["sklearn.*", "joblib.*", "xgboost.*", "scipy.*"]
+# scikit-learn, joblib, xgboost, scipy and reportlab ship no type information.
+module = ["sklearn.*", "joblib.*", "xgboost.*", "scipy.*", "reportlab.*"]
 ignore_missing_imports = true
 
 # ---------------------------------------------------------------- pytest

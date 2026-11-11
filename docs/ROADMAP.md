@@ -174,18 +174,23 @@ Acceptance criteria:
 
 ## Phase 9 — Analyst-grade PDF reports
 
-**Status:** Planned; `/reports` is a not-built route.
+**Status:** ✅ Complete (2026-11-11). `/reports` downloads a dated country report as PDF, as CSV of the chart
+data, or as JSON (`POST /api/reports/generate`). Every number comes from the services the API already serves;
+every summary sentence is a template filled with one of them. The renderers were written by a local
+open-weight model (Qwen3.8-27B on the developer's GPU) from briefs and specification tests and corrected in
+review ([docs/LOCAL_MODEL.md](LOCAL_MODEL.md)). `pnpm smoke`: 2883/2883 checks, including the report of every
+country against its KPI summary.
 **Goal:** Export readable, dated reports with verifiable analytical content.
 **Deliverables:** PDF download, selected country/as-of indicators and charts, available
 model/forecast results, source citations, limitations, rules-based summary and CSV export.
 
 Acceptance criteria:
 
-- [ ] Generated PDF opens and is visually inspected; tables/charts match the selected country/as-of and actual stored results.
-- [ ] Include units, source URLs, retrieval/publication dates where known, model/version/horizons, methodology and uncertainty/vintage caveats.
-- [ ] Missing observations or untrained models are labeled; summary uses recorded metrics/rules without invented analysis.
-- [ ] Download has a descriptive filename; generation failures produce safe server errors and no credentials appear in exports/logs.
-- [ ] CSV matches underlying chart data with citations and dates; export tests and frontend build pass.
+- [x] Generated PDF opens and is visually inspected; tables/charts match the selected country/as-of and actual stored results. *(Real DE latest and US as-of 2008-Q2 reports rendered page by page and reviewed; layout bugs fixed after that review; JSON report KPIs equal `/api/countries/{iso}/summary` in tests and smoke; chart points end at the cut-off.)*
+- [x] Include units, source URLs, retrieval/publication dates where known, model/version/horizons, methodology and uncertainty/vintage caveats. *(Numbered sources with request URL, retrieval and source-update times; model name and version per horizon with held-out Brier skill; methodology; limitations incl. revised data and measured interval under-coverage.)*
+- [x] Missing observations or untrained models are labeled; summary uses recorded metrics/rules without invented analysis. *(N/A plus reason for every missing value; untrained models carry the training hint; past as-of estimates are stated as in-sample fits next to the walk-forward estimate.)*
+- [x] Download has a descriptive filename; generation failures produce safe server errors and no credentials appear in exports/logs. *(`macropulse-report-<iso>-<as-of|latest>-<yyyymmdd>.<ext>`; renderer exceptions become 500 `report_generation_failed` with a request id and no internals — tested with an exception message containing a path and a key name; rate-limited like the other compute endpoints.)*
+- [x] CSV matches underlying chart data with citations and dates; export tests and frontend build pass. *(One row per chart point with unit, source label, URL, retrieval time, report as-of and generation time; missing values stay empty. 254 pytest, 102 Vitest, `next build`.)*
 
 ## Phase 10 — Production hardening, audit and GitHub-ready release
 

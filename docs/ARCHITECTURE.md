@@ -105,7 +105,7 @@ The following is a **PLANNED entity allocation**, not a claim that migrations ex
 | `model_metrics` | Walk-forward/baseline/calibration results and undefined-metric reasons | 5 implemented; display in 6 |
 | `prediction_runs`, `predictions` | `model_predictions` stores out-of-sample backtest and current (`live`) estimates per model version (5); on-request inference runs in 6 | 5–6 |
 | `scenario_runs` | Not a table: evaluation is stateless and recomputed on request; saved scenarios stay in the browser (localStorage) and export as JSON with request, result and disclaimer | 7 (no server-side persistence) |
-| `report_exports` | Export selection, generation status, citations and artifact metadata | 9 |
+| `report_exports` | Not a table: reports are generated on request and not stored; each file carries its generation time, app version, as-of and sources | 9 (no server-side persistence) |
 
 Country support is computed from stored observations: `full` needs verified, fresh real GDP,
 inflation and unemployment; `partial` needs real GDP; otherwise `unavailable`. Source health derives only from ingestion-run rows:
@@ -171,6 +171,10 @@ of the published model's fold for that year, rebuilds the inputs known at the cu
 window as published later, plus warned / missed / false-alarm episodes. Every replay is a revised-data /
 release-lag approximation; no vintages are stored
 ([ADR-0019](../vault/30%20Decisions/ADR-0019%20Replays%20are%20walk-forward%20fold%20estimates.md)).
+Reports are **implemented** (Phase 9): `services/report_builder.py` assembles a `ReportContent`
+(`reports/content.py`) from the KPI, series, inference and forecast services; `reports/charts.py`
+(matplotlib, Agg), `reports/pdf.py` (reportlab, DejaVu fonts) and `reports/csv_export.py` only lay it out
+([ADR-0020](../vault/30%20Decisions/ADR-0020%20Report%20renderers%20only%20lay%20out%20content.md)).
 
 ```mermaid
 flowchart TD

@@ -1,8 +1,8 @@
 ---
 type: status
-phase: 9
-phase_name: Analyst-grade PDF reports
-updated: 2026-11-10
+phase: 10
+phase_name: Hardening & release
+updated: 2026-11-11
 tags:
   - project
 ---
@@ -18,15 +18,17 @@ tags:
 - ✅ **Phase 6 — Explainable risk dashboard & ML lab** done (2026-11-10): live inference round trip, explanations, risk timeline, ML laboratory. See [[Phase 06 — Explainable risk dashboard & ML lab]].
 - ✅ **Phase 7 — Forecasts & scenario lab** done (2026-11-10): rolling-origin forecasts with measured interval coverage, scenario lab with bounded shocks and plausibility checks. Intervals under-cover ([[F-011 Forecast intervals under-cover]]). See [[Phase 07 — Forecasts & scenario lab]].
 - ✅ **Phase 8 — Crisis time machine** done (2026-11-10): walk-forward replays with inputs as known then, outcomes as published later, warned / missed / false alarms; revised-data / release-lag approximation, no vintages. Most recessions were missed ([[F-013 Replays show most recessions were missed]]). See [[Phase 08 — Crisis time machine]].
-- ⏭️ **Phase 9 — Analyst-grade PDF reports** is next. See [[Phase 09 — Analyst-grade PDF reports]].
+- ✅ **Phase 9 — Analyst-grade PDF reports** done (2026-11-11): PDF / CSV / JSON country reports from the API's own services; renderers written by the **local model** (Qwen3.8-27B on the RX 7800 XT) and reviewed ([[ADR-0021 Local model as a reviewed single-file worker]]). See [[Phase 09 — Analyst-grade PDF reports]].
+- ⏭️ **Phase 10 — Hardening & release** is next. See [[Phase 10 — Hardening & release]].
 - CI: run 42843134743 for `3311fb9` (Phase 8) passed all jobs — Web, API, Docker images (Phase 7: run 42838837827 for `ebfc4d4`, green). (Earlier: the Docker job failed on `ed7a1ab`, fixed in `b6987da` — [[F-010 Docker build broke when the ML package was added]].)
 
 ## Working (verified 2026-11-10)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`.
 - Models: run `20261110T142434Z` (retrained to store the feature covariance; same selection) — H=2 HistGradientBoosting, H=4 Logistic Regression; artifacts in `models/artifacts`.
-- API: `/api/recession/predict` (round trip, explanation, track record, in-sample flag), `/api/recession/history`, `/api/models` + `/metrics` + `/curves`, `/api/forecasts`, `/api/scenarios/spec` + `POST /evaluate` (rate-limited), `/api/history/replay` + `/episodes` + `/presets`, plus all data endpoints.
-- Web: Overview (live 2Q/4Q estimates with caveats), Countries, Compare, Data observatory, Recession risk, ML laboratory, Forecast studio, Scenario lab, **Crisis time machine**.
-- Checks: 234 pytest (+1 PostgreSQL in CI, +16 live), 97 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build`, `pnpm smoke` 2818/2818.
+- API: `/api/recession/predict` (round trip, explanation, track record, in-sample flag), `/api/recession/history`, `/api/models` + `/metrics` + `/curves`, `/api/forecasts`, `/api/scenarios/spec` + `POST /evaluate` (rate-limited), `/api/history/replay` + `/episodes` + `/presets`, `POST /api/reports/generate`, plus all data endpoints.
+- Web: Overview (live 2Q/4Q estimates with caveats), Countries, Compare, Data observatory, Recession risk, ML laboratory, Forecast studio, Scenario lab, Crisis time machine, **Report builder**.
+- Checks: 254 pytest (+1 PostgreSQL in CI, +16 live), 102 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build`, `pnpm smoke` 2883/2883.
+- Local model: llama.cpp Vulkan b12259 + Qwen3.8-27B Q3_K_XL in `~/.local/llama.cpp` and `~/.lmstudio/models` (outside the repo); `docs/LOCAL_MODEL.md`.
 
 ## Blockers & risks
 - [[F-008 No model beats the base rate on held-out years]] — shown next to every probability.
@@ -41,4 +43,4 @@ tags:
 - Browser-level E2E tests not automated; Docker not installed locally (CI builds the images).
 
 ## Next
-1. Phase 9: Report builder — a dated, print-friendly PDF (and CSV/JSON) per country with the overview KPIs and charts, the current model estimates with their track record (or the untrained state), forecasts with measured coverage, methodology, data citations with retrieval times, limitations and as-of dates; `POST /api/reports/generate` bounded and rate-limited.
+1. Phase 10: hardening and release — security/secret audit (bundle, history, logs), shared rate limiting notes for multi-instance deploys, browser E2E for the main flows, Docker/compose verification in CI, README screenshots, deploy guide, final model and data refresh; consider the open findings ([[F-009 Separate horizon models can contradict each other]], [[F-011 Forecast intervals under-cover]], [[F-012 Recession model lowers risk when unemployment rises]], [[F-013 Replays show most recessions were missed]]).

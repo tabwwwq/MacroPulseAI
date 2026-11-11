@@ -190,12 +190,13 @@ export const MODULES: AppModule[] = [
     group: "Platform",
     icon: FileText,
     phase: 9,
-    state: "planned",
+    state: "built",
     summary: "Dated, source-cited PDF reports with methodology, limitations and as-of dates.",
     capabilities: [
-      "Country overview, charts and current model estimates when available",
-      "Data citations, freshness and uncertainty notes",
-      "CSV/JSON export of the underlying chart data",
+      "PDF with key indicators, charts, technical-recession estimates and ridge-AR forecasts",
+      "Every number traceable: numbered sources with request URLs and retrieval times",
+      "Missing data, untrained models and in-sample fits labelled in the text",
+      "CSV of the chart data with citations, and the full report as JSON",
     ],
     prerequisites: ["Observations ingested (Phase 3)"],
   },
@@ -215,4 +216,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 8, name: "Crisis time machine", total: 10 } as const;
+export const CURRENT_PHASE = { number: 9, name: "Report builder", total: 10 } as const;

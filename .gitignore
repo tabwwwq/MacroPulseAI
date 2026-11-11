@@ -37,6 +37,7 @@ models/artifacts/
 
 # --- agent scratch ---
 .agents/codex-runs/
+.agents/local-runs/
 
 # --- Obsidian vault: curated notes are versioned; raw logs and UI state stay local ---
 vault/80 Logs/

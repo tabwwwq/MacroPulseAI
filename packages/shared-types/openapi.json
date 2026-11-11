@@ -3026,6 +3026,43 @@
         "title": "ReplayRange",
         "type": "object"
       },
+      "ReportRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "pattern": "^\\d{4}-Q[1-4]$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "country": {
+            "pattern": "^[A-Za-z]{2}$",
+            "title": "Country",
+            "type": "string"
+          },
+          "format": {
+            "default": "pdf",
+            "enum": [
+              "pdf",
+              "csv",
+              "json"
+            ],
+            "title": "Format",
+            "type": "string"
+          }
+        },
+        "required": [
+          "country"
+        ],
+        "title": "ReportRequest",
+        "type": "object"
+      },
       "RiskBand": {
         "properties": {
           "name": {
@@ -5267,6 +5304,65 @@
         "summary": "Probability of a technical recession within 2 or 4 quarters (live inference)",
         "tags": [
           "recession"
+        ]
+      }
+    },
+    "/api/reports/generate": {
+      "post": {
+        "operationId": "generate_report_api_reports_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {},
+              "application/pdf": {},
+              "text/csv; charset=utf-8": {}
+            },
+            "description": "The report file (Content-Disposition carries a descriptive filename)."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, as-of or format."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many compute requests."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Rendering failed (no details exposed)."
+          }
+        },
+        "summary": "Generate a dated country report (PDF, CSV of chart data, or JSON)",
+        "tags": [
+          "reports"
         ]
       }
     },

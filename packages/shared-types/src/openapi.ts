@@ -333,6 +333,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/reports/generate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a dated country report (PDF, CSV of chart data, or JSON) */
+        post: operations["generate_report_api_reports_generate_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/scenarios/evaluate": {
         parameters: {
             query?: never;
@@ -1520,6 +1537,19 @@ export interface components {
             /** Last */
             last: string;
         };
+        /** ReportRequest */
+        ReportRequest: {
+            /** As Of */
+            as_of?: string | null;
+            /** Country */
+            country: string;
+            /**
+             * Format
+             * @default pdf
+             * @enum {string}
+             */
+            format: "pdf" | "csv" | "json";
+        };
         /** RiskBand */
         RiskBand: {
             /** Name */
@@ -2654,6 +2684,59 @@ export interface operations {
             };
             /** @description No trained model / artifact / synced data. */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    generate_report_api_reports_generate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReportRequest"];
+            };
+        };
+        responses: {
+            /** @description The report file (Content-Disposition carries a descriptive filename). */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                    "application/pdf": unknown;
+                    "text/csv; charset=utf-8": unknown;
+                };
+            };
+            /** @description Unsupported country, as-of or format. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many compute requests. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Rendering failed (no details exposed). */
+            500: {
                 headers: {
                     [name: string]: unknown;
                 };
