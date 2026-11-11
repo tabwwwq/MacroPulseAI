@@ -148,6 +148,11 @@ def source_status(session: Session, source: DataSource, key_configured: bool) ->
     status: SourceSyncStatus = "never_synced"
     if latest is not None:
         status = _RUN_STATUS_TO_SOURCE_STATUS.get(latest.status, "failed")
+    snapshot = last_success is not None and last_success.mode == "snapshot"
+    # Freshness of snapshot data is when the snapshot was captured, not when it was imported.
+    fresh_at = (last_success.snapshot_taken_at if snapshot and last_success else None) or (
+        last_success.finished_at if last_success else None
+    )
     return SourceStatus(
         id=source.id,
         name=source.name,
@@ -159,7 +164,11 @@ def source_status(session: Session, source: DataSource, key_configured: bool) ->
         api_key_configured=key_configured if source.requires_api_key else None,
         status=status,
         last_attempt_at=as_utc(latest.started_at) if latest else None,
-        last_success_at=as_utc(last_success.finished_at) if last_success else None,
+        last_success_at=as_utc(fresh_at),
+        data_mode=("snapshot" if snapshot else "live") if last_success else None,
+        snapshot_taken_at=as_utc(last_success.snapshot_taken_at)
+        if snapshot and last_success
+        else None,
         last_rows_upserted=latest.rows_upserted if latest else None,
         last_error=latest.error_summary if latest and latest.status != "succeeded" else None,
     )

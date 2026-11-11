@@ -177,7 +177,7 @@ function DeltaList({ items, unit }: { items: ScenarioContribution[]; unit: strin
 
 function InputsTable({ r }: { r: ScenarioResult }) {
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className="w-full min-w-[680px] text-left text-xs tabular">
         <caption className="sr-only">Model inputs, baseline and scenario, against the training range</caption>
         <thead className="text-fg-subtle">

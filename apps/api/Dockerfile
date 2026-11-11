@@ -24,6 +24,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 COPY apps/api apps/api
 COPY packages/economics packages/economics
 COPY packages/ml packages/ml
+# Genuine demo snapshot (108 KB) for `macropulse demo-load` without network or keys.
+COPY data/demo data/demo
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --all-packages
 

@@ -216,4 +216,4 @@ export function moduleForPath(pathname: string): AppModule | undefined {
 }
 
 /** Current build phase of the project; shown in the UI so readers know what is implemented. */
-export const CURRENT_PHASE = { number: 9, name: "Report builder", total: 10 } as const;
+export const CURRENT_PHASE = { number: 10, name: "Hardening & release", total: 10 } as const;

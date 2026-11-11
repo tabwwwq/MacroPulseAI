@@ -2,6 +2,7 @@
 
 import { type ReactNode, Suspense, useState } from "react";
 
+import { DemoBanner } from "@/components/shell/demo-banner";
 import { MobileNav } from "@/components/shell/mobile-nav";
 import { Sidebar } from "@/components/shell/sidebar";
 import { Topbar } from "@/components/shell/topbar";
@@ -35,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-dvh lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
       <a
         href="#main"
-        className="sr-only z-50 rounded-lg bg-accent-strong px-3 py-2 text-sm text-white focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        className="sr-only z-50 rounded-lg bg-accent px-3 py-2 text-sm font-medium text-canvas focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
       >
         Skip to content
       </a>
@@ -52,6 +53,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Suspense fallback={<TopbarFallback />}>
           <Topbar onOpenMenu={() => setMenuOpen(true)} />
         </Suspense>
+        <DemoBanner />
         <main id="main" tabIndex={-1} className="flex-1 px-4 py-6 focus:outline-none sm:px-6 sm:py-8 lg:px-8">
           <div className="mx-auto w-full max-w-7xl">{children}</div>
         </main>

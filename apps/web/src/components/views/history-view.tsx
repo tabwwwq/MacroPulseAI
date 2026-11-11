@@ -195,7 +195,7 @@ function OutcomeCard({ r }: { r: Replay }) {
 function KnownInputs({ r }: { r: Replay }) {
   if (!r.inputs.length) return <EmptyState title="Inputs unavailable">{r.inputs_note}</EmptyState>;
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className="w-full min-w-[560px] text-left text-xs tabular">
         <caption className="sr-only">Model inputs as known at the replay date</caption>
         <thead className="text-fg-subtle">

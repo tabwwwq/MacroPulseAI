@@ -109,7 +109,7 @@ function TrackRecord({ e }: { e: RecessionEstimate }) {
     <Card>
       <CardHeader title="Measured track record" description="Out-of-sample walk-forward results of this model." />
       <CardBody>
-        <div className="relative -mx-5 overflow-x-auto px-5">
+        <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
           <table className="w-full min-w-[320px] text-left text-xs">
             <caption className="sr-only">Brier score, skill versus the prevalence baseline and ROC-AUC by split</caption>
             <thead>
@@ -283,7 +283,7 @@ export function RecessionView() {
                 ))}
               </ul>
               <p className="mt-3 text-xs text-fg-subtle">
-                Full diagnostics: <Link href={hrefWithContext("/lab")} className="text-accent hover:underline">ML laboratory</Link>.
+                Full diagnostics: <Link href={hrefWithContext("/lab")} className="text-accent underline underline-offset-2">ML laboratory</Link>.
               </p>
             </CardBody>
           </Card>

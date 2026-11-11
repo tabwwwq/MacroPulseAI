@@ -14,6 +14,7 @@
     "dev:web": "pnpm --filter @macropulse/web dev",
     "db:upgrade": "uv run macropulse db upgrade",
     "data:sync": "uv run macropulse data-sync",
+    "demo": "pnpm bootstrap && uv run macropulse demo-load && uv run macropulse train && pnpm dev",
     "smoke": "uv run python scripts/smoke_api.py",
     "train": "uv run macropulse train",
     "gen:types": "uv run macropulse openapi --out packages/shared-types/openapi.json && pnpm --filter @macropulse/shared-types gen",

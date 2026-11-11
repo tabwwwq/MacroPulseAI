@@ -28,7 +28,8 @@ services:
       APP_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-macropulse}:${POSTGRES_PASSWORD:-change-me-local-only}@db:5432/${POSTGRES_DB:-macropulse}
-      API_CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      COMPUTE_REQUESTS_PER_MINUTE: ${COMPUTE_REQUESTS_PER_MINUTE:-240}
       FRED_API_KEY: ${FRED_API_KEY:-}
       MODELS_DIR: /app/models/artifacts
     volumes:

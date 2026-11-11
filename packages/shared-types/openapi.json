@@ -3733,6 +3733,22 @@
             "title": "Attribution",
             "type": "string"
           },
+          "data_mode": {
+            "anyOf": [
+              {
+                "enum": [
+                  "live",
+                  "snapshot"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where the stored data came from: a live fetch, or an imported snapshot (demo). `null` before the first successful sync.",
+            "title": "Data Mode"
+          },
           "docs_url": {
             "title": "Docs Url",
             "type": "string"
@@ -3800,6 +3816,19 @@
           "requires_api_key": {
             "title": "Requires Api Key",
             "type": "boolean"
+          },
+          "snapshot_taken_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For snapshot data: when it was retrieved from the source.",
+            "title": "Snapshot Taken At"
           },
           "status": {
             "enum": [

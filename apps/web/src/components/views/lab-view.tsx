@@ -53,7 +53,7 @@ function Cell({ value, digits = 3, signed = false, note }: { value: number | nul
 
 function Comparison({ models, selectedKey, onInspect }: { models: ModelSummary[]; selectedKey: string; onInspect: (key: string) => void }) {
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className="w-full min-w-[900px] text-left text-sm">
         <caption className="sr-only">Out-of-sample metrics of every model of this run and horizon</caption>
         <thead>
@@ -181,7 +181,7 @@ function Confusion({ detail }: { detail: ModelDetail }) {
 function PerCountry({ detail }: { detail: ModelDetail }) {
   const countries = [...new Set(detail.metrics.filter((m) => m.segment !== "all").map((m) => m.segment))].sort();
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className="w-full min-w-[560px] text-left text-xs">
         <caption className="sr-only">Brier score and skill per country and split</caption>
         <thead>

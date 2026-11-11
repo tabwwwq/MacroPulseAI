@@ -26,7 +26,7 @@ export function publisherOf(s: Pick<StoredSeries, "source_id" | "source_name">):
  */
 export function StoredSeriesTable({ items, showGeo = false }: { items: StoredSeries[]; showGeo?: boolean }) {
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className="w-full min-w-[920px] text-left text-sm">
         <caption className="sr-only">Stored official series, lineage and quality</caption>
         <thead>

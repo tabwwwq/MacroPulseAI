@@ -1799,6 +1799,11 @@ export interface components {
             api_key_configured: boolean | null;
             /** Attribution */
             attribution: string;
+            /**
+             * Data Mode
+             * @description Where the stored data came from: a live fetch, or an imported snapshot (demo). `null` before the first successful sync.
+             */
+            data_mode?: ("live" | "snapshot") | null;
             /** Docs Url */
             docs_url: string;
             /** Id */
@@ -1823,6 +1828,11 @@ export interface components {
             publisher: string;
             /** Requires Api Key */
             requires_api_key: boolean;
+            /**
+             * Snapshot Taken At
+             * @description For snapshot data: when it was retrieved from the source.
+             */
+            snapshot_taken_at?: string | null;
             /**
              * Status
              * @enum {string}

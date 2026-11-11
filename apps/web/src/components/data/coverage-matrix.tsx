@@ -41,7 +41,7 @@ export function CoverageMatrix() {
 
   return (
     <div>
-      <div className="relative -mx-5 overflow-x-auto px-5">
+      <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
         <table className="w-full min-w-[720px] border-separate border-spacing-1 text-left text-xs">
           <caption className="sr-only">Data availability by country and indicator (probe {catalog.data.probe_date})</caption>
           <thead>

@@ -268,7 +268,7 @@ export function CompareView() {
       <Card className="mt-4">
         <CardHeader title="Per-country source and latest stored value" />
         <CardBody>
-          <div className="relative -mx-5 overflow-x-auto px-5">
+          <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
             <table className="w-full min-w-[760px] text-left text-sm">
               <caption className="sr-only">Source and latest stored value per selected country</caption>
               <thead>

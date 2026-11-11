@@ -31,12 +31,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = ROOT / ".agents" / "local-runs"
 FENCE = re.compile(r"```[a-zA-Z0-9_+-]*\n(.*?)```", re.DOTALL)
+# Files that themselves contain ``` fences (Markdown docs) come wrapped in four backticks.
+OUTER_FENCE = re.compile(r"^````[a-zA-Z0-9_+-]*\n(.*?)\n````[ \t]*$", re.DOTALL | re.MULTILINE)
 SYSTEM = (
     "You are a careful senior engineer on the MacroPulse AI repository (FastAPI + Next.js). "
     "Follow the brief exactly; it is the specification. Never invent data, APIs or modules that "
     "are not in the provided context or the standard library / listed dependencies. "
     "Answer with the COMPLETE content of the requested file in exactly one fenced code block, "
-    "followed by at most five short bullet points on decisions or doubts. No other code blocks."
+    "followed by at most five short bullet points on decisions or doubts. No other code blocks. "
+    "If the file itself contains ``` fences (for example Markdown), wrap the whole file in a "
+    "fence of FOUR backticks (````markdown on the first line, ```` on the last) instead."
 )
 
 
@@ -146,7 +150,8 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 - linear CLI fl
     }
     base.with_suffix(".meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
-    blocks = FENCE.findall(text)
+    outer = OUTER_FENCE.findall(text)
+    blocks = outer if len(outer) == 1 else FENCE.findall(text)
     code = 1
     if len(blocks) != 1:
         print(f"[local-task] expected exactly one code block, got {len(blocks)}; nothing written.")
@@ -158,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 - linear CLI fl
         print(f"[local-task] wrote {_rel(output)} ({len(blocks[0].splitlines())} lines)")
         code = 0
     print(f"[local-task] {json.dumps(meta)}")
-    notes = FENCE.sub("", text).strip()
+    notes = FENCE.sub("", OUTER_FENCE.sub("", text)).strip()
     if notes:
         print("[local-task] model notes:\n" + notes[:1500])
     with contextlib.suppress(OSError, subprocess.SubprocessError):

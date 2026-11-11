@@ -99,6 +99,14 @@ class SourceStatus(BaseModel):
     )
     last_rows_upserted: int | None
     last_error: str | None
+    data_mode: Literal["live", "snapshot"] | None = Field(
+        default=None,
+        description="Where the stored data came from: a live fetch, or an imported snapshot "
+        "(demo). `null` before the first successful sync.",
+    )
+    snapshot_taken_at: datetime | None = Field(
+        default=None, description="For snapshot data: when it was retrieved from the source."
+    )
 
 
 class SourceStatusList(BaseModel):

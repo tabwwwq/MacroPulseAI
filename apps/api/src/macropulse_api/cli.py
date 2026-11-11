@@ -113,6 +113,46 @@ def _cmd_data_sync(args: argparse.Namespace) -> int:
     return 0 if all(status == "succeeded" for _, status in report.runs.values()) else 1
 
 
+def _cmd_demo_export(args: argparse.Namespace) -> int:
+    from macropulse_api.services.demo import export_snapshot  # noqa: PLC0415
+
+    engine = build_engine(get_settings().database_url)
+    try:
+        with build_sessionmaker(engine)() as session:
+            header = export_snapshot(session, Path(args.out))
+    finally:
+        engine.dispose()
+    print(
+        f"wrote {args.out}: {header['observation_count']} observations from "
+        f"{header['series_count']} series, captured {header['captured_at']}"
+    )
+    return 0
+
+
+def _cmd_demo_load(args: argparse.Namespace) -> int:
+    from macropulse_api.services.demo import DEFAULT_SNAPSHOT, load_snapshot  # noqa: PLC0415
+
+    engine = build_engine(get_settings().database_url)
+    try:
+        if current_revision(engine) != head_revision():
+            print(
+                "Database is not migrated. Run `uv run macropulse db upgrade` first.",
+                file=sys.stderr,
+            )
+            return 2
+        path = Path(args.path) if args.path else DEFAULT_SNAPSHOT
+        report, captured = load_snapshot(build_sessionmaker(engine), path)
+    finally:
+        engine.dispose()
+    total = sum(o.rows for o in report.outcomes)
+    failed = [o for o in report.outcomes if not o.ok]
+    print(f"DEMO snapshot captured {captured.isoformat()} loaded: {total} observations")
+    for o in failed:
+        print(f"  not loaded: {o.series_id}: {o.error}")
+    print("The app now shows a demo banner. Run `pnpm data:sync` to replace it with live data.")
+    return 0 if not failed else 1
+
+
 def git_revision() -> str | None:
     """Short commit hash (+ "-dirty" when the tree has changes), or None without git."""
     git = shutil.which("git")
@@ -249,6 +289,10 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument("--source", action="append", choices=sorted(CONNECTORS), help="repeatable")
     sync.add_argument("--country", action="append", help="ISO alpha-2, repeatable")
 
+    dx = sub.add_parser("demo-export", help="write the stored observations to a demo snapshot")
+    dx.add_argument("--out", required=True, help="path of the .json.gz snapshot to write")
+    dl = sub.add_parser("demo-load", help="load the bundled demo snapshot (no network, no keys)")
+    dl.add_argument("--path", help="snapshot file (default: data/demo/snapshot-2026-11-09.json.gz)")
     tr = sub.add_parser("train", help="walk-forward backtest and fit technical-recession models")
     tr.add_argument("--horizon", action="append", type=int, choices=[2, 4], help="repeatable")
     tr.add_argument("--seed", type=int, default=42)
@@ -261,13 +305,14 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "db":
         handler = _cmd_db_upgrade if args.db_command == "upgrade" else _cmd_db_current
         return handler(args)
-    if args.command == "openapi":
-        return _cmd_openapi(args)
-    if args.command == "data-sync":
-        return _cmd_data_sync(args)
-    if args.command == "train":
-        return _cmd_train(args)
-    return _cmd_serve(args)
+    commands = {
+        "openapi": _cmd_openapi,
+        "data-sync": _cmd_data_sync,
+        "train": _cmd_train,
+        "demo-export": _cmd_demo_export,
+        "demo-load": _cmd_demo_load,
+    }
+    return commands.get(args.command, _cmd_serve)(args)
 
 
 if __name__ == "__main__":

@@ -47,6 +47,10 @@ export function SyncStatus() {
       tone = "warn";
       label = "No data synced";
       detail = `0 of ${total} official sources have been fetched yet. Run "uv run macropulse data-sync" on the server.`;
+    } else if (synced.some((s) => s.data_mode === "snapshot")) {
+      tone = "warn";
+      label = "Demo snapshot";
+      detail = `Data comes from the bundled snapshot of official statistics captured ${formatRelative(latest)}, not from a live sync. Run "pnpm data:sync" for current data.`;
     } else {
       tone = synced.length === total ? "ok" : "warn";
       label = `${synced.length}/${total} sources synced`;

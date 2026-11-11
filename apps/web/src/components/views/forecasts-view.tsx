@@ -226,7 +226,7 @@ function DiagnosticsCard({ fc, selected }: { fc: ForecastResponse; selected: str
         description={`Rolling-origin backtest, every origin ${fc.backtest.first_origin ?? "—"} to ${fc.backtest.last_origin ?? "—"}. Errors are later-published minus forecast; coverage uses intervals built only from errors known at each origin.`}
       />
       <CardBody>
-        <div className="relative -mx-5 overflow-x-auto px-5">
+        <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
           <table className="w-full min-w-[720px] text-left text-xs tabular">
             <caption className="sr-only">Forecast accuracy and interval coverage by horizon and model</caption>
             <thead className="text-fg-subtle">

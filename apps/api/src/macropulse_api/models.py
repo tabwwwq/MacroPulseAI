@@ -76,6 +76,12 @@ class IngestionRun(Base):
     status: Mapped[str] = mapped_column(String(16))
     rows_upserted: Mapped[int] = mapped_column(Integer, default=0)
     error_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # live = fetched from the source now; snapshot = imported from a captured snapshot (demo)
+    mode: Mapped[str] = mapped_column(String(16), default="live", server_default="live")
+    # for snapshots: when the snapshot's data was originally retrieved from the sources
+    snapshot_taken_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
 
 class Observation(Base):

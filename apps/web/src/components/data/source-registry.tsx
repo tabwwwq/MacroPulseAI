@@ -49,7 +49,7 @@ export function SourceRegistry({ compact = false }: { compact?: boolean }) {
   if (isError) return <ErrorState error={error} onRetry={() => void refetch()} />;
 
   return (
-    <div className="relative -mx-5 overflow-x-auto px-5">
+    <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
       <table className={`w-full text-left text-sm ${compact ? "min-w-[520px]" : "min-w-[760px]"}`}>
         <caption className="sr-only">Official data sources and their sync status</caption>
         <thead>

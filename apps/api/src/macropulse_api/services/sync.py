@@ -21,6 +21,7 @@ from macropulse_economics.connectors import ConnectorError, FetchResult, SeriesR
 from macropulse_economics.connectors.http import Fetcher
 from macropulse_economics.periods import period_start
 from macropulse_economics.quality import CheckResult, run_checks
+from macropulse_economics.redact import redact_secrets
 from macropulse_economics.series import native_series
 
 logger = logging.getLogger("macropulse.sync")
@@ -70,7 +71,7 @@ def upsert_observations(session: Session, result: FetchResult, run_id: int) -> i
         row.obs_status = fo.obs_status
         row.unit = req.unit
         row.adjustment = req.adjustment
-        row.source_url = result.url
+        row.source_url = redact_secrets(result.url) or ""
         row.source_updated_at = result.source_updated_at
         row.retrieved_at = result.retrieved_at
         row.ingestion_run_id = run_id
@@ -87,7 +88,7 @@ def _store_checks(
                 series_id=series_id,
                 rule=c.rule,
                 status=c.status,
-                detail=c.detail,
+                detail=redact_secrets(c.detail) or "",
             )
         )
 
@@ -121,7 +122,7 @@ def _sync_series(
         outcome.warnings = sum(c.status == "warn" for c in checks)
     except ConnectorError as exc:
         session.rollback()
-        outcome.error = str(exc)
+        outcome.error = redact_secrets(str(exc))
     except Exception as exc:  # unexpected: keep going, log class only
         session.rollback()
         outcome.error = f"unexpected {type(exc).__name__}"
@@ -141,6 +142,8 @@ def run_sync(
     countries: Iterable[str] | None = None,
     today: date | None = None,
     fetch: FetchFn = fetch_series,
+    mode: str = "live",
+    snapshot_taken_at: datetime | None = None,
 ) -> SyncReport:
     requests, skipped = native_series(countries, sources)
     report = SyncReport(skipped=skipped)
@@ -151,7 +154,13 @@ def run_sync(
 
     for source_id, reqs in sorted(by_source.items()):
         with factory() as session:
-            started = IngestionRun(source_id=source_id, status="running", rows_upserted=0)
+            started = IngestionRun(
+                source_id=source_id,
+                status="running",
+                rows_upserted=0,
+                mode=mode,
+                snapshot_taken_at=snapshot_taken_at,
+            )
             session.add(started)
             session.commit()
             run_id = started.id
@@ -173,7 +182,7 @@ def run_sync(
             run.status = status
             run.rows_upserted = rows_total
             run.finished_at = datetime.now(UTC)
-            run.error_summary = "; ".join(errors)[:2000] or None
+            run.error_summary = redact_secrets("; ".join(errors)[:2000]) or None
             session.commit()
         report.runs[source_id] = (run_id, status)
         logger.info(

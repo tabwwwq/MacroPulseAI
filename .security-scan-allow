@@ -1,0 +1,4 @@
+# Reviewed false positives for scripts/security_scan.py (kind<TAB>source<TAB>preview<TAB>reason).
+# Add an entry only after checking the matched value by hand; never allow a real credential.
+secret-assignment	scripts/obsidian/tests/test_vault_log.py	FRED_API_KEY=abc…	fake key "abcdef0123…" in the vault logger's redaction test (asserts it is masked)
+secret-assignment	apps/api/tests/test_sources.py	secret = "abcdef…	fake value marked "# fake test value"; the test asserts the API never returns it

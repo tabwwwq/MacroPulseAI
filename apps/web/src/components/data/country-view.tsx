@@ -102,7 +102,7 @@ function DataTab({ entries }: { entries: CatalogEntry[] }) {
         description="Verified by a live probe of the official APIs. Probe metadata describes what the source publishes; the Stored column counts rows actually in the database."
       />
       <CardBody>
-        <div className="relative -mx-5 overflow-x-auto px-5">
+        <div className="relative -mx-5 overflow-x-auto px-5 focus-visible:outline-2 focus-visible:outline-accent" tabIndex={0} role="region" aria-label="Table, scrolls horizontally">
           <table className="w-full min-w-[860px] text-left text-sm">
             <caption className="sr-only">Indicator sources and ingestion state</caption>
             <thead>
