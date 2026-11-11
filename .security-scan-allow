@@ -2,3 +2,6 @@
 # Add an entry only after checking the matched value by hand; never allow a real credential.
 secret-assignment	scripts/obsidian/tests/test_vault_log.py	FRED_API_KEY=abc…	fake key "abcdef0123…" in the vault logger's redaction test (asserts it is masked)
 secret-assignment	apps/api/tests/test_sources.py	secret = "abcdef…	fake value marked "# fake test value"; the test asserts the API never returns it
+secret-assignment	apps/api/tests/test_hardening.py	SECRET = "012345…	fake value "0123456789abcdef" x2 that the redaction test appends as api_key; the test asserts it is never stored
+database-password	packages/economics/tests/test_redact.py	postgresql+psyco…	fake password "hunter2" as redaction input and the masked "REDACTED" expected output
+database-password	scripts/tests/test_security_scan.py	postgresql://adm…	fake example.com URL in the scanner's own test asserting that database passwords are flagged

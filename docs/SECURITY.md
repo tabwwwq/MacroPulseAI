@@ -8,8 +8,8 @@ that was not run. The checks marked **CI** run on every push.
 
 | Area | What was checked | Result |
 |---|---|---|
-| Secrets in git history | `scripts/security_scan.py --history`: token formats (GitHub, AWS, OpenAI, Anthropic, Google, Slack), private keys, secret assignments, database URLs with passwords, over every added line of every commit — **CI** | 0 findings; 2 reviewed false positives (fake keys in redaction tests) listed with reasons in `.security-scan-allow` |
-| Secrets in tracked files | same scanner over `git ls-files` — **CI** | 0 findings (same 2 reviewed test values) |
+| Secrets in git history | `scripts/security_scan.py --history`: token formats (GitHub, AWS, OpenAI, Anthropic, Google, Slack), private keys, secret assignments, database URLs with passwords, over every added line of every commit — **CI** | 0 findings; 5 reviewed false positives (fake keys and passwords in the redaction and scanner tests) listed with reasons in `.security-scan-allow` |
+| Secrets in tracked files | same scanner over `git ls-files` — **CI** | 0 findings (the same reviewed test values) |
 | Client bundle | scanner over `apps/web/.next/static` after `next build`: token formats plus server-only names (`FRED_API_KEY`, `DATABASE_URL`, `POSTGRES_PASSWORD`) — **CI** | 0 findings |
 | `FRED_API_KEY` | where it is read and sent | Server-side `SecretStr`; only "configured: yes/no" is exposed. The current FRED connector uses the public CSV endpoint and never sends the key |
 | Credentials in provenance | request URLs are stored and exported (API, PDF/CSV reports) | `redact_secrets` masks `api_key`/`token`/`key`/`password` query parameters and URL passwords before storage, also in error summaries and quality-check details; tested end to end (`test_hardening.py`) |
