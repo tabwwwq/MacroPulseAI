@@ -234,7 +234,10 @@ export function OverviewView() {
         </Card>
       )}
 
-      <h2 className="mb-3 mt-10 font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-fg-subtle">Platform</h2>
+      <h2 className="mb-4 mt-12 flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-fg-subtle">
+        Platform
+        <span aria-hidden className="hairline h-px flex-1" />
+      </h2>
       <div className="grid gap-4 xl:grid-cols-3">
         <Card>
           <CardHeader title="Platform status" description="Live readiness checks." />

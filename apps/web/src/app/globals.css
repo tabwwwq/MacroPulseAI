@@ -19,12 +19,59 @@
 
   --color-accent: #4cc3ff;
   --color-accent-strong: #2f9bff;
+  /* Second accent: only for decorative gradients and glows, never for meaning. */
+  --color-iris: #8f8bff;
   --color-ok: #3dd6a3;
   --color-warn: #f5b544;
   --color-danger: #f2667a;
 
-  --radius-card: 0.875rem;
-  --shadow-card: inset 0 1px 0 0 rgb(255 255 255 / 0.035), 0 16px 40px -24px rgb(0 0 0 / 0.7);
+  --radius-card: 1rem;
+  --shadow-card:
+    inset 0 1px 0 0 rgb(255 255 255 / 0.05), 0 1px 0 0 rgb(0 0 0 / 0.3), 0 24px 48px -28px rgb(0 0 0 / 0.85);
+  --shadow-glow: 0 0 0 1px rgb(76 195 255 / 0.22), 0 18px 50px -22px rgb(47 155 255 / 0.55);
+
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-drift: drift 28s ease-in-out infinite alternate;
+  --animate-trace: trace 4.5s linear infinite;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  @keyframes drift {
+    from {
+      transform: translate3d(-2%, -1%, 0) scale(1);
+    }
+    to {
+      transform: translate3d(3%, 2%, 0) scale(1.08);
+    }
+  }
+
+  @keyframes trace {
+    from {
+      stroke-dashoffset: 0;
+    }
+    to {
+      stroke-dashoffset: -260;
+    }
+  }
 }
 
 @theme inline {
@@ -35,6 +82,8 @@
 @layer base {
   html {
     color-scheme: dark;
+    scrollbar-color: var(--color-line-strong) transparent;
+    scrollbar-width: thin;
   }
 
   body {
@@ -50,24 +99,152 @@
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
+
+  /* Tables: quiet mono column heads, rows light up under the pointer. */
+  thead th {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  tbody tr {
+    transition: background-color 0.15s ease;
+  }
+
+  tbody tr:hover {
+    background-color: rgb(76 195 255 / 0.045);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: var(--color-line-strong) content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-fg-subtle) content-box;
+  }
 }
 
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
 
-/* Subtle ambient glow behind the content area. Purely decorative. */
-.app-backdrop {
+/* ----------------------------------------------------------------------------------------------
+   Surfaces. `panel` is the card: an opaque navy fill (text contrast never depends on what is
+   behind it) inside a 1px gradient border that catches the light at the top-left corner.
+   ---------------------------------------------------------------------------------------------- */
+@utility panel {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: var(--radius-card);
   background:
-    radial-gradient(1100px 480px at 75% -12%, rgb(47 155 255 / 0.1), transparent 60%),
-    radial-gradient(700px 360px at -5% -5%, rgb(76 195 255 / 0.06), transparent 55%);
+    linear-gradient(180deg, #162036 0%, var(--color-surface) 46%, #111828 100%) padding-box,
+    linear-gradient(
+        155deg,
+        rgb(124 200 255 / 0.42) 0%,
+        rgb(143 139 255 / 0.2) 18%,
+        var(--color-line) 42%,
+        var(--color-line) 100%
+      )
+      border-box;
+  box-shadow: var(--shadow-card);
 }
 
-.grid-lines {
+/* Interactive panels (links, tiles): lift and light up on hover / keyboard focus. */
+@utility panel-hover {
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 0.25s ease;
+
+  &:hover,
+  &:focus-within {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+  }
+}
+
+/* A 1px line that fades out at both ends: under the top bar, above footers. */
+@utility hairline {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(76 195 255 / 0.45) 18%,
+    rgb(143 139 255 / 0.35) 50%,
+    var(--color-line) 82%,
+    transparent
+  );
+}
+
+/* Headline text: white fading into the accent. The fallback colour keeps it readable anywhere. */
+@utility text-headline {
+  color: var(--color-fg);
+  background: linear-gradient(120deg, #ffffff 0%, #e7ebf3 38%, #9bdcff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ----------------------------------------------------------------------------------------------
+   Ambient backdrop behind the content column: two slow aurora glows and a faint grid that fades
+   out towards the bottom. Purely decorative, fixed, never intercepts pointer events.
+   ---------------------------------------------------------------------------------------------- */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.aurora::before,
+.aurora::after {
+  position: absolute;
+  content: "";
+  will-change: transform;
+}
+
+.aurora::before {
+  inset: -30% -10% auto 18%;
+  height: 78vh;
+  background:
+    radial-gradient(48% 52% at 68% 32%, rgb(47 155 255 / 0.2), transparent 70%),
+    radial-gradient(36% 44% at 22% 18%, rgb(143 139 255 / 0.15), transparent 72%),
+    radial-gradient(30% 36% at 92% 62%, rgb(61 214 163 / 0.07), transparent 70%);
+  filter: blur(8px);
+  animation: var(--animate-drift);
+}
+
+.aurora::after {
+  inset: 0;
   background-image:
-    linear-gradient(to right, rgb(255 255 255 / 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(255 255 255 / 0.025) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(to right, rgb(255 255 255 / 0.028) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.028) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(120% 70% at 60% 0%, #000 0%, transparent 78%);
+}
+
+/* Loading placeholder with a moving highlight. */
+.shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--color-surface-2) 30%,
+    rgb(76 195 255 / 0.1) 50%,
+    var(--color-surface-2) 70%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Page content rises in once per route. */
+.page-enter {
+  animation: var(--animate-rise);
 }
 
 @media (prefers-reduced-motion: reduce) {

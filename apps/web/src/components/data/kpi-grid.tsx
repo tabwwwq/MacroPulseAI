@@ -8,18 +8,46 @@ import { ErrorState } from "@/components/ui/states";
 import { formatRelative } from "@/lib/format";
 import { availabilityReason, MAPPING_STATUS, sourceLabel } from "@/lib/mapping";
 import { modelState, modelSummaryText } from "@/lib/models";
-import { useCatalog, useCountrySummary, useModels, useRecessionEstimate } from "@/lib/queries";
+import { useCatalog, useCountrySummary, useIndicatorSeries, useModels, useRecessionEstimate } from "@/lib/queries";
 import { BANDS, formatProbability } from "@/lib/risk";
 import { ApiError } from "@/lib/api";
-import { flagLabel, provenanceLabel } from "@/lib/series";
+import { flagLabel, provenanceLabel, rangeBounds } from "@/lib/series";
 
 /** Change unit: percentage points for rates, otherwise the indicator unit. */
 export function changeUnit(unit: string): string {
   return unit.startsWith("%") ? "pp" : unit;
 }
 
-function KpiTile({ kpi, entry }: { kpi: KpiValue; entry: CatalogEntry | undefined }) {
+/** How many of the latest stored observations the KPI sparkline shows. */
+export const TREND_POINTS = 24;
+
+/**
+ * Sparkline input: the last stored observations of the same series the KPI value comes from, up to
+ * and including the KPI's own period. `null` when there is nothing to draw.
+ */
+export function kpiTrend(
+  points: { period: string; value: number | null }[] | undefined,
+  kpi: Pick<KpiValue, "period" | "indicator">,
+): { values: (number | null)[]; label: string } | null {
+  if (!points?.length || !kpi.period) return null;
+  const end = points.findIndex((p) => p.period === kpi.period);
+  if (end < 0) return null;
+  const window = points.slice(Math.max(0, end + 1 - TREND_POINTS), end + 1);
+  const first = window[0];
+  if (!first || window.length < 2) return null;
+  return {
+    values: window.map((p) => p.value),
+    label: `${kpi.indicator.name}: ${window.length} stored observations from ${first.period} to ${kpi.period}`,
+  };
+}
+
+function KpiTile({ kpi, entry, iso2, asOf }: { kpi: KpiValue; entry: CatalogEntry | undefined; iso2: string; asOf: string | null }) {
   const status = entry ? MAPPING_STATUS[entry.mapping.status] : null;
+  // Same query as the overview charts (10-year window), so this is served from the cache there.
+  const series = useIndicatorSeries(
+    kpi.status === "ok" ? { country: iso2, indicator: kpi.indicator.id, ...rangeBounds("10y", asOf) } : null,
+  );
+  const trend = kpiTrend(series.data?.points, kpi);
   const flag = flagLabel(kpi.source_flag);
   const note =
     kpi.status === "ok"
@@ -38,6 +66,7 @@ function KpiTile({ kpi, entry }: { kpi: KpiValue; entry: CatalogEntry | undefine
       flag={flag}
       badge={status ? { label: status.label, tone: status.tone } : undefined}
       note={note}
+      trend={trend ?? undefined}
       source={kpi.provenance ? provenanceLabel(kpi.provenance) : entry ? sourceLabel(entry) : null}
       provenance={
         kpi.provenance ? (
@@ -69,7 +98,13 @@ export function KpiGrid({ iso2, asOf }: { iso2: string; asOf: string | null }) {
       {summary.isPending
         ? Array.from({ length: 6 }, (_, i) => <KpiCard key={i} label="Loading" isLoading />)
         : summary.data.kpis.map((k) => (
-            <KpiTile key={k.indicator.id} kpi={k} entry={entries.find((e) => e.indicator.id === k.indicator.id)} />
+            <KpiTile
+              key={k.indicator.id}
+              kpi={k}
+              entry={entries.find((e) => e.indicator.id === k.indicator.id)}
+              iso2={iso2}
+              asOf={asOf}
+            />
           ))}
       {summary.data ? (
         <>

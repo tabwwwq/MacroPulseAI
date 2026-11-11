@@ -13,14 +13,15 @@ import { init, use as registerEcharts, type ComposeOption, type EChartsType } fr
 import { CanvasRenderer } from "echarts/renderers";
 import { useEffect, useRef, type JSX } from "react";
 
+import { chartTheme, glowLine, legendStyle, tooltipStyle, valueAxisStyle } from "@/components/charts/theme";
+
 registerEcharts([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer]);
 
 const theme = {
-  backgroundColor: "#131b2c",
-  color: ["#4cc3ff", "#f5b544", "#3dd6a3", "#f2667a", "#a0abc0"],
-  textStyle: { color: "#a0abc0", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" },
-  lineColor: "#24304a",
-  axisColor: "#7f8aa3",
+  backgroundColor: "transparent",
+  color: [chartTheme.accent, chartTheme.warn, chartTheme.ok, "#f2667a", "#a0abc0"],
+  textStyle: chartTheme.textStyle,
+  axisColor: chartTheme.axis,
 };
 
 type Option = ComposeOption<LineSeriesOption | GridComponentOption | TooltipComponentOption | LegendComponentOption>;
@@ -68,13 +69,11 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, height = 240, domai
       animation: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       textStyle: theme.textStyle,
       grid: { left: 12, right: 16, top: 40, bottom: 28, containLabel: true },
-      legend: { top: 4, type: "scroll", textStyle: theme.textStyle },
+      legend: legendStyle,
       tooltip: {
         trigger: "item",
         confine: true,
-        backgroundColor: theme.backgroundColor,
-        borderColor: theme.lineColor,
-        textStyle: theme.textStyle,
+        ...tooltipStyle,
         formatter: (p) => {
           const item = Array.isArray(p) ? p[0] : p;
           const v = (item?.value ?? []) as number[];
@@ -88,8 +87,7 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, height = 240, domai
         name: xLabel,
         nameLocation: "middle",
         nameGap: 22,
-        axisLine: { lineStyle: { color: theme.axisColor } },
-        splitLine: { lineStyle: { color: theme.lineColor } },
+        ...valueAxisStyle,
       },
       yAxis: {
         type: "value",
@@ -98,15 +96,15 @@ export function XYChart({ series, xLabel, yLabel, ariaLabel, height = 240, domai
         name: yLabel,
         nameLocation: "middle",
         nameGap: 34,
-        axisLine: { lineStyle: { color: theme.axisColor } },
-        splitLine: { lineStyle: { color: theme.lineColor } },
+        ...valueAxisStyle,
       },
-      series: series.map((s) => ({
+      series: series.map((s, i) => ({
         name: s.name,
         type: "line" as const,
         data: s.points.map((p) => [p.x, p.y]),
         showSymbol: Boolean(s.markers),
         symbolSize: 8,
+        lineStyle: glowLine(theme.color[i % theme.color.length] ?? chartTheme.accent, 2),
         ...(s.markers ? { lineStyle: { width: 1, type: "dotted" as const } } : {}),
         ...(s.dashed ? { lineStyle: { type: "dashed" as const, width: 1 }, itemStyle: { color: theme.axisColor } } : {}),
         ...(s.step ? { step: "end" as const } : {}),

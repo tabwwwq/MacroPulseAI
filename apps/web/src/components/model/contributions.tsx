@@ -25,7 +25,7 @@ export function Contributions({ items, unit }: { items: Contribution[]; unit: st
                 {formatSigned(i.contribution)} <span className="text-fg-subtle">{unit}</span>
               </span>
             </div>
-            <div className="relative mt-1 h-2 rounded-full bg-surface-2" aria-hidden>
+            <div className="relative mt-1.5 h-2 rounded-full bg-canvas" aria-hidden>
               <span className="absolute inset-y-0 left-1/2 w-px bg-line-strong" />
               <span
                 className="absolute inset-y-0 rounded-full"
@@ -33,7 +33,10 @@ export function Contributions({ items, unit }: { items: Contribution[]; unit: st
                   width,
                   left: up ? "50%" : undefined,
                   right: up ? undefined : "50%",
-                  background: up ? "#f5b544" : "#4cc3ff",
+                  background: up
+                    ? "linear-gradient(90deg, #f5b54466, #f5b544)"
+                    : "linear-gradient(270deg, #4cc3ff66, #4cc3ff)",
+                  boxShadow: `0 0 10px ${up ? "#f5b54480" : "#4cc3ff80"}`,
                 }}
               />
             </div>

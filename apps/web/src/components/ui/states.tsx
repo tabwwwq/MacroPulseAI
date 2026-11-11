@@ -63,11 +63,13 @@ export function EmptyState({ icon, title, children, action, className }: EmptySt
   return (
     <div
       className={cn(
-        "flex flex-col items-center gap-3 rounded-xl border border-dashed border-line-strong bg-surface-2/40 px-6 py-10 text-center",
+        "flex flex-col items-center gap-3 rounded-xl border border-dashed border-line-strong bg-[radial-gradient(60%_80%_at_50%_0%,rgb(76_195_255/0.07),transparent_70%)] px-6 py-10 text-center",
         className,
       )}
     >
-      <div className="text-fg-subtle">{icon ?? <Info className="size-5" aria-hidden />}</div>
+      <div className="flex size-11 items-center justify-center rounded-full border border-line-strong bg-surface-2 text-accent shadow-[0_0_24px_-6px_rgb(76_195_255/0.5)]">
+        {icon ?? <Info className="size-5" aria-hidden />}
+      </div>
       <p className="text-sm font-medium text-fg">{title}</p>
       {children ? <div className="max-w-md text-sm text-fg-muted">{children}</div> : null}
       {action}

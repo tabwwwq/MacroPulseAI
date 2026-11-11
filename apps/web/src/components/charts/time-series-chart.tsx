@@ -16,20 +16,28 @@ import { init, use as registerEcharts, type ComposeOption, type EChartsType } fr
 import { CanvasRenderer } from "echarts/renderers";
 import { useEffect, useImperativeHandle, useRef, type JSX, type Ref } from "react";
 
+import {
+  axisPointerStyle,
+  categoryAxisStyle,
+  chartTheme,
+  glowLine,
+  legendStyle,
+  tooltipStyle,
+  valueAxisStyle,
+  verticalFade,
+  zoomSliderStyle,
+} from "@/components/charts/theme";
 import type { ChartKind, ChartSeries, ChartShading } from "@/components/charts/types";
 import { alignSeries } from "@/lib/export";
 
 registerEcharts([LineChart, BarChart, GridComponent, TooltipComponent, LegendComponent, DataZoomComponent, MarkAreaComponent, CanvasRenderer]);
 
-// Matches globals.css. Canvas rendering cannot consume Tailwind classes.
 const theme = {
   darkMode: true,
-  backgroundColor: "#131b2c",
-  color: ["#4cc3ff", "#3dd6a3", "#f2667a", "#2f9bff", "#a0abc0"],
-  textStyle: { color: "#a0abc0", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" },
-  lineColor: "#24304a",
-  axisColor: "#7f8aa3",
-  referenceColor: "#f5b544",
+  backgroundColor: "transparent",
+  color: [...chartTheme.palette],
+  textStyle: chartTheme.textStyle,
+  referenceColor: chartTheme.warn,
 };
 
 type ChartOption = ComposeOption<
@@ -69,7 +77,7 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
   const chart = useRef<EChartsType | null>(null);
 
   useImperativeHandle(ref, () => ({
-    getPngDataUrl: () => chart.current?.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: theme.backgroundColor }) ?? null,
+    getPngDataUrl: () => chart.current?.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: chartTheme.exportBackground }) ?? null,
   }), []);
 
   useEffect(() => {
@@ -93,25 +101,39 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
     const { periods, columns } = alignSeries(series);
     const times = periods.map(periodTime);
     const labels = new Map(times.map((time, index) => [time, periods[index]]));
-    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id, step, color }, index) => ({
-      id,
-      ...(color ? { itemStyle: { color } } : {}),
-      name: columns[index]?.label,
-      type: kind,
-      data: times.map((time, pointIndex) => [time, columns[index]?.values[pointIndex] ?? null]),
-      ...(kind === "line"
-        ? {
-            // Step series hold each value until the next observation (e.g. a rate decision);
-            // they connect across the gaps that alignment with other series introduces.
-            connectNulls: Boolean(step),
-            smooth: false,
-            showSymbol: times.length <= 150, // dense series: line only, values on hover
-            symbolSize: 4,
-            ...(step ? { step: "end" as const } : {}),
-            ...(color ? { lineStyle: { color } } : {}),
-          }
-        : {}),
-    }));
+    const plotted: (LineSeriesOption | BarSeriesOption)[] = series.map(({ id, step, color }, index) => {
+      const tone = color ?? chartTheme.palette[index % chartTheme.palette.length] ?? chartTheme.accent;
+      const shared = {
+        id,
+        name: columns[index]?.label,
+        data: times.map((time, pointIndex) => [time, columns[index]?.values[pointIndex] ?? null]),
+      };
+      if (kind === "bar") {
+        return {
+          ...shared,
+          type: "bar" as const,
+          itemStyle: { color: verticalFade(tone, 1, 0.55), borderRadius: 2 },
+          emphasis: { itemStyle: { color: tone } },
+        };
+      }
+      return {
+        ...shared,
+        type: "line" as const,
+        itemStyle: { color: tone },
+        lineStyle: glowLine(tone, series.length > 2 ? 1.75 : 2.25),
+        // A single series gets a soft fill to the axis; with several, fills would hide each other.
+        ...(series.length === 1 ? { areaStyle: { color: verticalFade(tone, 0.28, 0), origin: "start" as const } } : {}),
+        // Step series hold each value until the next observation (e.g. a rate decision);
+        // they connect across the gaps that alignment with other series introduces.
+        connectNulls: Boolean(step),
+        smooth: false,
+        showSymbol: times.length <= 60, // dense series: line only, values on hover
+        symbol: "circle",
+        symbolSize: 5,
+        emphasis: { scale: 1.6 },
+        ...(step ? { step: "end" as const } : {}),
+      };
+    });
     const sources = [...new Set(series.map((s) => s.source).filter((s): s is string => Boolean(s)))];
     // Separate, explicitly labelled reference series keep shading in the legend and PNG.
     const references: LineSeriesOption[] = shading.map(({ from, to, label, prefix = "External reference" }, index) => ({
@@ -132,14 +154,13 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
       animation: !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
       textStyle: theme.textStyle,
       grid: { left: 16, right: 16, top: 60, bottom: 60, containLabel: true },
-      legend: { type: "scroll", top: 4, textStyle: theme.textStyle },
+      legend: legendStyle,
       tooltip: {
         trigger: "axis",
         renderMode: "richText",
         confine: true,
-        backgroundColor: theme.backgroundColor,
-        borderColor: theme.lineColor,
-        textStyle: theme.textStyle,
+        ...tooltipStyle,
+        axisPointer: axisPointerStyle,
         formatter: (params) => {
           const entries = Array.isArray(params) ? params : [params];
           const firstValue = entries[0]?.value;
@@ -158,12 +179,12 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
           return [period, ...values, ...referenceLabels, ...sourceLines].join("\n");
         },
       },
-      xAxis: { type: "time", axisLine: { lineStyle: { color: theme.axisColor } }, splitLine: { show: false } },
-      yAxis: { type: "value", axisLabel: { color: theme.axisColor }, splitLine: { lineStyle: { color: theme.lineColor } } },
+      xAxis: { type: "time", ...categoryAxisStyle },
+      yAxis: { type: "value", ...valueAxisStyle },
       dataZoom: [
         // The page must keep scrolling over charts: zoom with Ctrl + wheel, pinch, or the slider.
         { type: "inside", filterMode: "none", zoomOnMouseWheel: "ctrl", moveOnMouseWheel: false, preventDefaultMouseMove: false },
-        { type: "slider", bottom: 4, height: 20, borderColor: theme.lineColor, textStyle: theme.textStyle },
+        zoomSliderStyle,
       ],
       series: [...plotted, ...references],
     };

@@ -20,14 +20,15 @@ tags:
 - ✅ **Phase 8 — Crisis time machine** done (2026-11-10): walk-forward replays with inputs as known then, outcomes as published later, warned / missed / false alarms; revised-data / release-lag approximation, no vintages. Most recessions were missed ([[F-013 Replays show most recessions were missed]]). See [[Phase 08 — Crisis time machine]].
 - ✅ **Phase 9 — Analyst-grade PDF reports** done (2026-11-11): PDF / CSV / JSON country reports from the API's own services; renderers written by the **local model** (Qwen3.8-27B on the RX 7800 XT) and reviewed ([[ADR-0021 Local model as a reviewed single-file worker]]). See [[Phase 09 — Analyst-grade PDF reports]].
 - ✅ **Phase 10 — Hardening & release** done (`75c88b5`, 2026-11-11): credential-free demo from a genuine snapshot ([[ADR-0022 Demo from a genuine snapshot, labelled as such]]), security audit and secret scanner, 58 Playwright E2E incl. axe ([[F-015 Accessibility violations found by the first axe run]]), compose stack on PostgreSQL in CI, deploy guide, README with real screenshots. See [[Phase 10 — Hardening & release]].
+- 🎨 **Visual refresh** after the release (2026-11-11): new design system — opaque gradient-bordered panels, ambient backdrop, shared chart theme, redesigned gauge, KPI sparklines from stored series, pulse trace ([[ADR-0023 Opaque panels, shared chart theme and decorative motion]], `docs/DESIGN.md`). Five files written by the local model and reviewed. No data, model or caveat changed. CI for it: pending.
 - All ten roadmap phases are complete. CI: run 43023762417 for `0dde5a0` passed all five jobs — API, Web, Security audit (history/tree secret scan, pip-audit, pnpm audit), E2E (58 Playwright on the demo snapshot) and the Docker compose stack on PostgreSQL. The previous run 43022549543 (`31ba843`) failed only the security scan on this phase's own fake test credentials; reviewed and allowlisted in `0dde5a0`.
 
 ## Working (verified 2026-11-11)
 - Data: 31 native series, 25,702 observations; BE/DE/FR/NL `full`, US `partial`. The same rows ship as the demo snapshot `data/demo/snapshot-2026-11-09.json.gz` (`pnpm demo`, DEMO banner).
 - Models: H=2 HistGradientBoosting, H=4 Logistic Regression; artifacts in `models/artifacts` (ignored); a fresh clone trains them in ~13 s.
 - API: all endpoints of CLAUDE.md §9 except admin sync/train (CLI only, by design); 64 KiB body limit, security headers, credential redaction in stored provenance.
-- Web: all ten pages; production CSP; axe WCAG A/AA clean at 1440 px and 375 px.
-- Checks: 283 pytest (+1 PostgreSQL in CI, +16 live), 104 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build`, 58 Playwright, `pnpm smoke` 2883/2883, secret scan, `pip-audit`, `pnpm audit`.
+- Web: all ten pages on the refreshed design; production CSP; axe WCAG A/AA clean at 1440 px and 375 px (58/58 after the refresh); shell-shared queries are hydration-safe ([[F-016 Hydration mismatch from queries shared with the shell]]).
+- Checks: 287 pytest (+1 PostgreSQL in CI, +16 live), 134 Vitest, ruff, mypy `--strict`, ESLint, tsc, `next build`, 58 Playwright, `pnpm smoke` 2883/2883, secret scan, `pip-audit`, `pnpm audit`.
 - Clean clone: fresh `git clone` of `75c88b5` → bootstrap 3 min 28 s, demo load 6.6 s, train 12.8 s; 283 pytest, 104 Vitest, lint, build, smoke 2883/2883 all passed.
 - Local model: llama.cpp Vulkan b12259 + Qwen3.8-27B Q3_K_XL outside the repo; `docs/LOCAL_MODEL.md`.
 

@@ -47,7 +47,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, c
       role="radiogroup"
       aria-label={label}
       onKeyDown={onKeyDown}
-      className={cn("inline-flex max-w-full flex-wrap rounded-lg border border-line-strong bg-surface-2 p-0.5", className)}
+      className={cn("inline-flex max-w-full flex-wrap rounded-lg border border-line-strong bg-canvas/60 p-0.5 shadow-[inset_0_1px_2px_rgb(0_0_0/0.4)]", className)}
     >
       {options.map((o, i) => {
         const checked = o.value === value;
@@ -63,8 +63,10 @@ export function Segmented<T extends string>({ label, options, value, onChange, c
             tabIndex={checked ? 0 : -1}
             onClick={() => onChange(o.value)}
             className={cn(
-              "h-7 rounded-md px-3 text-xs font-medium transition-colors",
-              checked ? "bg-accent/15 text-accent" : "text-fg-muted hover:text-fg",
+              "h-7 rounded-md px-3 text-xs font-medium transition-all duration-200",
+              checked
+                ? "bg-accent/15 text-accent shadow-[inset_0_0_0_1px_rgb(76_195_255/0.4),0_0_16px_-4px_rgb(76_195_255/0.5)]"
+                : "text-fg-muted hover:bg-surface-2 hover:text-fg",
             )}
           >
             {o.label}

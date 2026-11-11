@@ -27,7 +27,7 @@ export function CountrySwitcher() {
     <Select.Root value={supported && country ? country : ""} onValueChange={setCountry} disabled={unavailable}>
       <Select.Trigger
         aria-label={country ? `Country: ${country}` : "Select country"}
-        className="inline-flex h-8 min-w-0 items-center gap-2 rounded-lg border border-line-strong bg-surface-2 px-2.5 text-sm text-fg hover:bg-elevated disabled:opacity-60 data-[placeholder]:text-fg-muted"
+        className="inline-flex h-8 min-w-0 items-center gap-2 rounded-lg border border-line-strong bg-surface-2/80 px-2.5 text-sm text-fg shadow-[inset_0_1px_0_rgb(255_255_255/0.05)] transition-colors hover:border-accent/45 hover:bg-elevated disabled:opacity-60 data-[placeholder]:text-fg-muted"
       >
         <Globe className="size-4 shrink-0 text-fg-subtle" aria-hidden />
         <span className="hidden max-w-44 truncate sm:block">

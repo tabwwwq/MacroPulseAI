@@ -17,7 +17,7 @@ export function MobileNav({ open, onOpenChange }: MobileNavProps) {
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden" />
         <Dialog.Content
-          className="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r border-line bg-surface shadow-card focus:outline-none lg:hidden"
+          className="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] border-r border-line bg-[linear-gradient(180deg,#10182b_0%,#0c1222_55%,#0b1020_100%)] shadow-card focus:outline-none lg:hidden"
           aria-describedby={undefined}
         >
           <Dialog.Title className="sr-only">Navigation</Dialog.Title>

@@ -3,6 +3,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import type { ScenarioRequest } from "@macropulse/shared-types";
 
 import { api, ApiError, fetchReady, unwrap } from "@/lib/api";
+import { useHydrated } from "@/lib/use-hydrated";
 
 export const queryKeys = {
   health: ["health"] as const,
@@ -30,6 +31,27 @@ export const queryKeys = {
   scenario: (r: ScenarioRequest | null) =>
     ["scenarios", "evaluate", r?.country ?? "", r?.horizon ?? 0, r?.as_of ?? "latest", JSON.stringify(r?.shocks ?? {})] as const,
 };
+
+/**
+ * Queries the shell also uses (top bar, footer) can resolve while a page's Suspense boundary is
+ * still hydrating; the page's first client render would then see data the server HTML never had
+ * and React would report a hydration mismatch. Until hydration completes, such a query is
+ * reported as pending — exactly what the server rendered.
+ */
+function usePendingUntilHydrated<T extends { data: unknown }>(result: T): T {
+  const hydrated = useHydrated();
+  if (hydrated) return result;
+  return {
+    ...result,
+    data: undefined,
+    error: null,
+    status: "pending",
+    isPending: true,
+    isLoading: true,
+    isSuccess: false,
+    isError: false,
+  } as T;
+}
 
 /** 404/503 are answers (not trained, inputs not published), not transient failures. */
 function retryUnlessAnswer(count: number, error: unknown): boolean {
@@ -215,27 +237,33 @@ export function useDataQuality(iso2: string | null) {
 }
 
 export function useHealth() {
-  return useQuery({
-    queryKey: queryKeys.health,
-    queryFn: () => unwrap(api.GET("/api/health")),
-    refetchInterval: 60_000,
-  });
+  return usePendingUntilHydrated(
+    useQuery({
+      queryKey: queryKeys.health,
+      queryFn: () => unwrap(api.GET("/api/health")),
+      refetchInterval: 60_000,
+    }),
+  );
 }
 
 export function useReady() {
-  return useQuery({
-    queryKey: queryKeys.ready,
-    queryFn: fetchReady,
-    refetchInterval: 30_000,
-  });
+  return usePendingUntilHydrated(
+    useQuery({
+      queryKey: queryKeys.ready,
+      queryFn: fetchReady,
+      refetchInterval: 30_000,
+    }),
+  );
 }
 
 export function useCountries() {
-  return useQuery({
-    queryKey: queryKeys.countries,
-    queryFn: () => unwrap(api.GET("/api/countries")),
-    staleTime: 5 * 60_000,
-  });
+  return usePendingUntilHydrated(
+    useQuery({
+      queryKey: queryKeys.countries,
+      queryFn: () => unwrap(api.GET("/api/countries")),
+      staleTime: 5 * 60_000,
+    }),
+  );
 }
 
 export function useCountry(iso2: string) {
@@ -257,9 +285,11 @@ export function useCatalog(iso2: string | null) {
 }
 
 export function useSourcesStatus() {
-  return useQuery({
-    queryKey: queryKeys.sources,
-    queryFn: () => unwrap(api.GET("/api/sources/status")),
-    refetchInterval: 60_000,
-  });
+  return usePendingUntilHydrated(
+    useQuery({
+      queryKey: queryKeys.sources,
+      queryFn: () => unwrap(api.GET("/api/sources/status")),
+      refetchInterval: 60_000,
+    }),
+  );
 }

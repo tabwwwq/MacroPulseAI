@@ -28,7 +28,7 @@ export function AsOfSelect() {
     <Select.Root value={asOf ?? LATEST} onValueChange={(v) => setAsOf(v === LATEST ? null : v)}>
       <Select.Trigger
         aria-label={`As-of quarter: ${formatAsOf(asOf)}`}
-        className="inline-flex h-8 min-w-0 items-center gap-2 rounded-lg border border-line-strong bg-surface-2 px-2.5 text-sm text-fg hover:bg-elevated"
+        className="inline-flex h-8 min-w-0 items-center gap-2 rounded-lg border border-line-strong bg-surface-2/80 px-2.5 text-sm text-fg shadow-[inset_0_1px_0_rgb(255_255_255/0.05)] transition-colors hover:border-accent/45 hover:bg-elevated"
       >
         <CalendarClock className="size-4 shrink-0 text-fg-subtle" aria-hidden />
         <span className="hidden text-fg-subtle md:inline">As of</span>

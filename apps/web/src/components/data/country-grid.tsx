@@ -12,14 +12,14 @@ import { ErrorState } from "@/components/ui/states";
 import { useCountries } from "@/lib/queries";
 
 const CARD =
-  "group flex h-full w-full flex-col gap-3 rounded-xl border border-line bg-surface-2/60 p-4 text-left transition-colors hover:border-accent/40 hover:bg-surface-2";
+  "panel panel-hover group flex h-full w-full flex-col gap-3 p-4 text-left";
 
 function CardContent({ c }: { c: Country }): ReactNode {
   return (
     <>
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg border border-line-strong bg-surface font-mono text-xs font-semibold text-fg">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-accent/25 bg-[radial-gradient(circle_at_30%_20%,rgb(76_195_255/0.28),rgb(23_34_56/0.9)_70%)] font-mono text-xs font-semibold text-fg shadow-[0_0_18px_-6px_rgb(76_195_255/0.6)]">
             {c.iso2}
           </span>
           <div className="min-w-0">

@@ -15,18 +15,40 @@ import { useRecessionEstimate } from "@/lib/queries";
 import { BANDS, HORIZON_CONFLICT_NOTE, formatProbability, horizonConflict } from "@/lib/risk";
 
 function Row({ horizon, e }: { horizon: 2 | 4; e: RecessionEstimate }) {
-  const band = BANDS[e.band] ?? { label: e.band, tone: "neutral" as const };
+  const band = BANDS[e.band] ?? { label: e.band, tone: "neutral" as const, color: "#a0abc0" };
   return (
-    <li className="flex items-center justify-between gap-3 py-2">
-      <div>
-        <p className="text-sm text-fg">Next {horizon} quarters</p>
-        <p className="font-mono text-[11px] text-fg-subtle">
-          {e.model.name} · base rate {formatProbability(e.base_rate)}
-        </p>
+    <li className="py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm text-fg">Next {horizon} quarters</p>
+          <p className="font-mono text-[11px] text-fg-subtle">
+            {e.model.name} · base rate {formatProbability(e.base_rate)}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="tabular font-mono text-2xl font-semibold tracking-tight text-fg">
+            {formatProbability(e.probability)}
+          </span>
+          <Badge tone={band.tone}>{band.label}</Badge>
+        </div>
       </div>
-      <div className="flex items-center gap-2">
-        <span className="tabular font-mono text-xl font-semibold text-fg">{formatProbability(e.probability)}</span>
-        <Badge tone={band.tone}>{band.label}</Badge>
+      {/* Meter: the estimate on a 0–100 % track, with the base rate as a tick. Decorative; both numbers are in the text above. */}
+      <div aria-hidden className="relative mt-2.5 h-1.5 rounded-full bg-canvas">
+        <div
+          className="h-full rounded-full"
+          style={{
+            width: `${Math.min(Math.max(e.probability, 0), 1) * 100}%`,
+            minWidth: 6,
+            background: `linear-gradient(90deg, ${band.color}66, ${band.color})`,
+            boxShadow: `0 0 12px ${band.color}99`,
+          }}
+        />
+        {e.base_rate !== null ? (
+          <span
+            className="absolute -top-1 h-3.5 w-px bg-fg"
+            style={{ left: `${Math.min(Math.max(e.base_rate, 0), 1) * 100}%` }}
+          />
+        ) : null}
       </div>
     </li>
   );

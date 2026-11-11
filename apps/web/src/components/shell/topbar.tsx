@@ -13,7 +13,8 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const current = moduleForPath(usePathname());
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-canvas/80 px-4 backdrop-blur-md sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-3 bg-canvas/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+      <span aria-hidden className="hairline absolute inset-x-0 bottom-0 h-px" />
       <button
         type="button"
         onClick={onOpenMenu}
@@ -30,7 +31,7 @@ export function Topbar({ onOpenMenu }: { onOpenMenu: () => void }) {
           <span className="mx-2 text-line-strong" aria-hidden>
             /
           </span>
-          <span className="text-fg">{current.label}</span>
+          <span className="font-medium text-fg">{current.label}</span>
         </p>
       ) : null}
 

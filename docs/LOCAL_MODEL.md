@@ -67,3 +67,25 @@ wrote the four renderer/view files.
 Lessons: specification tests plus a visual check of the real output caught every problem; the model
 was reliable on small, fully specified files and needed review on anything with layout or
 concurrency concerns. It never touched files outside its brief in single-file mode.
+
+## What happened on the visual refresh (2026-11-11)
+
+The lead designed the tokens, surfaces, shell and chart theme; the local model wrote five
+self-contained files from briefs in `.agents/briefs/` (`sparkline`, `gauge`, `pulse-line`,
+`chart-theme-tests`, `design-doc`).
+
+| File | Rounds | Model time | Problems found in review |
+|---|---|---|---|
+| `charts/sparkline.tsx` | 2 | 64 s + 70 s | Round 1: 7/9 specification tests; y computed while min/max were still being discovered, gaps detected with the wrong index, `useId` after an early return (the model's notes claimed otherwise). Round 2 fixed all three but introduced `undefined + 1`; lead fixed that and replaced the end circle (distorted when the SVG is stretched) by a round-capped stroke. |
+| `model/probability-gauge.tsx` | 1 | 81 s | Logic correct on the first try. The brief's own viewBox was too small for the tick labels and the end labels sat on their tick marks — the lead's specification errors, fixed by the lead. |
+| `ui/pulse-line.tsx` | 1 | 80 s | 5/5 specification tests, but the gradient and the blur filter shared one id and the filter was referenced without `url(#…)` — invisible to the tests, found by reading the code. |
+| `charts/theme.test.ts` | 1 | 82 s | None; 12 tests with hand-computed values, accepted as written. |
+| `docs/DESIGN.md` | 1 | 173 s | Faithful to the sources; "Used by" entries the model could not see were left blank (as instructed) and completed in review. |
+
+Tooling bug found on the way: twice the model wrapped a code file in a four-backtick fence *and* a
+three-backtick fence, and `local_task.py` wrote the inner fence into the file. `unwrap()` now strips
+such an inner fence for non-Markdown outputs (`scripts/tests/test_local_task.py`).
+
+Lesson confirmed: specification tests catch arithmetic, not rendering — every visual component was
+also checked in the browser and by reading the SVG.
+

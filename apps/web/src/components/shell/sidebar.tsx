@@ -36,18 +36,24 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                       onClick={onNavigate}
                       aria-current={isActive ? "page" : undefined}
                       className={cn(
-                        "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                        "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200",
                         isActive
-                          ? "bg-accent/10 text-fg"
-                          : "text-fg-muted hover:bg-surface-2 hover:text-fg",
+                          ? "bg-gradient-to-r from-accent/[0.16] via-accent/[0.06] to-transparent font-medium text-fg shadow-[inset_0_0_0_1px_rgb(76_195_255/0.14)]"
+                          : "text-fg-muted hover:translate-x-0.5 hover:bg-surface-2/70 hover:text-fg",
                       )}
                     >
                       {isActive ? (
-                        <span aria-hidden className="absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-accent" />
+                        <span
+                          aria-hidden
+                          className="absolute inset-y-1.5 left-0 w-[3px] rounded-full bg-accent shadow-[0_0_12px_1px_rgb(76_195_255/0.8)]"
+                        />
                       ) : null}
                       <Icon
                         aria-hidden
-                        className={cn("size-4 shrink-0", isActive ? "text-accent" : "text-fg-subtle group-hover:text-fg-muted")}
+                        className={cn(
+                          "size-4 shrink-0 transition-colors",
+                          isActive ? "text-accent drop-shadow-[0_0_6px_rgb(76_195_255/0.7)]" : "text-fg-subtle group-hover:text-accent",
+                        )}
                       />
                       <span className="truncate">{m.label}</span>
                       {m.state === "planned" ? (
@@ -67,13 +73,13 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         ))}
       </nav>
 
-      <div className="border-t border-line px-5 py-4">
+      <div className="m-3 rounded-xl border border-line bg-surface/70 px-4 py-3.5 shadow-[inset_0_1px_0_rgb(255_255_255/0.04)]">
         <p className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-fg-subtle">Build status</p>
         <p className="mt-1 text-xs text-fg-muted">
           Phase {CURRENT_PHASE.number} of {CURRENT_PHASE.total} · {CURRENT_PHASE.name}
         </p>
         <div
-          className="mt-2 h-1 overflow-hidden rounded-full bg-surface-2"
+          className="mt-2.5 h-1.5 rounded-full bg-canvas"
           role="progressbar"
           aria-label="Build progress"
           aria-valuemin={0}
@@ -81,7 +87,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           aria-valuenow={CURRENT_PHASE.number}
         >
           <div
-            className="h-full rounded-full bg-gradient-to-r from-accent to-accent-strong"
+            className="h-full rounded-full bg-gradient-to-r from-iris via-accent to-ok shadow-[0_0_10px_rgb(76_195_255/0.7)]"
             style={{ width: `${(CURRENT_PHASE.number / CURRENT_PHASE.total) * 100}%` }}
           />
         </div>

@@ -211,6 +211,15 @@ Acceptance criteria:
 - [x] README/deployment guide includes accurate Windows instructions, source attribution, target/methodology, limitations and only real screenshots/measured scores.
 - [x] Publish a truthful working/partly-working/not-implemented table; no release completion claim while major checks fail. *(CI run 43023762417 for `0dde5a0` passed all five jobs — API, Web, Security audit (history/tree secret scan, pip-audit, pnpm audit), E2E (58 Playwright on the demo snapshot) and the Docker compose stack on PostgreSQL. The previous run 43022549543 (`31ba843`) failed only the security scan on this phase's own fake test credentials; reviewed and allowlisted in `0dde5a0`.)*
 
+## After the release — visual refresh (2026-11-11)
+
+Not a roadmap phase; no data, model or wording of caveats changed. New design system
+([DESIGN.md](DESIGN.md)): opaque gradient-bordered panels, ambient backdrop, shared ECharts theme with
+gradient fills, redesigned probability gauge, KPI sparklines drawn from the stored series behind each
+KPI value, brand pulse trace in page headers. Verified with 134 Vitest and 58/58 Playwright tests
+(axe WCAG A/AA at 1440 px and 375 px) against the production build; screenshots retaken. A hydration
+race between shell and page queries was fixed on the way.
+
 ## Country targets and data gates
 
 Evidence: [DATA_FEASIBILITY.md](DATA_FEASIBILITY.md), recorded probe dated 2026-11-08.

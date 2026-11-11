@@ -21,12 +21,13 @@ walk-forward-evaluated models whose track record is shown next to every number.
 | ![Country explorer](docs/screenshots/country-de.png) | ![Compare](docs/screenshots/compare.png) | ![Data observatory](docs/screenshots/data-observatory.png) |
 
 All screenshots are real: the production build (`next build && next start`) on data synced from the
-official APIs on 2026-11-09, captured on 2026-11-11.
+official APIs on 2026-11-09, captured on 2026-11-11 (after the visual refresh).
 
 ## Status
 
 All ten phases of the [roadmap](docs/ROADMAP.md) are complete. The release audit is in
-[`docs/SECURITY.md`](docs/SECURITY.md), deployment in [`docs/DEPLOY.md`](docs/DEPLOY.md).
+[`docs/SECURITY.md`](docs/SECURITY.md), deployment in [`docs/DEPLOY.md`](docs/DEPLOY.md), the design system in
+[`docs/DESIGN.md`](docs/DESIGN.md).
 
 > [!IMPORTANT]
 > **Model result, stated plainly.** The published models beat the historical base rate on the 2000–2014
@@ -49,15 +50,15 @@ All ten phases of the [roadmap](docs/ROADMAP.md) are complete. The release audit
 | Scenario lab | ✅ Works | Bounded, non-causal sensitivity of the published model with plausibility checks; it shows counter-intuitive model behaviour (higher unemployment lowers the 4-quarter estimate) instead of hiding it |
 | Crisis time machine | ⚠️ Approximation only | Walk-forward replays with a leakage test; every replay is a *revised-data / release-lag approximation* — no vintages |
 | Report builder | ✅ Works | Dated PDF / chart-data CSV / JSON with sources, methodology and limitations |
-| Release engineering | ✅ Works | CI: lint, types, 283 pytest, 104 Vitest, build, 58 Playwright E2E (desktop + mobile, axe, failure paths), Docker compose stack on PostgreSQL, secret scan, dependency audit |
+| Release engineering | ✅ Works | CI: lint, types, 287 pytest, 134 Vitest, build, 58 Playwright E2E (desktop + mobile, axe, failure paths), Docker compose stack on PostgreSQL, secret scan, dependency audit |
 | OECD and World Bank connectors | ❌ Not implemented | Registered as sources ("3/5 sources synced" is accurate); leading indicators and annual structural data are not used |
 | ALFRED vintages / release calendar | ❌ Not implemented | Needs a server-side `FRED_API_KEY` and verification; replays stay approximations |
 | More countries (UK, IT, ES, PL, RO, euro area) | ❌ Not implemented | Not mapped or validated |
 | SHAP, XGBoost, LSTM/GRU | ❌ Not used | SHAP and XGBoost are not installed (exact log-odds / local sensitivity explanations instead); a recurrent network is not justified with this few events |
 | Authentication, scheduled sync | ❌ Not included | Read-only public statistics; schedule `data-sync` with cron / Task Scheduler if needed |
 
-Verified on 2026-11-11 (Windows 11): 283 pytest (+1 PostgreSQL test in CI, +16 opt-in live API tests),
-ruff, mypy `--strict`, ESLint, `tsc`, 104 Vitest, `next build`, 58/58 Playwright tests against the
+Verified on 2026-11-11 (Windows 11): 287 pytest (+1 PostgreSQL test in CI, +16 opt-in live API tests),
+ruff, mypy `--strict`, ESLint, `tsc`, 134 Vitest, `next build`, 58/58 Playwright tests against the
 production build, `pnpm smoke` 2883/2883 API checks, secret scan of history/tree/bundle, `pip-audit` and
 `pnpm audit` (no known vulnerabilities). Docker is not installed on the development machine: the compose
 stack (PostgreSQL + API + web, migrations, readiness, demo load) is verified in CI.
@@ -166,7 +167,7 @@ packages/ml            Labels, as-of features, walk-forward backtests, models, f
 packages/shared-types  Generated TypeScript types from the OpenAPI schema
 data/demo              Genuine, attributed demo snapshot (108 KB)
 scripts/               Smoke test, security scan, source probe; scripts/agents for AI-agent delegation
-docs/                  Architecture, roadmap, deployment, security audit, local model, data feasibility
+docs/                  Architecture, roadmap, deployment, security audit, design system, local model, data feasibility
 vault/                 Obsidian knowledge base (status, phases, ADRs, findings, journals)
 ```
 

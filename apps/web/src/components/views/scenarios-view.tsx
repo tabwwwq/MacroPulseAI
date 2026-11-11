@@ -154,11 +154,11 @@ function DeltaList({ items, unit }: { items: ScenarioContribution[]; unit: strin
                   <span className="sr-only">{up ? ", raises the estimate" : ", lowers the estimate"}</span>
                 </span>
               </div>
-              <div className="relative mt-1 h-2 rounded-full bg-surface-2" aria-hidden>
+              <div className="relative mt-1 h-2 rounded-full bg-canvas" aria-hidden>
                 <span className="absolute inset-y-0 left-1/2 w-px bg-line-strong" />
                 <span
                   className="absolute inset-y-0 rounded-full"
-                  style={{ width: `${(Math.abs(c.delta) / max) * 50}%`, left: up ? "50%" : undefined, right: up ? undefined : "50%", background: up ? "#f5b544" : "#4cc3ff" }}
+                  style={{ width: `${(Math.abs(c.delta) / max) * 50}%`, left: up ? "50%" : undefined, right: up ? undefined : "50%", background: up ? "linear-gradient(90deg, #f5b54466, #f5b544)" : "linear-gradient(270deg, #4cc3ff66, #4cc3ff)" }}
                 />
               </div>
               <p className="mt-1 font-mono text-[11px] text-fg-subtle">

@@ -226,7 +226,7 @@ function FoldTimeline({ detail }: { detail: ModelDetail }) {
         {folds.map((f) => (
           <li key={f.year} className="grid grid-cols-[2.75rem_1fr_auto] items-center gap-2 text-[11px]">
             <span className="tabular font-mono text-fg-muted">{f.year}</span>
-            <span className="relative h-2 rounded-full bg-surface-2" aria-hidden>
+            <span className="relative h-2 rounded-full bg-canvas" aria-hidden>
               <span className={`absolute inset-y-0 left-0 rounded-full ${f.year <= 2014 ? "bg-accent/60" : "bg-warn/70"}`} style={{ width: `${(f.train_rows / max) * 100}%` }} />
             </span>
             <span className="tabular whitespace-nowrap font-mono text-fg-subtle">
@@ -255,9 +255,9 @@ function Coefficients({ coefficients, labels }: { coefficients: Record<string, n
             <span className="text-fg">{labels[name] ?? name}</span>
             <span className="tabular font-mono text-fg-muted">{formatSigned(v)}</span>
           </div>
-          <div className="relative mt-1 h-1.5 rounded-full bg-surface-2" aria-hidden>
+          <div className="relative mt-1 h-1.5 rounded-full bg-canvas" aria-hidden>
             <span className="absolute inset-y-0 left-1/2 w-px bg-line-strong" />
-            <span className="absolute inset-y-0 rounded-full" style={{ width: `${(Math.abs(v) / max) * 50}%`, left: v > 0 ? "50%" : undefined, right: v > 0 ? undefined : "50%", background: v > 0 ? "#f5b544" : "#4cc3ff" }} />
+            <span className="absolute inset-y-0 rounded-full" style={{ width: `${(Math.abs(v) / max) * 50}%`, left: v > 0 ? "50%" : undefined, right: v > 0 ? undefined : "50%", background: v > 0 ? "linear-gradient(90deg, #f5b54466, #f5b544)" : "linear-gradient(270deg, #4cc3ff66, #4cc3ff)" }} />
           </div>
         </li>
       ))}

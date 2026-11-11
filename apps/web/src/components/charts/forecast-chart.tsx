@@ -16,17 +16,27 @@ import { init, use as registerEcharts, type ComposeOption, type EChartsType } fr
 import { CanvasRenderer } from "echarts/renderers";
 import { useEffect, useImperativeHandle, useRef, type JSX, type Ref } from "react";
 
+import {
+  axisPointerStyle,
+  categoryAxisStyle,
+  chartTheme,
+  glowLine,
+  legendStyle,
+  tooltipStyle,
+  valueAxisStyle,
+  verticalFade,
+  zoomSliderStyle,
+} from "@/components/charts/theme";
+
 registerEcharts([LineChart, GridComponent, TooltipComponent, LegendComponent, DataZoomComponent, MarkLineComponent, CanvasRenderer]);
 
-// Matches globals.css. Canvas rendering cannot consume Tailwind classes.
 const theme = {
-  backgroundColor: "#131b2c",
-  textStyle: { color: "#a0abc0", fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" },
-  lineColor: "#24304a",
-  axisColor: "#7f8aa3",
-  actual: "#4cc3ff",
-  projection: "#f5b544",
-  realised: "#3dd6a3",
+  backgroundColor: "transparent",
+  textStyle: chartTheme.textStyle,
+  axisColor: chartTheme.axis,
+  actual: chartTheme.accent,
+  projection: chartTheme.warn,
+  realised: chartTheme.ok,
 };
 
 type Option = ComposeOption<LineSeriesOption | GridComponentOption | TooltipComponentOption | LegendComponentOption | DataZoomComponentOption>;
@@ -69,7 +79,7 @@ export function ForecastChart({
   const chart = useRef<EChartsType | null>(null);
 
   useImperativeHandle(ref, () => ({
-    getPngDataUrl: () => chart.current?.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: theme.backgroundColor }) ?? null,
+    getPngDataUrl: () => chart.current?.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: chartTheme.exportBackground }) ?? null,
   }), []);
 
   useEffect(() => {
@@ -102,18 +112,15 @@ export function ForecastChart({
       textStyle: theme.textStyle,
       grid: { left: 16, right: 20, top: 48, bottom: 60, containLabel: true },
       legend: {
-        type: "scroll",
-        top: 4,
-        textStyle: theme.textStyle,
+        ...legendStyle,
         data: ["Published", `${modelName} forecast`, "80 % interval", ...(realised.length ? ["Published after origin"] : [])],
       },
       tooltip: {
         trigger: "axis",
         renderMode: "richText",
         confine: true,
-        backgroundColor: theme.backgroundColor,
-        borderColor: theme.lineColor,
-        textStyle: theme.textStyle,
+        ...tooltipStyle,
+        axisPointer: axisPointerStyle,
         formatter: (params) => {
           const entries = Array.isArray(params) ? params : [params];
           const first = entries[0]?.value;
@@ -135,16 +142,11 @@ export function ForecastChart({
           return lines.join("\n");
         },
       },
-      xAxis: { type: "time", axisLine: { lineStyle: { color: theme.axisColor } }, axisLabel: { color: theme.axisColor }, splitLine: { show: false } },
-      yAxis: {
-        type: "value",
-        scale: true,
-        axisLabel: { color: theme.axisColor },
-        splitLine: { lineStyle: { color: theme.lineColor } },
-      },
+      xAxis: { type: "time", ...categoryAxisStyle },
+      yAxis: { type: "value", scale: true, ...valueAxisStyle },
       dataZoom: [
         { type: "inside", filterMode: "none", zoomOnMouseWheel: "ctrl", moveOnMouseWheel: false, preventDefaultMouseMove: false, startValue: start, endValue: end },
-        { type: "slider", bottom: 4, height: 20, borderColor: theme.lineColor, textStyle: theme.textStyle, startValue: start, endValue: end },
+        { ...zoomSliderStyle, startValue: start, endValue: end },
       ],
       series: [
         {
@@ -153,7 +155,8 @@ export function ForecastChart({
           type: "line",
           data: actuals.map((a) => [periodTime(a.period), a.value]),
           showSymbol: false,
-          lineStyle: { color: theme.actual, width: 1.5 },
+          lineStyle: glowLine(theme.actual, 2),
+          areaStyle: { color: verticalFade(theme.actual, 0.2, 0), origin: "start" },
           itemStyle: { color: theme.actual },
           markLine: {
             silent: true,
@@ -182,7 +185,7 @@ export function ForecastChart({
           data: banded.map((p) => [periodTime(p.period), (p.upper ?? 0) - (p.lower ?? 0)]),
           lineStyle: { opacity: 0 },
           showSymbol: false,
-          areaStyle: { color: theme.projection, opacity: 0.18 },
+          areaStyle: { color: verticalFade(theme.projection, 0.3, 0.12) },
           itemStyle: { color: theme.projection },
           tooltip: { show: false },
         },
@@ -193,7 +196,7 @@ export function ForecastChart({
           data: line.map((p) => [periodTime(p.period), p.value]),
           showSymbol: true,
           symbolSize: 5,
-          lineStyle: { color: theme.projection, type: "dashed", width: 2 },
+          lineStyle: { ...glowLine(theme.projection, 2.25), type: "dashed" },
           itemStyle: { color: theme.projection },
         },
         ...(realised.length
@@ -206,7 +209,7 @@ export function ForecastChart({
                 showSymbol: true,
                 symbol: "diamond",
                 symbolSize: 7,
-                lineStyle: { color: theme.realised, width: 1.5 },
+                lineStyle: glowLine(theme.realised, 1.75),
                 itemStyle: { color: theme.realised },
               },
             ]

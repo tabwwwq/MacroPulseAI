@@ -33,6 +33,22 @@ RUNS = ROOT / ".agents" / "local-runs"
 FENCE = re.compile(r"```[a-zA-Z0-9_+-]*\n(.*?)```", re.DOTALL)
 # Files that themselves contain ``` fences (Markdown docs) come wrapped in four backticks.
 OUTER_FENCE = re.compile(r"^````[a-zA-Z0-9_+-]*\n(.*?)\n````[ \t]*$", re.DOTALL | re.MULTILINE)
+# A block that is itself one triple-backtick fence: a code file the model wrapped twice.
+WHOLE_FENCE = re.compile(r"\A```[a-zA-Z0-9_+-]*\n(.*?)\n?```[ \t]*\n?\Z", re.DOTALL)
+
+
+def unwrap(block: str, output: Path) -> str:
+    """The file content of one extracted block.
+
+    Models sometimes wrap a code file in a four-backtick fence *and* a three-backtick fence. For
+    anything but Markdown (where an inner fence can be the real content) the inner fence is removed.
+    """
+    if output.suffix.lower() in {".md", ".mdx"}:
+        return block
+    inner = WHOLE_FENCE.match(block)
+    return inner.group(1) + "\n" if inner else block
+
+
 SYSTEM = (
     "You are a careful senior engineer on the MacroPulse AI repository (FastAPI + Next.js). "
     "Follow the brief exactly; it is the specification. Never invent data, APIs or modules that "
@@ -159,8 +175,9 @@ def main(argv: list[str] | None = None) -> int:  # noqa: PLR0915 - linear CLI fl
         print("[local-task] answer was cut off (max tokens); nothing written.")
     else:
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(blocks[0], encoding="utf-8", newline="\n")
-        print(f"[local-task] wrote {_rel(output)} ({len(blocks[0].splitlines())} lines)")
+        content = unwrap(blocks[0], output)
+        output.write_text(content, encoding="utf-8", newline="\n")
+        print(f"[local-task] wrote {_rel(output)} ({len(content.splitlines())} lines)")
         code = 0
     print(f"[local-task] {json.dumps(meta)}")
     notes = FENCE.sub("", OUTER_FENCE.sub("", text)).strip()
