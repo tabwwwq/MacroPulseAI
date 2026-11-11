@@ -20,6 +20,6 @@ tags:
 - Same race possible for `useCountries` (country switcher ↔ page title, country grid), `useHealth` and `useReady`.
 
 ## Resolution
-`usePendingUntilHydrated` in `apps/web/src/lib/queries.ts` reports those four shell-shared queries as pending until hydration has completed (`useHydrated`), exactly as the server rendered them. After the change, reloading the overview for two countries added no new hydration error to the console.
+`usePendingUntilHydrated` in `apps/web/src/lib/queries.ts` reports those four shell-shared queries as pending until hydration has completed (`useHydrated`), exactly as the server rendered them. Re-check in a fresh browser tab of the development server after the change: overview DE, overview FR and the recession page — no console errors.
 
 Related: [[Phase 10 — Hardening & release]] · [[ADR-0023 Opaque panels, shared chart theme and decorative motion]]
