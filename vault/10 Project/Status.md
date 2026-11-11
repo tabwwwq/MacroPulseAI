@@ -40,7 +40,7 @@ tags:
 - [[F-013 Replays show most recessions were missed]] — 2Q warned 0 / 20, 4Q 6 / 22; listed per recession on `/history`.
 - [[F-006 US October 2025 observations missing]] — handled by the one-month staleness rule.
 - [[F-002 OECD CLI missing for Belgium and Netherlands]] — no OECD connector.
-- No vintages / publication dates → replays stay *revised-data approximations*; `FRED_API_KEY` not configured → US `partial`.
+- No vintages / publication dates → replays stay *revised-data approximations*. `FRED_API_KEY` is configured in the local `.env` since 2026-11-11 (verified: FRED `series` and ALFRED `vintagedates` for GDPC1 answer 200; the API reports it as configured) — but no connector uses it yet, so US stays `partial` until the ALFRED client is built.
 - [[F-007 OneDrive locks the virtual environment]] — also stale dev-server reloads; restart servers after edits.
 - Docker not installed locally: the compose stack is verified in CI only.
 
