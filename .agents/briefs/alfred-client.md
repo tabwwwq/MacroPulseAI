@@ -25,22 +25,29 @@ REALTIME_START = "1776-07-04"
 REALTIME_END = "9999-12-31"
 PAGE_SIZE = 100_000  # the API's maximum limit
 
+
 @dataclass(frozen=True, slots=True)
 class VintageObservation:
-    period: str                 # our label: "2008-Q3" / "2020-04" (via periods.normalise_fred_date)
-    value: float | None         # None for "." (not available in that vintage)
-    realtime_start: date        # first day this value was the published one
-    realtime_end: date | None   # last day; None when REALTIME_END (still current)
+    period: str  # our label: "2008-Q3" / "2020-04" (via periods.normalise_fred_date)
+    value: float | None  # None for "." (not available in that vintage)
+    realtime_start: date  # first day this value was the published one
+    realtime_end: date | None  # last day; None when REALTIME_END (still current)
+
 
 @dataclass(slots=True)
 class VintageFetch:
     request: SeriesRequest
     observations: list[VintageObservation]
-    url: str                    # first page URL with the key redacted (redact_secrets)
-    retrieved_at: datetime      # timezone-aware UTC
+    url: str  # first page URL with the key redacted (redact_secrets)
+    retrieved_at: datetime  # timezone-aware UTC
 
-def parse_vintage_page(payload: dict[str, Any], request: SeriesRequest) -> tuple[list[VintageObservation], int]: ...
-def fetch_vintages(fetcher: Fetcher, request: SeriesRequest, api_key: str | None, *, page_size: int = PAGE_SIZE) -> VintageFetch: ...
+
+def parse_vintage_page(
+    payload: dict[str, Any], request: SeriesRequest
+) -> tuple[list[VintageObservation], int]: ...
+def fetch_vintages(
+    fetcher: Fetcher, request: SeriesRequest, api_key: str | None, *, page_size: int = PAGE_SIZE
+) -> VintageFetch: ...
 ```
 
 ## Rules
