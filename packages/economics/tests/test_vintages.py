@@ -5,6 +5,9 @@ from __future__ import annotations
 from datetime import date
 
 import pytest
+
+from macropulse_economics.connectors.alfred import VintageObservation as V
+from macropulse_economics.transforms import IDENTITY, Transform
 from macropulse_economics.vintages import (
     RevisionPoint,
     derived_as_of,
@@ -13,9 +16,6 @@ from macropulse_economics.vintages import (
     revision_summary,
     value_as_of,
 )
-
-from macropulse_economics.connectors.alfred import VintageObservation as V
-from macropulse_economics.transforms import IDENTITY, Transform
 
 QOQ = Transform("growth", 1)
 
