@@ -401,6 +401,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/vintages/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** First release versus current value per period (ALFRED vintages) */
+        get: operations["get_revisions_api_vintages_revisions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1550,6 +1567,94 @@ export interface components {
              */
             format: "pdf" | "csv" | "json";
         };
+        /** RevisionIndicator */
+        RevisionIndicator: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Unit */
+            unit: string;
+        };
+        /** RevisionPointOut */
+        RevisionPointOut: {
+            /**
+             * First Published
+             * Format: date
+             */
+            first_published: string;
+            /**
+             * First Release
+             * @description True only when the first stored vintage came out within 120 days of the period's end; otherwise it is back-filled history, not the first release (excluded from statistics and signals).
+             */
+            first_release: boolean;
+            /**
+             * First Value
+             * @description Value derived from the first vintage of this period.
+             */
+            first_value: number;
+            /**
+             * Latest Value
+             * @description Same derivation on the current vintage.
+             */
+            latest_value: number | null;
+            /** Period */
+            period: string;
+            /**
+             * Revision
+             * @description latest_value - first_value.
+             */
+            revision: number | null;
+        };
+        /** RevisionSummaryOut */
+        RevisionSummaryOut: {
+            /** Count */
+            count: number;
+            /** Max Abs Period */
+            max_abs_period: string | null;
+            /** Max Abs Revision */
+            max_abs_revision: number | null;
+            /** Mean Abs Revision */
+            mean_abs_revision: number | null;
+            /**
+             * Sign Changes
+             * @description Periods whose first release and latest value have different signs (zero counts as not negative).
+             */
+            sign_changes: string[];
+        };
+        /** Revisions */
+        Revisions: {
+            /**
+             * Archive Start
+             * Format: date
+             * @description First stored vintage of the series.
+             */
+            archive_start: string;
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Country */
+            country: string;
+            indicator: components["schemas"]["RevisionIndicator"];
+            /** Note */
+            note: string;
+            /** Points */
+            points: components["schemas"]["RevisionPointOut"][];
+            /** Revision Unit */
+            revision_unit: string;
+            series: components["schemas"]["VintageSeriesInfo"];
+            /** @description Over genuine first releases only. */
+            summary: components["schemas"]["RevisionSummaryOut"];
+            /**
+             * Technical Signals
+             * @description Real GDP q/q only: two consecutive negative quarters as first known versus in today's data. Empty for other indicators.
+             */
+            technical_signals: components["schemas"]["TechnicalSignal"][];
+            /** Transform */
+            transform: string;
+        };
         /** RiskBand */
         RiskBand: {
             /** Name */
@@ -1943,6 +2048,34 @@ export interface components {
          * @enum {string}
          */
         SupportLevel: "full" | "partial" | "unavailable";
+        /** TechnicalSignal */
+        TechnicalSignal: {
+            /**
+             * As First Known
+             * @description Both quarters negative in the vintage of that day.
+             */
+            as_first_known: boolean;
+            /** First Values */
+            first_values: (number | null)[];
+            /**
+             * In Latest Data
+             * @description Both quarters negative in today's data.
+             */
+            in_latest_data: boolean;
+            /** Latest Values */
+            latest_values: (number | null)[];
+            /**
+             * Period
+             * @description Second of two consecutive negative q/q quarters.
+             */
+            period: string;
+            /**
+             * Published
+             * Format: date
+             * @description Day this quarter was first published.
+             */
+            published: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -1962,6 +2095,34 @@ export interface components {
             period: string;
             /** Value */
             value: number;
+        };
+        /** VintageSeriesInfo */
+        VintageSeriesInfo: {
+            /** Dataset */
+            dataset: string;
+            /** First Vintage */
+            first_vintage: string | null;
+            /** Last Vintage */
+            last_vintage: string | null;
+            /**
+             * Retrieved At
+             * Format: date-time
+             */
+            retrieved_at: string;
+            /** Rows */
+            rows: number;
+            /** Series Id */
+            series_id: string;
+            /**
+             * Source Url
+             * @description First request of the fetch; the API key is redacted.
+             */
+            source_url: string;
+            /**
+             * Vintages
+             * @description Distinct publication dates (real-time starts).
+             */
+            vintages: number;
         };
     };
     responses: never;
@@ -2852,6 +3013,49 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SourceStatusList"];
+                };
+            };
+        };
+    };
+    get_revisions_api_vintages_revisions_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Indicator id. */
+                indicator: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Revisions"];
+                };
+            };
+            /** @description Country or indicator without stored vintages. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Vintages not synced yet (needs FRED_API_KEY). */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

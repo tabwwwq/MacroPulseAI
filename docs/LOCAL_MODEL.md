@@ -89,3 +89,15 @@ such an inner fence for non-Markdown outputs (`scripts/tests/test_local_task.py`
 Lesson confirmed: specification tests catch arithmetic, not rendering — every visual component was
 also checked in the browser and by reading the SVG.
 
+## What happened on the ALFRED vintages (2026-11-12)
+
+| File | Rounds | Model time | Problems found in review |
+|---|---|---|---|
+| `connectors/alfred.py` | 1 | 98 s | 18/18 specification tests on the first try. Review found two things the tests did not: pagination advanced by `page_size` instead of the rows received (a server that caps `limit` would make it skip rows silently) and non-string JSON fields raised `TypeError` instead of `ConnectorError`. Lead fixed both and added tests. |
+| `vintages.py` | 1 | 117 s | All specification tests on the first try; the indexed and the plain lookup were two copies of the same rule — lead merged them into one helper; mypy needed the summary rewritten to keep `revision` narrowed. |
+| `lib/revisions.ts` | 1 | 55 s | 7/7 on the first try; accepted as written (one defensive extra branch). |
+
+The lead wrote the storage, migration, API, CLI, the card and every test. The real data review caught
+what no test could: ALFRED's 1992 vintage back-filled real GDP to 1947, so "first appearance in the
+archive" is not a first release — fixed with a 120-day publication window.
+

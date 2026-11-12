@@ -3063,6 +3063,215 @@
         "title": "ReportRequest",
         "type": "object"
       },
+      "RevisionIndicator": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "unit"
+        ],
+        "title": "RevisionIndicator",
+        "type": "object"
+      },
+      "RevisionPointOut": {
+        "properties": {
+          "first_published": {
+            "format": "date",
+            "title": "First Published",
+            "type": "string"
+          },
+          "first_release": {
+            "description": "True only when the first stored vintage came out within 120 days of the period's end; otherwise it is back-filled history, not the first release (excluded from statistics and signals).",
+            "title": "First Release",
+            "type": "boolean"
+          },
+          "first_value": {
+            "description": "Value derived from the first vintage of this period.",
+            "title": "First Value",
+            "type": "number"
+          },
+          "latest_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Same derivation on the current vintage.",
+            "title": "Latest Value"
+          },
+          "period": {
+            "title": "Period",
+            "type": "string"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "latest_value - first_value.",
+            "title": "Revision"
+          }
+        },
+        "required": [
+          "period",
+          "first_published",
+          "first_value",
+          "latest_value",
+          "revision",
+          "first_release"
+        ],
+        "title": "RevisionPointOut",
+        "type": "object"
+      },
+      "RevisionSummaryOut": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "max_abs_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Abs Period"
+          },
+          "max_abs_revision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Abs Revision"
+          },
+          "mean_abs_revision": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Abs Revision"
+          },
+          "sign_changes": {
+            "description": "Periods whose first release and latest value have different signs (zero counts as not negative).",
+            "items": {
+              "type": "string"
+            },
+            "title": "Sign Changes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "count",
+          "mean_abs_revision",
+          "max_abs_revision",
+          "max_abs_period",
+          "sign_changes"
+        ],
+        "title": "RevisionSummaryOut",
+        "type": "object"
+      },
+      "Revisions": {
+        "properties": {
+          "archive_start": {
+            "description": "First stored vintage of the series.",
+            "format": "date",
+            "title": "Archive Start",
+            "type": "string"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "indicator": {
+            "$ref": "#/components/schemas/RevisionIndicator"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/RevisionPointOut"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "revision_unit": {
+            "title": "Revision Unit",
+            "type": "string"
+          },
+          "series": {
+            "$ref": "#/components/schemas/VintageSeriesInfo"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/RevisionSummaryOut",
+            "description": "Over genuine first releases only."
+          },
+          "technical_signals": {
+            "description": "Real GDP q/q only: two consecutive negative quarters as first known versus in today's data. Empty for other indicators.",
+            "items": {
+              "$ref": "#/components/schemas/TechnicalSignal"
+            },
+            "title": "Technical Signals",
+            "type": "array"
+          },
+          "transform": {
+            "title": "Transform",
+            "type": "string"
+          }
+        },
+        "required": [
+          "country",
+          "indicator",
+          "transform",
+          "revision_unit",
+          "series",
+          "points",
+          "archive_start",
+          "summary",
+          "technical_signals",
+          "computed_at",
+          "note"
+        ],
+        "title": "Revisions",
+        "type": "object"
+      },
       "RiskBand": {
         "properties": {
           "name": {
@@ -4157,6 +4366,69 @@
         "title": "SupportLevel",
         "type": "string"
       },
+      "TechnicalSignal": {
+        "properties": {
+          "as_first_known": {
+            "description": "Both quarters negative in the vintage of that day.",
+            "title": "As First Known",
+            "type": "boolean"
+          },
+          "first_values": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "First Values",
+            "type": "array"
+          },
+          "in_latest_data": {
+            "description": "Both quarters negative in today's data.",
+            "title": "In Latest Data",
+            "type": "boolean"
+          },
+          "latest_values": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Latest Values",
+            "type": "array"
+          },
+          "period": {
+            "description": "Second of two consecutive negative q/q quarters.",
+            "title": "Period",
+            "type": "string"
+          },
+          "published": {
+            "description": "Day this quarter was first published.",
+            "format": "date",
+            "title": "Published",
+            "type": "string"
+          }
+        },
+        "required": [
+          "period",
+          "published",
+          "as_first_known",
+          "in_latest_data",
+          "first_values",
+          "latest_values"
+        ],
+        "title": "TechnicalSignal",
+        "type": "object"
+      },
       "ValidationError": {
         "properties": {
           "ctx": {
@@ -4213,6 +4485,73 @@
           "value"
         ],
         "title": "ValuePoint",
+        "type": "object"
+      },
+      "VintageSeriesInfo": {
+        "properties": {
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "first_vintage": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Vintage"
+          },
+          "last_vintage": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Vintage"
+          },
+          "retrieved_at": {
+            "format": "date-time",
+            "title": "Retrieved At",
+            "type": "string"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          },
+          "series_id": {
+            "title": "Series Id",
+            "type": "string"
+          },
+          "source_url": {
+            "description": "First request of the fetch; the API key is redacted.",
+            "title": "Source Url",
+            "type": "string"
+          },
+          "vintages": {
+            "description": "Distinct publication dates (real-time starts).",
+            "title": "Vintages",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "series_id",
+          "dataset",
+          "source_url",
+          "retrieved_at",
+          "rows",
+          "vintages",
+          "first_vintage",
+          "last_vintage"
+        ],
+        "title": "VintageSeriesInfo",
         "type": "object"
       }
     }
@@ -5505,6 +5844,73 @@
         "summary": "Source health and freshness",
         "tags": [
           "sources"
+        ]
+      }
+    },
+    "/api/vintages/revisions": {
+      "get": {
+        "operationId": "get_revisions_api_vintages_revisions_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Indicator id.",
+            "in": "query",
+            "name": "indicator",
+            "required": true,
+            "schema": {
+              "description": "Indicator id.",
+              "pattern": "^[a-z0-9_]{1,40}$",
+              "title": "Indicator",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Revisions"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Country or indicator without stored vintages."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Vintages not synced yet (needs FRED_API_KEY)."
+          }
+        },
+        "summary": "First release versus current value per period (ALFRED vintages)",
+        "tags": [
+          "vintages"
         ]
       }
     }

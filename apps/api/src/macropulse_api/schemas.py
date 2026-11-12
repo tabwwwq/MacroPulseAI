@@ -780,3 +780,73 @@ class ReplayEpisodes(BaseModel):
 class CrisisPreset(BaseModel):
     as_of: str
     label: str
+
+
+# ---------------------------------------------------------------- ALFRED vintages / revisions
+
+
+class RevisionIndicator(BaseModel):
+    id: str
+    name: str
+    unit: str
+
+
+class VintageSeriesInfo(BaseModel):
+    series_id: str
+    dataset: str
+    source_url: str = Field(description="First request of the fetch; the API key is redacted.")
+    retrieved_at: datetime
+    rows: int
+    vintages: int = Field(description="Distinct publication dates (real-time starts).")
+    first_vintage: date | None
+    last_vintage: date | None
+
+
+class RevisionPointOut(BaseModel):
+    period: str
+    first_published: date
+    first_value: float = Field(description="Value derived from the first vintage of this period.")
+    latest_value: float | None = Field(description="Same derivation on the current vintage.")
+    revision: float | None = Field(description="latest_value - first_value.")
+    first_release: bool = Field(
+        description="True only when the first stored vintage came out within 120 days of the "
+        "period's end; otherwise it is back-filled history, not the first release (excluded "
+        "from statistics and signals)."
+    )
+
+
+class TechnicalSignal(BaseModel):
+    period: str = Field(description="Second of two consecutive negative q/q quarters.")
+    published: date = Field(description="Day this quarter was first published.")
+    as_first_known: bool = Field(description="Both quarters negative in the vintage of that day.")
+    in_latest_data: bool = Field(description="Both quarters negative in today's data.")
+    first_values: list[float | None]
+    latest_values: list[float | None]
+
+
+class RevisionSummaryOut(BaseModel):
+    count: int
+    mean_abs_revision: float | None
+    max_abs_revision: float | None
+    max_abs_period: str | None
+    sign_changes: list[str] = Field(
+        description="Periods whose first release and latest value have different signs "
+        "(zero counts as not negative)."
+    )
+
+
+class Revisions(BaseModel):
+    country: str
+    indicator: RevisionIndicator
+    transform: str
+    revision_unit: str
+    series: VintageSeriesInfo
+    points: list[RevisionPointOut]
+    archive_start: date = Field(description="First stored vintage of the series.")
+    summary: RevisionSummaryOut = Field(description="Over genuine first releases only.")
+    technical_signals: list[TechnicalSignal] = Field(
+        description="Real GDP q/q only: two consecutive negative quarters as first known versus "
+        "in today's data. Empty for other indicators."
+    )
+    computed_at: datetime
+    note: str

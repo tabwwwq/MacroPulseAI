@@ -19,6 +19,7 @@ from macropulse_api.migrate import current_revision, head_revision, upgrade
 from macropulse_api.services.registry_sync import sync_registry
 from macropulse_api.services.sync import run_sync
 from macropulse_api.services.training import heldout_check, train
+from macropulse_api.services.vintages import sync_vintages, vintage_requests
 from macropulse_economics.connectors import CONNECTORS
 from macropulse_economics.connectors.http import Fetcher, make_client
 
@@ -111,6 +112,36 @@ def _cmd_data_sync(args: argparse.Namespace) -> int:
     total = sum(o.rows for o in report.outcomes)
     print(f"{total} observations upserted from {len(report.outcomes)} series")
     return 0 if all(status == "succeeded" for _, status in report.runs.values()) else 1
+
+
+def _cmd_vintages_sync(_args: argparse.Namespace) -> int:
+    settings = get_settings()
+    key = settings.fred_api_key.get_secret_value() if settings.fred_api_key else None
+    if not key:
+        print(
+            "FRED_API_KEY is not set. Add it to the server environment (.env) — it is never "
+            "sent to the browser. Free key: https://fred.stlouisfed.org/docs/api/api_key.html",
+            file=sys.stderr,
+        )
+        return 2
+    engine = build_engine(settings.database_url)
+    try:
+        if current_revision(engine) != head_revision():
+            print(
+                "Database is not migrated. Run `uv run macropulse db upgrade` first.",
+                file=sys.stderr,
+            )
+            return 2
+        with make_client() as client:
+            report = sync_vintages(build_sessionmaker(engine), Fetcher(client), key)
+    finally:
+        engine.dispose()
+    width = max((len(r.series_id) for r in vintage_requests()), default=20)
+    for o in report.outcomes:
+        state = "ok  " if o.ok else "FAIL"
+        detail = f"{o.rows:>6} rows  {o.vintages:>4} vintages" if o.ok else (o.error or "")
+        print(f"{state} {o.series_id:<{width}} {detail}")
+    return 0 if report.outcomes and all(o.ok for o in report.outcomes) else 1
 
 
 def _cmd_demo_export(args: argparse.Namespace) -> int:
@@ -289,6 +320,10 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument("--source", action="append", choices=sorted(CONNECTORS), help="repeatable")
     sync.add_argument("--country", action="append", help="ISO alpha-2, repeatable")
 
+    sub.add_parser(
+        "vintages-sync",
+        help="fetch the ALFRED revision history of US GDP, CPI and unemployment (FRED_API_KEY)",
+    )
     dx = sub.add_parser("demo-export", help="write the stored observations to a demo snapshot")
     dx.add_argument("--out", required=True, help="path of the .json.gz snapshot to write")
     dl = sub.add_parser("demo-load", help="load the bundled demo snapshot (no network, no keys)")
@@ -311,6 +346,7 @@ def main(argv: list[str] | None = None) -> int:
         "train": _cmd_train,
         "demo-export": _cmd_demo_export,
         "demo-load": _cmd_demo_load,
+        "vintages-sync": _cmd_vintages_sync,
     }
     return commands.get(args.command, _cmd_serve)(args)
 

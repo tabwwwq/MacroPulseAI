@@ -28,6 +28,7 @@ export const queryKeys = {
   replay: (iso2: string, horizon: number, asOf: string) => ["history", "replay", iso2.toUpperCase(), horizon, asOf] as const,
   episodes: (iso2: string, horizon: number) => ["history", "episodes", iso2.toUpperCase(), horizon] as const,
   presets: ["history", "presets"] as const,
+  revisions: (iso2: string, indicator: string) => ["vintages", "revisions", iso2.toUpperCase(), indicator] as const,
   scenario: (r: ScenarioRequest | null) =>
     ["scenarios", "evaluate", r?.country ?? "", r?.horizon ?? 0, r?.as_of ?? "latest", JSON.stringify(r?.shocks ?? {})] as const,
 };
@@ -130,6 +131,18 @@ export function useReplay(iso2: string, horizon: 2 | 4, asOf: string) {
       unwrap(api.GET("/api/history/replay", { params: { query: { country: iso2, horizon, as_of: asOf } } })),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** First release versus current value per period, from stored ALFRED vintages (US only). */
+export function useRevisions(iso2: string, indicator: string, enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.revisions(iso2, indicator),
+    queryFn: () =>
+      unwrap(api.GET("/api/vintages/revisions", { params: { query: { country: iso2, indicator } } })),
+    enabled,
+    staleTime: 10 * 60_000,
     retry: retryUnlessAnswer,
   });
 }

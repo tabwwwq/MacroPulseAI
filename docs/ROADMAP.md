@@ -220,6 +220,17 @@ KPI value, brand pulse trace in page headers. Verified with 134 Vitest and 58/58
 (axe WCAG A/AA at 1440 px and 375 px) against the production build; screenshots retaken. A hydration
 race between shell and page queries was fixed on the way.
 
+## After the release — ALFRED vintages for the US (2026-11-12)
+
+Not a roadmap phase. With a server-side `FRED_API_KEY`, `macropulse vintages-sync` stores the full
+ALFRED revision history of US real GDP, CPI and unemployment in separate `vintage_*` tables
+(migration 0005; dashboards and models keep reading the latest revision). `GET /api/vintages/revisions`
+and the US country page show first release versus today, revision statistics and two-negative-quarter
+signals as first known versus in today's data. Verified live: 4,426 / 3,364 / 2,200 rows, 420 / 671 / 801
+vintages; mean absolute revision of first-release US q/q GDP growth 0.29 pp over 140 first releases since
+1991-Q4. A first release counts only when published within 120 days of the period's end (ALFRED back-fills
+history). Replays remain revised-data approximations.
+
 ## Country targets and data gates
 
 Evidence: [DATA_FEASIBILITY.md](DATA_FEASIBILITY.md), recorded probe dated 2026-11-08.

@@ -9,6 +9,7 @@ import type { CatalogEntry, Country } from "@macropulse/shared-types";
 import { IndicatorChart } from "@/components/data/indicator-chart";
 import { KpiGrid } from "@/components/data/kpi-grid";
 import { RangeControl, useRange } from "@/components/data/range-control";
+import { RevisionsCard } from "@/components/data/revisions-card";
 import { StoredSeriesTable } from "@/components/data/stored-series-table";
 import { SupportBadge } from "@/components/data/support-badge";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,13 @@ const TABS = [
   { id: "data", label: "Data", categories: [] as string[] },
 ] as const;
 type TabId = (typeof TABS)[number]["id"];
+
+/** Tab -> indicator whose ALFRED revision history is shown under the charts (US only). */
+const REVISION_TAB: Partial<Record<TabId, string>> = {
+  growth: "real_gdp_qoq",
+  prices: "inflation_yoy",
+  labor: "unemployment_rate",
+};
 
 function isTab(value: string | null): value is TabId {
   return TABS.some((t) => t.id === value);
@@ -292,6 +300,11 @@ export function CountryView({ iso2 }: { iso2: string }) {
                       <IndicatorPanel key={e.indicator.id} entry={e} iso2={data.iso2} asOf={asOf} range={range} />
                     ))}
                   </div>
+                  {REVISION_TAB[t.id] && data.iso2 === "US" ? (
+                    <div className="mt-4">
+                      <RevisionsCard iso2={data.iso2} indicator={REVISION_TAB[t.id] ?? ""} range={range} />
+                    </div>
+                  ) : null}
                 </>
               )}
             </Tabs.Content>

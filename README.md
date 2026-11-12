@@ -52,7 +52,7 @@ All ten phases of the [roadmap](docs/ROADMAP.md) are complete. The release audit
 | Report builder | ✅ Works | Dated PDF / chart-data CSV / JSON with sources, methodology and limitations |
 | Release engineering | ✅ Works | CI: lint, types, 287 pytest, 134 Vitest, build, 58 Playwright E2E (desktop + mobile, axe, failure paths), Docker compose stack on PostgreSQL, secret scan, dependency audit |
 | OECD and World Bank connectors | ❌ Not implemented | Registered as sources ("3/5 sources synced" is accurate); leading indicators and annual structural data are not used |
-| ALFRED vintages / release calendar | ❌ Not implemented | Needs a server-side `FRED_API_KEY` and verification; replays stay approximations |
+| ALFRED vintages (US) | ⚠️ Partly | `macropulse vintages-sync` (server-side `FRED_API_KEY`) stores the full revision history of US GDP, CPI and unemployment (420 / 671 / 801 vintages, verified 2026-11-12); the US country page shows first release vs today, revision statistics and two-negative-quarter signals then vs now. Replays and models still use revised data; no release calendar |
 | More countries (UK, IT, ES, PL, RO, euro area) | ❌ Not implemented | Not mapped or validated |
 | SHAP, XGBoost, LSTM/GRU | ❌ Not used | SHAP and XGBoost are not installed (exact log-odds / local sensitivity explanations instead); a recurrent network is not justified with this few events |
 | Authentication, scheduled sync | ❌ Not included | Read-only public statistics; schedule `data-sync` with cron / Task Scheduler if needed |
@@ -95,6 +95,7 @@ pnpm dev          # API on http://127.0.0.1:8000, web on http://localhost:3000
 | `pnpm demo` | Offline demo: bootstrap, load `data/demo/snapshot-2026-11-09.json.gz`, train, start |
 | `pnpm db:upgrade` | Apply migrations and sync the country/source registry (idempotent) |
 | `pnpm data:sync` | Fetch all mapped official series. Narrow it with `uv run macropulse data-sync --source eurostat --country DE` |
+| `uv run macropulse vintages-sync` | ALFRED revision history of US GDP, CPI and unemployment (needs `FRED_API_KEY` in `.env`, ~6 s) |
 | `uv run macropulse demo-load` / `demo-export --out <file>` | Load the demo snapshot / write the stored data to a new snapshot |
 | `pnpm train` | As-of features, walk-forward backtest for H = 2 and 4, metrics, predictions and the published model in `models/artifacts/` |
 | `pnpm test` | pytest + Vitest |

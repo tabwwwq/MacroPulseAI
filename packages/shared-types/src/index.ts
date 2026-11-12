@@ -57,3 +57,6 @@ export type ReplayEpisodes = Schemas["ReplayEpisodes"];
 export type RecessionEpisode = Schemas["RecessionEpisode"];
 export type FalseAlarm = Schemas["FalseAlarm"];
 export type CrisisPreset = Schemas["CrisisPreset"];
+export type Revisions = Schemas["Revisions"];
+export type RevisionPointOut = Schemas["RevisionPointOut"];
+export type TechnicalSignal = Schemas["TechnicalSignal"];

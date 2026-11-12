@@ -213,3 +213,49 @@ class ModelPrediction(Base):
     label: Mapped[int | None] = mapped_column(Integer, nullable=True)
     split: Mapped[str] = mapped_column(String(12))  # development | heldout | unlabelled | live
     fold_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
+class VintageSeries(Base):
+    """One native FRED series whose full ALFRED revision history is stored (US only).
+
+    Kept apart from `observations` (latest revision) on purpose: nothing in the dashboards or the
+    models reads vintages unless it says so.
+    """
+
+    __tablename__ = "vintage_series"
+
+    series_id: Mapped[str] = mapped_column(String(200), primary_key=True)
+    source_id: Mapped[str] = mapped_column(ForeignKey("data_sources.id", ondelete="CASCADE"))
+    geo: Mapped[str] = mapped_column(String(8))
+    dataset: Mapped[str] = mapped_column(String(64))
+    frequency: Mapped[str] = mapped_column(String(10))
+    unit: Mapped[str] = mapped_column(String(64))
+    # first page of the request, with the API key redacted
+    source_url: Mapped[str] = mapped_column(Text)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    rows: Mapped[int] = mapped_column(Integer)
+    vintages: Mapped[int] = mapped_column(Integer)
+    first_vintage: Mapped[date | None] = mapped_column(Date, nullable=True)
+    last_vintage: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+
+class VintageObservation(Base):
+    """The value of one period as published during one real-time window (ALFRED)."""
+
+    __tablename__ = "vintage_observations"
+    __table_args__ = (
+        UniqueConstraint(
+            "series_id", "period", "realtime_start", name="uq_vintage_series_period_start"
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    series_id: Mapped[str] = mapped_column(
+        ForeignKey("vintage_series.series_id", ondelete="CASCADE"), index=True
+    )
+    period: Mapped[str] = mapped_column(String(10))
+    # None: FRED's "." — the period was not available in that vintage
+    value: Mapped[float | None] = mapped_column(Float, nullable=True)
+    realtime_start: Mapped[date] = mapped_column(Date)
+    # None: still the current value
+    realtime_end: Mapped[date | None] = mapped_column(Date, nullable=True)

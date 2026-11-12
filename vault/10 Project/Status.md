@@ -2,7 +2,7 @@
 type: status
 phase: 10
 phase_name: Hardening & release (complete)
-updated: 2026-11-11
+updated: 2026-11-12
 tags:
   - project
 ---
@@ -21,6 +21,7 @@ tags:
 - ✅ **Phase 9 — Analyst-grade PDF reports** done (2026-11-11): PDF / CSV / JSON country reports from the API's own services; renderers written by the **local model** (Qwen3.8-27B on the RX 7800 XT) and reviewed ([[ADR-0021 Local model as a reviewed single-file worker]]). See [[Phase 09 — Analyst-grade PDF reports]].
 - ✅ **Phase 10 — Hardening & release** done (`75c88b5`, 2026-11-11): credential-free demo from a genuine snapshot ([[ADR-0022 Demo from a genuine snapshot, labelled as such]]), security audit and secret scanner, 58 Playwright E2E incl. axe ([[F-015 Accessibility violations found by the first axe run]]), compose stack on PostgreSQL in CI, deploy guide, README with real screenshots. See [[Phase 10 — Hardening & release]].
 - 🎨 **Visual refresh** after the release (2026-11-11): new design system — opaque gradient-bordered panels, ambient backdrop, shared chart theme, redesigned gauge, KPI sparklines from stored series, pulse trace ([[ADR-0023 Opaque panels, shared chart theme and decorative motion]], `docs/DESIGN.md`). Five files written by the local model and reviewed. No data, model or caveat changed. CI for it: run 43090806778 for `18e3f06` passed all five jobs (API, Web, Security audit, E2E 58 Playwright incl. axe, Docker compose stack).
+- 🕰️ **ALFRED vintages (US)** (2026-11-12): `vintages-sync`, `/api/vintages/revisions`, *first release vs today* card on the US tabs; a 2022 technical recession by first release was revised away ([[F-017 ALFRED shows a 2022 technical recession that was revised away]]). CI: ALFRED_CI_LINE
 - All ten roadmap phases are complete. CI: run 43023762417 for `0dde5a0` passed all five jobs — API, Web, Security audit (history/tree secret scan, pip-audit, pnpm audit), E2E (58 Playwright on the demo snapshot) and the Docker compose stack on PostgreSQL. The previous run 43022549543 (`31ba843`) failed only the security scan on this phase's own fake test credentials; reviewed and allowlisted in `0dde5a0`.
 
 ## Working (verified 2026-11-11)
@@ -40,12 +41,12 @@ tags:
 - [[F-013 Replays show most recessions were missed]] — 2Q warned 0 / 20, 4Q 6 / 22; listed per recession on `/history`.
 - [[F-006 US October 2025 observations missing]] — handled by the one-month staleness rule.
 - [[F-002 OECD CLI missing for Belgium and Netherlands]] — no OECD connector.
-- No vintages / publication dates → replays stay *revised-data approximations*. `FRED_API_KEY` is configured in the local `.env` since 2026-11-11 (verified: FRED `series` and ALFRED `vintagedates` for GDPC1 answer 200; the API reports it as configured) — but no connector uses it yet, so US stays `partial` until the ALFRED client is built.
+- Replays and models use revised data (no vintage-backed replay yet). US ALFRED vintages of GDP, CPI and unemployment are stored and shown as *first release vs today* since 2026-11-12 ([[ADR-0024 ALFRED vintages in separate tables with a first-release window]]); US stays `partial` (series metadata still not fetched).
 - [[F-007 OneDrive locks the virtual environment]] — also stale dev-server reloads; restart servers after edits.
 - Docker not installed locally: the compose stack is verified in CI only.
 
 ## Next
 Release work is finished; remaining items are improvements, not gaps in the delivered scope:
 1. Model quality: the open findings [[F-008 No model beats the base rate on held-out years]], [[F-009 Separate horizon models can contradict each other]], [[F-011 Forecast intervals under-cover]], [[F-012 Recession model lowers risk when unemployment rises]], [[F-013 Replays show most recessions were missed]].
-2. Data: OECD and World Bank connectors ([[F-002 OECD CLI missing for Belgium and Netherlands]], [[F-004 World Bank central-government debt is sparse]]); ALFRED vintages with a `FRED_API_KEY` for true point-in-time US replays.
+2. Data: OECD and World Bank connectors ([[F-002 OECD CLI missing for Belgium and Netherlands]], [[F-004 World Bank central-government debt is sparse]]); vintage-backed US replays and training on first-release GDP (vintages are stored since 2026-11-12).
 3. Countries: UK, IT, ES, PL, RO, EA only after their series are mapped and validated.

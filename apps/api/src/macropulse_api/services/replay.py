@@ -70,10 +70,11 @@ def basis(iso2: str, *, fred_key_configured: bool) -> dict[str, Any]:
     """How faithful a replay can be for this country, stated before any number."""
     if iso2 == "US":
         vintage = (
-            "ALFRED keeps the US figures as first published, but vintage replay is not "
-            "implemented and needs a server-side FRED_API_KEY "
-            f"({'configured' if fred_key_configured else 'not configured'}); US replays use "
-            "today's revised FRED data."
+            "ALFRED keeps the US figures as first published. With a server-side FRED_API_KEY "
+            f"({'configured' if fred_key_configured else 'not configured'}) `macropulse "
+            "vintages-sync` stores the revision history of US GDP, CPI and unemployment, shown as "
+            "'first release vs today' on the country page; this replay itself still uses today's "
+            "revised FRED data."
         )
     else:
         vintage = (
