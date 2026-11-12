@@ -21,6 +21,7 @@ The local Playwright run used the developer database, which already held live OE
 - `load_snapshot` imports only series the snapshot contains (`run_sync(..., series_ids=...)`); series registered later are listed as *not in this snapshot (registered after it was captured)* and stay *never synced*, which is the truth. A missing series is not a failed sync.
 - Test `test_series_registered_after_the_snapshot_are_not_failures` loads the bundled snapshot and expects 13 OECD series reported, no failed run.
 - Verified on a fresh database: `db upgrade`, `demo-load` (exit 0), `train` (same published models), then Playwright against that database.
+- CI run 43266164427 for `c7ab379`: all five jobs green.
 - Practice: before pushing a change that adds registry series, replay CI's demo step on a fresh database.
 
 Related: [[ADR-0022 Demo from a genuine snapshot, labelled as such]], [[ADR-0027 OECD connector with confidence indicators kept apart from the CLI]]
