@@ -145,7 +145,25 @@ INDICATORS: tuple[IndicatorDef, ...] = (
         Category.LEADING,
         "index",
         Frequency.MONTHLY,
-        "OECD composite leading indicator (amplitude adjusted).",
+        "OECD composite leading indicator, amplitude adjusted (long-term average = 100).",
+    ),
+    IndicatorDef(
+        "business_confidence",
+        "Business confidence",
+        Category.LEADING,
+        "index",
+        Frequency.MONTHLY,
+        "OECD composite business confidence, amplitude adjusted (long-term average = 100). "
+        "A survey indicator, not the composite leading indicator.",
+    ),
+    IndicatorDef(
+        "consumer_confidence",
+        "Consumer confidence",
+        Category.LEADING,
+        "index",
+        Frequency.MONTHLY,
+        "OECD composite consumer confidence, amplitude adjusted (long-term average = 100). "
+        "A survey indicator, not the composite leading indicator.",
     ),
     IndicatorDef(
         "yield_spread",
@@ -166,7 +184,39 @@ INDICATORS: tuple[IndicatorDef, ...] = (
 )
 
 _EU = ("BE", "DE", "FR", "NL")
-_ISO3 = {"BE": "BEL", "DE": "DEU", "FR": "FRA", "NL": "NLD"}
+_ISO3 = {"BE": "BEL", "DE": "DEU", "FR": "FRA", "NL": "NLD", "US": "USA"}
+# OECD Composite leading indicators dataflow: REF_AREA.FREQ.MEASURE.UNIT_MEASURE.ACTIVITY.
+# ADJUSTMENT.TRANSFORMATION.TIME_HORIZ.METHODOLOGY, amplitude adjusted index, OECD harmonised.
+_OECD_CLI = "DSD_STES@DF_CLI"
+_OECD_VERIFIED = "Key and values live-verified against the OECD SDMX API on 2026-11-12."
+
+
+def _oecd_key(country: str, measure: str) -> str:
+    return f"{_ISO3[country]}.M.{measure}.IX._Z.AA.IX._Z.H"
+
+
+def _oecd_confidence(country: str) -> list[SourceMapping]:
+    """Composite business and consumer confidence: published by the OECD for all five countries."""
+    return [
+        SourceMapping(
+            indicator,
+            country,
+            "oecd",
+            _OECD_CLI,
+            _oecd_key(country, measure),
+            Frequency.MONTHLY,
+            "amplitude adjusted",
+            MappingStatus.VERIFIED,
+            "2026-10",
+            _OECD_VERIFIED,
+        )
+        for indicator, measure in (
+            ("business_confidence", "BCICP"),
+            ("consumer_confidence", "CCICP"),
+        )
+    ]
+
+
 _GDP_LAST = {"BE": "2026-Q2", "DE": "2026-Q3", "FR": "2026-Q3", "NL": "2026-Q3"}
 _HICP_NOTE = (
     "ECOICOP ver.2 successor of prc_hicp_manr (frozen at 2025-12, finding F-001): covers 1997-01 "
@@ -283,16 +333,18 @@ def _eu_mappings(c: str) -> list[SourceMapping]:
             "cli",
             c,
             "oecd",
-            "DSD_STES@DF_CLI",
-            f"{_ISO3[c]}.M.LI",
+            _OECD_CLI,
+            _oecd_key(c, "LI"),
             Frequency.MONTHLY,
             "amplitude adjusted",
-            MappingStatus.PARTIAL if c in {"DE", "FR"} else MappingStatus.NOT_PUBLISHED,
-            "2026-09" if c in {"DE", "FR"} else None,
-            "CLI variants found; exact measure/adjustment to be fixed in Phase 3."
+            MappingStatus.VERIFIED if c in {"DE", "FR"} else MappingStatus.NOT_PUBLISHED,
+            "2026-10" if c in {"DE", "FR"} else None,
+            _OECD_VERIFIED
             if c in {"DE", "FR"}
-            else "OECD publishes only confidence indices for this country (finding F-002).",
+            else "The OECD publishes no composite leading indicator for this country, only the "
+            "business and consumer confidence indices (finding F-002, rechecked 2026-11-12).",
         ),
+        *_oecd_confidence(c),
     ]
 
 
@@ -397,14 +449,15 @@ _US: list[SourceMapping] = [
         "cli",
         "US",
         "oecd",
-        "DSD_STES@DF_CLI",
-        "USA.M.LI",
+        _OECD_CLI,
+        _oecd_key("US", "LI"),
         Frequency.MONTHLY,
         "amplitude adjusted",
-        MappingStatus.PARTIAL,
-        "2026-09",
-        "CLI variants found; exact measure/adjustment to be fixed in Phase 3.",
+        MappingStatus.VERIFIED,
+        "2026-10",
+        _OECD_VERIFIED,
     ),
+    *_oecd_confidence("US"),
     SourceMapping(
         "yield_spread",
         "US",

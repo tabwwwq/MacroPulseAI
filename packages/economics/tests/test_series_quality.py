@@ -41,12 +41,20 @@ def test_ecb_rate_is_one_shared_euro_area_series() -> None:
     assert reqs[0].series_key == "B.U2.EUR.4F.KR.DFR.LEV"
 
 
-def test_unmapped_or_connectorless_series_are_reported_not_fetched() -> None:
+def test_unpublished_series_are_reported_not_fetched() -> None:
     reqs, skipped = native_series(["NL"])
-    assert all(r.source_id in {"eurostat", "ecb"} for r in reqs)
+    assert all(r.source_id in {"eurostat", "ecb", "oecd"} for r in reqs)
     assert "NL/cli: not_published" in skipped
-    _, us_skipped = native_series(["US"])
-    assert "US/cli: no oecd connector yet" in us_skipped
+    assert {r.series_key for r in reqs if r.source_id == "oecd"} == {
+        "NLD.M.BCICP.IX._Z.AA.IX._Z.H",
+        "NLD.M.CCICP.IX._Z.AA.IX._Z.H",
+    }
+    us, _ = native_series(["US"], ["oecd"])
+    assert {r.indicator_ids for r in us} == {
+        ("cli",),
+        ("business_confidence",),
+        ("consumer_confidence",),
+    }
 
 
 def test_us_series_come_from_fred_only() -> None:

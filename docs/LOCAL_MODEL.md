@@ -112,3 +112,14 @@ The lead wrote the fold re-fit, the API service, schema, route, the hook, the fi
 and the history-page integration. Real-data review: every replayed US quarter reproduced its stored
 estimate before the first-release inputs were scored.
 
+## What happened on the OECD connector (2026-11-12)
+
+| File | Rounds | Model time | Problems found in review |
+|---|---|---|---|
+| `connectors/oecd.py` | 1 | 115 s | 14/14 specification tests on the first try; two lines over 100 characters (ruff). Accepted otherwise: it reads the unit from the first row with a value rather than the first row, harmless because the unit is part of the checked key. |
+
+What no test could show came from the live API: a second sync within a minute got HTTP 429 from
+the OECD. The lead added per-host spacing (3.5 s for `sdmx.oecd.org`) and a 30 s wait after a 429
+without `Retry-After`; the next sync fetched all 13 series in 45 s. The browser check found that line
+charts forced zero onto the y-axis, flattening an index around 100 — line charts now fit the data,
+bar charts keep zero.

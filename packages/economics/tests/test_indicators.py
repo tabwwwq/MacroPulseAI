@@ -45,7 +45,14 @@ def test_probe_findings_are_reflected() -> None:
     # F-002: OECD publishes no CLI for Belgium and the Netherlands.
     assert mappings_for("BE")["cli"].status is MappingStatus.NOT_PUBLISHED
     assert mappings_for("NL")["cli"].status is MappingStatus.NOT_PUBLISHED
-    assert mappings_for("DE")["cli"].status is MappingStatus.PARTIAL
+    assert mappings_for("DE")["cli"].status is MappingStatus.VERIFIED
+    assert mappings_for("US")["cli"].series_key == "USA.M.LI.IX._Z.AA.IX._Z.H"
+    # ... but it does publish composite confidence for every country, as separate indicators.
+    for c in ("BE", "DE", "FR", "NL", "US"):
+        business = mappings_for(c)["business_confidence"]
+        assert business.status is MappingStatus.VERIFIED
+        assert business.series_key.split(".")[2] == "BCICP"
+        assert mappings_for(c)["consumer_confidence"].series_key.split(".")[2] == "CCICP"
 
 
 def test_shared_rate_and_scope_caveats_are_explicit() -> None:

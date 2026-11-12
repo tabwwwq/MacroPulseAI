@@ -16,7 +16,7 @@ from macropulse_economics.indicators import MAPPINGS, MappingStatus, SourceMappi
 
 SYNCABLE = {MappingStatus.VERIFIED, MappingStatus.PARTIAL}
 
-# Units of the *native* series as published (Eurostat/ECB echo them back and are checked on ingest;
+# Units of the *native* series as published (Eurostat/ECB/OECD echo them back, checked on ingest;
 # FRED units are from the series documentation and are not machine-verified without the API key).
 NATIVE_UNITS: dict[tuple[str, str], str] = {
     ("eurostat", "namq_10_gdp"): "Chain-linked volumes (2020), million units of national currency",
@@ -35,6 +35,7 @@ NATIVE_UNITS: dict[tuple[str, str], str] = {
     ("fred", "GFDEGDQ188S"): "% of GDP (FRED documentation)",
     ("fred", "T10Y3M"): "percentage points (FRED documentation)",
     ("fred", "USREC"): "1 = recession, 0 = expansion (FRED documentation)",
+    ("oecd", "DSD_STES@DF_CLI"): "Index, long-term average = 100 (OECD)",
 }
 
 

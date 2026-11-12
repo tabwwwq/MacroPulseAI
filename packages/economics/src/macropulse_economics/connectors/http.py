@@ -14,6 +14,10 @@ from macropulse_economics.connectors.base import ConnectorError
 USER_AGENT = "MacroPulse/0.3 (+https://github.com/tabwwwq/MacroPulseAI)"
 RETRY_STATUS = {429, 500, 502, 503, 504}
 MIN_INTERVAL_S = 0.5  # minimum spacing between requests to the same host
+# Hosts whose anonymous rate limit needs wider spacing. OECD answered HTTP 429 once ~20 requests
+# had been sent within a minute (observed 2026-11-12); 3.5 s keeps a sync under 18 a minute.
+HOST_MIN_INTERVAL_S: dict[str, float] = {"sdmx.oecd.org": 3.5}
+RATE_LIMIT_WAIT_S = 30.0  # wait after HTTP 429 without a usable Retry-After header
 
 
 def make_client(transport: httpx.BaseTransport | None = None) -> httpx.Client:
@@ -45,7 +49,8 @@ class Fetcher:
         host = urlsplit(url).netloc
         last = self._last_call.get(host)
         if last is not None:
-            wait = MIN_INTERVAL_S - (time.monotonic() - last)
+            interval = HOST_MIN_INTERVAL_S.get(host, MIN_INTERVAL_S)
+            wait = interval - (time.monotonic() - last)
             if wait > 0:
                 self.sleep(wait)
         self._last_call[host] = time.monotonic()
@@ -67,6 +72,9 @@ class Fetcher:
                 retry_after = response.headers.get("Retry-After", "")
                 if retry_after.isdigit() and attempt < self.retries:
                     self.sleep(min(float(retry_after), 60.0))
+                    continue
+                if response.status_code == 429 and attempt < self.retries:
+                    self.sleep(RATE_LIMIT_WAIT_S)  # a rate-limit window, not a transient error
                     continue
             if attempt < self.retries:
                 self.sleep(self.backoff_s * (2**attempt))

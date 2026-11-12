@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from macropulse_economics.connectors import ecb, eurostat, fred
+from macropulse_economics.connectors import ecb, eurostat, fred, oecd
 from macropulse_economics.connectors.base import ConnectorError, FetchResult, SeriesRequest
 from macropulse_economics.connectors.http import Fetcher
 
@@ -14,6 +14,7 @@ CONNECTORS: dict[str, ConnectorFn] = {
     "eurostat": eurostat.fetch,
     "ecb": ecb.fetch,
     "fred": fred.fetch,
+    "oecd": oecd.fetch,
 }
 
 

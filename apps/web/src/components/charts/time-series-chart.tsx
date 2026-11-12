@@ -180,7 +180,8 @@ export function TimeSeriesChart({ series, kind = "line", height = 280, shading =
         },
       },
       xAxis: { type: "time", ...categoryAxisStyle },
-      yAxis: { type: "value", ...valueAxisStyle },
+      // Lines fit the data (an index near 100 must not look flat); bars keep zero so lengths stay true.
+      yAxis: { type: "value", scale: kind === "line", ...valueAxisStyle },
       dataZoom: [
         // The page must keep scrolling over charts: zoom with Ctrl + wheel, pinch, or the slider.
         { type: "inside", filterMode: "none", zoomOnMouseWheel: "ctrl", moveOnMouseWheel: false, preventDefaultMouseMove: false },

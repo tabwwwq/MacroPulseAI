@@ -131,7 +131,15 @@ def test_country_data_quality_lists_every_series_behind_the_country(synced: Test
     body = synced.get("/api/countries/DE/data-quality").json()
     by_id = {i["series_id"]: i for i in body["items"]}
     # GDP, HICP, unemployment, debt, 10y yield + the shared ECB rate and euro-area 3m rate
-    assert len(by_id) == 7
+    # + OECD composite leading indicator, business and consumer confidence
+    assert len(by_id) == 10
+    oecd = [i for i in body["items"] if i["source_id"] == "oecd"]
+    assert {i["indicators"][0] for i in oecd} == {
+        "cli",
+        "business_confidence",
+        "consumer_confidence",
+    }
+    assert {i["health"] for i in oecd} == {"not_synced"}  # the fixture sync has no OECD rows
     gdp = by_id[DE_GDP_ID]
     assert gdp["health"] == "pass"
     assert gdp["observations"] == 6
@@ -149,11 +157,13 @@ def test_country_data_quality_lists_every_series_behind_the_country(synced: Test
 
 def test_global_inventory_reports_never_synced_series(synced: TestClient) -> None:
     body = synced.get("/api/data-quality").json()
-    assert len(body["items"]) == 31
+    # 31 Eurostat / ECB / FRED series + 13 OECD (CLI for DE, FR, US; two confidence indices x 5)
+    assert len(body["items"]) == 44
     fred = [i for i in body["items"] if i["source_id"] == "fred"]
     assert fred
     assert {i["health"] for i in fred} == {"not_synced"}
-    assert sum(body["counts"].values()) == 31
+    assert sum(1 for i in body["items"] if i["source_id"] == "oecd") == 13
+    assert sum(body["counts"].values()) == 44
 
 
 def test_a_failed_latest_sync_is_visible_while_older_rows_remain(

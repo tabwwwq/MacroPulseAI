@@ -14,7 +14,13 @@ import httpx
 import pytest
 
 from macropulse_economics.connectors import ConnectorError, SeriesRequest, ecb, eurostat, fred
-from macropulse_economics.connectors.http import Fetcher, make_client
+from macropulse_economics.connectors.http import (
+    HOST_MIN_INTERVAL_S,
+    MIN_INTERVAL_S,
+    RATE_LIMIT_WAIT_S,
+    Fetcher,
+    make_client,
+)
 from macropulse_economics.connectors.registry import fetch_series
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -201,9 +207,9 @@ def test_fred_fetch_reports_missing_values_as_a_warning() -> None:
 
 
 def test_registry_rejects_sources_without_a_connector() -> None:
-    oecd = SeriesRequest("oecd", "CLI", "X", "DE", "monthly", "index")
+    world_bank = SeriesRequest("worldbank", "WDI", "X", "DE", "annual", "%")
     with pytest.raises(ConnectorError, match="No connector"):
-        fetch_series(_fetcher(lambda r: httpx.Response(200)), oecd)
+        fetch_series(_fetcher(lambda r: httpx.Response(200)), world_bank)
 
 
 # --- HTTP retries -----------------------------------------------------------------------------
@@ -236,6 +242,30 @@ def test_fetcher_honours_retry_after_on_429() -> None:
     rec = Recorder()
     _fetcher(handler, rec).get("https://example.test/data")
     assert 7.0 in rec.sleeps
+
+
+def test_fetcher_waits_out_a_rate_limit_without_retry_after() -> None:
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        return httpx.Response(429) if calls["n"] == 1 else httpx.Response(200)
+
+    rec = Recorder()
+    _fetcher(handler, rec).get("https://example.test/data")
+    assert RATE_LIMIT_WAIT_S in rec.sleeps
+    assert calls["n"] == 2
+
+
+def test_rate_limited_hosts_are_spaced_wider() -> None:
+    rec = Recorder()
+    fetcher = _fetcher(lambda r: httpx.Response(200), rec)
+    fetcher.get("https://sdmx.oecd.org/public/rest/data/a")
+    fetcher.get("https://sdmx.oecd.org/public/rest/data/b")
+    fetcher.get("https://example.test/a")
+    fetcher.get("https://example.test/b")
+    assert rec.sleeps[0] > HOST_MIN_INTERVAL_S["sdmx.oecd.org"] - 0.5
+    assert rec.sleeps[1] <= MIN_INTERVAL_S
 
 
 def test_fetcher_does_not_retry_client_errors() -> None:

@@ -66,7 +66,9 @@ FEATURE_NAMES: tuple[str, ...] = tuple(name for name, _ in FEATURES)
 EXCLUDED_INPUTS = {
     "gov_debt_gdp": "EU general-government and US federal debt are not comparable definitions.",
     "yield_spread": "US-only daily series; superseded by the monthly term spread.",
-    "cli": "No OECD connector yet; not published for BE/NL.",
+    "cli": "Not published for BE/NL (finding F-002); not in the pre-registered feature set.",
+    "business_confidence": "Synced since 2026-11-12; not in the pre-registered feature set.",
+    "consumer_confidence": "Synced since 2026-11-12; not in the pre-registered feature set.",
     "nber_recession": "External reference chronology; never a feature or a target.",
 }
 

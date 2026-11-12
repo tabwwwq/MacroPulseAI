@@ -8,3 +8,10 @@
 Sources: Eurostat (reuse with acknowledgement), European Central Bank Data Portal,
 FRED, Federal Reserve Bank of St. Louis (GDPC1: U.S. Bureau of Economic Analysis).
 Used only by unit tests; the app never displays fixture data.
+
+Captured 2026-11-12 (first rows of the full response, in the order the OECD returned them):
+
+- `oecd_cli_USA_LI_6.csv`: https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/USA.M.LI.IX._Z.AA.IX._Z.H?format=csvfile
+- `oecd_cli_BEL_BCICP_4.csv`: https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_CLI,4.1/BEL.M.BCICP.IX._Z.AA.IX._Z.H?format=csvfile
+
+Source: OECD Data Explorer, Composite leading indicators (DSD_STES@DF_CLI 4.1), OECD terms of use.

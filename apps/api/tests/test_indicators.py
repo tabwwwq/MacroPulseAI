@@ -14,7 +14,7 @@ def test_catalog_covers_all_countries_and_indicators(client: TestClient) -> None
     body = client.get("/api/indicators/catalog").json()
     assert body["probe_date"] == "2026-11-08"
     assert [c["country"] for c in body["countries"]] == ["BE", "DE", "FR", "NL", "US"]
-    assert all(len(c["items"]) == 11 for c in body["countries"])
+    assert all(len(c["items"]) == 13 for c in body["countries"])
 
 
 def test_single_country_filter_is_case_insensitive(client: TestClient) -> None:

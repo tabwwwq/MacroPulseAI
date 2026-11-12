@@ -2,7 +2,7 @@
 type: finding
 id: F-002
 severity: medium
-status: open
+status: mitigated
 area: data
 found: 2026-11-08
 tags:
@@ -20,4 +20,8 @@ The CLI feature is unavailable for BE/NL; confidence indices must not be relabel
 ## Action
 Use a documented reduced feature set for BE/NL or keep partial model coverage.
 
-Related: [[OECD]]
+## Recheck 2026-11-12
+- `DSD_STES@DF_CLI` 4.1, exact key `{ISO3}.M.LI.IX._Z.AA.IX._Z.H` (amplitude adjusted, OECD harmonised): DEU, FRA and USA return the CLI; BEL and NLD still return only `BCICP` (composite business confidence) and `CCICP` (composite consumer confidence).
+- Mitigation: the OECD connector syncs the CLI for DE, FR and US, and the two confidence indices as **separate indicators** for all five countries. Confidence is never labelled as a CLI; BE/NL keep `cli` = *not published*.
+
+Related: [[OECD]] · [[ADR-0027 OECD connector with confidence indicators kept apart from the CLI]]

@@ -41,7 +41,7 @@ All ten phases of the [roadmap](docs/ROADMAP.md) are complete. The release audit
 
 | Area | State | Details |
 | --- | --- | --- |
-| Official data (Eurostat, ECB, FRED) | ✅ Works | `macropulse data-sync`: 31 native series, 25,702 observations (live run 2026-11-09), timeouts, retries, throttling, validation, quality checks, partial-failure runs, credential redaction in stored URLs |
+| Official data (Eurostat, ECB, FRED, OECD) | ✅ Works | `macropulse data-sync`: 31 native series, 25,702 observations (live run 2026-11-09) plus 13 OECD series, 9,375 observations (2026-11-12); timeouts, retries, per-host throttling (OECD rate limit), validation, quality checks, partial-failure runs, credential redaction in stored URLs |
 | Offline demo | ✅ Works | `pnpm demo`: genuine snapshot of that sync (`data/demo/`, attributed), loaded through the normal pipeline, **DEMO banner** while in use |
 | Country support | ✅ BE, DE, FR, NL `full` · ⚠️ US `partial` | Computed from stored data. US: series metadata (units/adjustment) needs the FRED API, which needs a key |
 | Dashboards (overview, countries, compare, data observatory) | ✅ Works | Provenance on every value, as-of cut-off, CSV/PNG export, lineage, raw-row CSV |
@@ -51,7 +51,8 @@ All ten phases of the [roadmap](docs/ROADMAP.md) are complete. The release audit
 | Crisis time machine | ⚠️ Approximation (US: plus first-release check) | Walk-forward replays with a leakage test, labelled *revised-data / release-lag approximation*. For the US the same fold model is re-fitted, must reproduce its stored estimate, and is scored again on GDP, CPI and unemployment as first published (ALFRED) — the model itself was still trained on revised data |
 | Report builder | ✅ Works | Dated PDF / chart-data CSV / JSON with sources, methodology and limitations |
 | Release engineering | ✅ Works | CI: lint, types, 287 pytest, 134 Vitest, build, 58 Playwright E2E (desktop + mobile, axe, failure paths), Docker compose stack on PostgreSQL, secret scan, dependency audit |
-| OECD and World Bank connectors | ❌ Not implemented | Registered as sources ("3/5 sources synced" is accurate); leading indicators and annual structural data are not used |
+| OECD leading and confidence indicators | ✅ Works (shown, not modelled) | Composite leading indicator for DE, FR, US (not published for BE/NL); composite business and consumer confidence for all five, kept as separate indicators. Not model inputs |
+| World Bank connector | ❌ Not implemented | Registered as a source ("4/5 sources synced" is accurate); annual structural data are not used |
 | ALFRED vintages (US) | ⚠️ Partly | `macropulse vintages-sync` (server-side `FRED_API_KEY`) stores the full revision history of US GDP, CPI and unemployment (420 / 671 / 801 vintages, verified 2026-11-12); the US country page shows first release vs today, revision statistics and two-negative-quarter signals then vs now. US replays also show the estimate on the figures as first published; models are still trained on revised data; no release calendar |
 | More countries (UK, IT, ES, PL, RO, euro area) | ❌ Not implemented | Not mapped or validated |
 | SHAP, XGBoost, LSTM/GRU | ❌ Not used | SHAP and XGBoost are not installed (exact log-odds / local sensitivity explanations instead); a recurrent network is not justified with this few events (the small MLP above is the only neural model) |
@@ -150,7 +151,8 @@ flowchart LR
 | [Eurostat](https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-introduction) | Quarterly real GDP (`namq_10_gdp`), HICP (`prc_hicp_minr`), unemployment, government debt, interest rates | Reuse with acknowledgement |
 | [ECB Data Portal](https://data.ecb.europa.eu/help/api/overview) | Shared euro-area policy rate (deposit facility) | Reuse with source attribution |
 | [FRED](https://fred.stlouisfed.org/docs/api/fred/series_observations.html) | US real GDP, CPI, unemployment, policy and market rates, debt, NBER reference | Series-specific; see FRED legal |
-| [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392) · [OECD](https://data-explorer.oecd.org/) | Registered, not yet connected | CC BY 4.0 · OECD terms |
+| [OECD Data Explorer](https://data-explorer.oecd.org/) | Composite leading indicator, composite business and consumer confidence (`DSD_STES@DF_CLI` 4.1) | OECD terms and conditions |
+| [World Bank](https://datahelpdesk.worldbank.org/knowledgebase/articles/889392) | Registered, not yet connected | CC BY 4.0 |
 
 The demo snapshot's contents and terms are listed in [`data/demo/README.md`](data/demo/README.md). NBER
 business-cycle dating reference:
