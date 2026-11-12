@@ -13,6 +13,7 @@ from sqlalchemy import select
 from macropulse_api.models import IngestionRun, Observation
 from macropulse_api.services.demo import (
     DEFAULT_SNAPSHOT,
+    NOT_IN_SNAPSHOT,
     export_snapshot,
     load_snapshot,
     read_snapshot,
@@ -67,6 +68,20 @@ def test_live_sync_is_labelled_live(app: FastAPI, client: TestClient) -> None:
         i["data_mode"] == "live" and i["snapshot_taken_at"] is None for i in synced
     )
     assert all(i["data_mode"] is None for i in items if not i["last_success_at"])
+
+
+def test_series_registered_after_the_snapshot_are_not_failures(tmp_path: Path) -> None:
+    """The bundled snapshot predates the OECD connector: its series must stay "never synced",
+    not turn the demo load into a failure (CI 43264272331)."""
+    app = _new_app(tmp_path)
+    report, _ = load_snapshot(app.state.sessionmaker)
+    assert [o.series_id for o in report.outcomes if not o.ok] == []
+    later = [s for s in report.skipped if s.endswith(NOT_IN_SNAPSHOT)]
+    assert len(later) == 13 and all(s.startswith("oecd:") for s in later)
+    with app.state.sessionmaker() as s:
+        runs = s.scalars(select(IngestionRun)).all()
+        assert {r.source_id for r in runs} == {"eurostat", "ecb", "fred"}
+        assert {r.status for r in runs} == {"succeeded"}
 
 
 def test_bundled_snapshot_is_genuine_and_complete() -> None:

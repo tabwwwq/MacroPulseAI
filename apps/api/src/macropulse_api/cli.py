@@ -161,7 +161,11 @@ def _cmd_demo_export(args: argparse.Namespace) -> int:
 
 
 def _cmd_demo_load(args: argparse.Namespace) -> int:
-    from macropulse_api.services.demo import DEFAULT_SNAPSHOT, load_snapshot  # noqa: PLC0415
+    from macropulse_api.services.demo import (  # noqa: PLC0415
+        DEFAULT_SNAPSHOT,
+        NOT_IN_SNAPSHOT,
+        load_snapshot,
+    )
 
     engine = build_engine(get_settings().database_url)
     try:
@@ -180,6 +184,11 @@ def _cmd_demo_load(args: argparse.Namespace) -> int:
     print(f"DEMO snapshot captured {captured.isoformat()} loaded: {total} observations")
     for o in failed:
         print(f"  not loaded: {o.series_id}: {o.error}")
+    later = [s for s in report.skipped if s.endswith(NOT_IN_SNAPSHOT)]
+    if later:
+        print(f"  {len(later)} series registered after the snapshot stay 'never synced':")
+        for line in later:
+            print(f"    {line.split(': ', 1)[0]}")
     print("The app now shows a demo banner. Run `pnpm data:sync` to replace it with live data.")
     return 0 if not failed else 1
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from collections import defaultdict
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Collection, Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 
@@ -144,8 +144,12 @@ def run_sync(
     fetch: FetchFn = fetch_series,
     mode: str = "live",
     snapshot_taken_at: datetime | None = None,
+    series_ids: Collection[str] | None = None,
 ) -> SyncReport:
+    """Fetch and store every syncable series (optionally only `series_ids`), one run per source."""
     requests, skipped = native_series(countries, sources)
+    if series_ids is not None:
+        requests = [r for r in requests if r.series_id in series_ids]
     report = SyncReport(skipped=skipped)
     by_source: dict[str, list[SeriesRequest]] = defaultdict(list)
     for r in requests:

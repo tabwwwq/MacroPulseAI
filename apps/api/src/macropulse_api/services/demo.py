@@ -30,9 +30,11 @@ from macropulse_economics.connectors.base import (
     SeriesRequest,
 )
 from macropulse_economics.connectors.http import Fetcher, make_client
+from macropulse_economics.series import native_series
 
 FORMAT = "macropulse-snapshot/1"
 DEFAULT_SNAPSHOT = REPO_ROOT / "data" / "demo" / "snapshot-2026-11-09.json.gz"
+NOT_IN_SNAPSHOT = "not in this snapshot (registered after it was captured)"
 
 
 def export_snapshot(session: Session, path: Path) -> dict[str, Any]:
@@ -91,10 +93,16 @@ def read_snapshot(path: Path) -> dict[str, Any]:
 def load_snapshot(
     factory: sessionmaker[Session], path: Path = DEFAULT_SNAPSHOT
 ) -> tuple[SyncReport, datetime]:
-    """Import a snapshot through the normal sync pipeline, marked as snapshot data."""
+    """Import a snapshot through the normal sync pipeline, marked as snapshot data.
+
+    Only series the snapshot contains are imported. Series registered after it was captured are
+    listed in `report.skipped` and stay "never synced" — a missing series is not a failed sync.
+    """
     data = read_snapshot(path)
     captured = datetime.fromisoformat(data["captured_at"])
     by_id = {s["series_id"]: s for s in data["series"]}
+    registered, _ = native_series()
+    absent = sorted(r.series_id for r in registered if r.series_id not in by_id)
 
     def snapshot_fetch(_fetcher: Fetcher, req: SeriesRequest) -> FetchResult:
         entry = by_id.get(req.series_id)
@@ -117,5 +125,7 @@ def load_snapshot(
             fetch=snapshot_fetch,
             mode="snapshot",
             snapshot_taken_at=captured,
+            series_ids=set(by_id),
         )
+    report.skipped.extend(f"{sid}: {NOT_IN_SNAPSHOT}" for sid in absent)
     return report, captured
