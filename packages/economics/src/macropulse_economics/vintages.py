@@ -95,6 +95,34 @@ def derived_as_of(
     return _derived_from_index(_index(rows), period, on, transform)
 
 
+def vintage_series(
+    rows: Sequence[VintageObservation], on: date | None, transform: Transform
+) -> dict[str, float]:
+    """The whole series as a user could have downloaded it on day ``on``.
+
+    For every period whose value is non-None in the vintage valid on ``on`` (``on=None`` is the
+    current vintage) and whose derivation is defined, the derived value is returned. The result
+    is keyed by period and ordered by ``period_start``. Nothing published after ``on`` appears.
+    """
+    if transform.kind not in ("identity", "growth"):
+        raise ValueError(f"Unknown transform kind: {transform.kind!r}")
+    by_period = _index(rows)
+    levels: dict[str, float] = {}
+    for period in sorted(by_period, key=lambda p: (period_start(p), p)):
+        v = _pick(by_period[period], on)
+        if v is not None:
+            levels[period] = v
+    if transform.kind == "identity":
+        return levels
+    values: dict[str, float] = {}
+    for period, v in levels.items():
+        base = levels.get(shift(period, -transform.lag))
+        if base is None or base == 0:
+            continue
+        values[period] = (v / base - 1.0) * 100.0
+    return values
+
+
 def revision_history(
     rows: Sequence[VintageObservation], transform: Transform
 ) -> list[RevisionPoint]:

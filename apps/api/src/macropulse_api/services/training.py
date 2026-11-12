@@ -292,7 +292,12 @@ def train(
                     feature_set_version=FEATURE_SET_VERSION,
                     feature_names=list(panel.feature_names),
                     params={**res.spec.params, "seed": seed},
-                    evaluation=protocol(h, result),
+                    evaluation={
+                        **protocol(h, result),
+                        # The exact panel range, so a fold model can be re-fitted later.
+                        "panel_first_as_of": FIRST_AS_OF,
+                        "panel_last_as_of": last_as_of,
+                    },
                     training_rows=result.final_n if is_selected else None,
                     training_events=result.final_events if is_selected else None,
                     training_last_as_of=result.final_last_as_of if is_selected else None,

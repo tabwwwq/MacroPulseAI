@@ -64,6 +64,7 @@ def test_training_persists_versions_metrics_predictions_and_artifact(
             "logistic",
             "hist_gbm",
             "hist_gbm_platt",
+            "mlp",
             "xgboost",
         }
         selected = [v for v in versions if v.selected]

@@ -8,6 +8,7 @@ import type { Replay, ReplayEpisodes } from "@macropulse/shared-types";
 type Basis = Replay["basis"];
 
 import { ChartFrame } from "@/components/charts/chart-frame";
+import { VintageReplayCard } from "@/components/model/vintage-replay-card";
 import { CountryRequired } from "@/components/views/country-required";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,8 @@ const HORIZONS = [
   { value: "4", label: "Next 4 quarters" },
 ];
 const BASIS_FALLBACK = "Revised-data / release-lag approximation";
+/** Figures as first published (ALFRED vintages) exist only for the United States. */
+const VINTAGE_COUNTRY = "US";
 const num = new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 });
 const SPLIT_LABEL: Record<string, string> = { development: "Development year", heldout: "Held-out year", unlabelled: "Outcome pending" };
 
@@ -388,6 +391,7 @@ function HistoryBody({ iso2 }: { iso2: string }) {
             <EstimateCard r={r} updating={replay.isFetching} />
             <OutcomeCard r={r} />
           </div>
+          {iso2 === VINTAGE_COUNTRY ? <VintageReplayCard iso2={iso2} horizon={horizon} asOf={r.as_of} /> : null}
           <div className="grid gap-4 xl:grid-cols-5">
             <Card className="xl:col-span-3">
               <CardHeader title={`Known on ${r.cutoff}`} description="Each input as it could be known at the cut-off: period ended and the assumed publication lag passed." />

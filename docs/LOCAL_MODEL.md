@@ -101,3 +101,14 @@ The lead wrote the storage, migration, API, CLI, the card and every test. The re
 what no test could: ALFRED's 1992 vintage back-filled real GDP to 1947, so "first appearance in the
 archive" is not a first release — fixed with a 120-day publication window.
 
+## What happened on the vintage replay (2026-11-12)
+
+| File | Rounds | Model time | Problems found in review |
+|---|---|---|---|
+| `vintages.py` (`vintage_series`) | 1 | 239 s | 8/8 specification tests on the first try, but two rules of the brief were not followed: each level was picked twice (as value and again as base) instead of once, and an unknown transform was rejected only when the series had a value. Lead rewrote the loop to pick every level once and to check the transform first. |
+| `model/vintage-replay-card.tsx` | 1 | 232 s | 5/5 specification tests on the first try. Review found what the tests could not: `JSX.Element` (no global `JSX` namespace in React 19, so `tsc` fails), `React.ReactNode` without an import, an unused `cn` import (ESLint) and unescaped apostrophes in JSX text. Lead fixed all four and gave the card an accessible name for axe. |
+
+The lead wrote the fold re-fit, the API service, schema, route, the hook, the fixtures, every test
+and the history-page integration. Real-data review: every replayed US quarter reproduced its stored
+estimate before the first-release inputs were scored.
+

@@ -27,6 +27,8 @@ export const queryKeys = {
   scenarioSpec: ["scenarios", "spec"] as const,
   replay: (iso2: string, horizon: number, asOf: string) => ["history", "replay", iso2.toUpperCase(), horizon, asOf] as const,
   episodes: (iso2: string, horizon: number) => ["history", "episodes", iso2.toUpperCase(), horizon] as const,
+  vintageReplay: (iso2: string, horizon: number, asOf: string) =>
+    ["history", "vintage-replay", iso2.toUpperCase(), horizon, asOf] as const,
   presets: ["history", "presets"] as const,
   revisions: (iso2: string, indicator: string) => ["vintages", "revisions", iso2.toUpperCase(), indicator] as const,
   scenario: (r: ScenarioRequest | null) =>
@@ -131,6 +133,19 @@ export function useReplay(iso2: string, horizon: 2 | 4, asOf: string) {
       unwrap(api.GET("/api/history/replay", { params: { query: { country: iso2, horizon, as_of: asOf } } })),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
+    retry: retryUnlessAnswer,
+  });
+}
+
+/** US only: the same walk-forward fold model scored on GDP, CPI and unemployment as first published. */
+export function useVintageReplay(iso2: string, horizon: 2 | 4, asOf: string, enabled = true) {
+  return useQuery({
+    queryKey: queryKeys.vintageReplay(iso2, horizon, asOf),
+    queryFn: () =>
+      unwrap(api.GET("/api/history/vintage-replay", { params: { query: { country: iso2, horizon, as_of: asOf } } })),
+    enabled,
+    placeholderData: keepPreviousData,
+    staleTime: 10 * 60_000,
     retry: retryUnlessAnswer,
   });
 }

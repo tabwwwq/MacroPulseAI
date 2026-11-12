@@ -177,6 +177,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/history/vintage-replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** US only: the same walk-forward fold model scored on the figures as first published */
+        get: operations["get_vintage_replay_api_history_vintage_replay_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/indicators": {
         parameters: {
             query?: never;
@@ -2096,6 +2113,100 @@ export interface components {
             /** Value */
             value: number;
         };
+        /** VintageReplay */
+        VintageReplay: {
+            /**
+             * Archive Start
+             * Format: date
+             * @description First day all three US series have a vintage.
+             */
+            archive_start: string;
+            /** As Of */
+            as_of: string;
+            /** Available */
+            available: boolean;
+            /**
+             * Computed At
+             * Format: date-time
+             */
+            computed_at: string;
+            /** Country */
+            country: string;
+            /**
+             * Cutoff
+             * Format: date
+             */
+            cutoff: string;
+            /** Fold Year */
+            fold_year: number | null;
+            /** Horizon */
+            horizon: number;
+            /** Inputs */
+            inputs: components["schemas"]["VintageReplayInput"][];
+            /** Model Id */
+            model_id: string;
+            /** Note */
+            note: string;
+            /**
+             * Reason
+             * @description Why no vintage-based estimate is shown.
+             */
+            reason: string | null;
+            /**
+             * Reproduced
+             * @description True when the re-fitted fold model reproduced the stored estimate.
+             */
+            reproduced: boolean | null;
+            /**
+             * Revised Probability
+             * @description Stored walk-forward estimate (revised data).
+             */
+            revised_probability: number;
+            /** Vintage Band */
+            vintage_band: string | null;
+            /**
+             * Vintage Date
+             * Format: date
+             * @description Real-time date whose vintage supplied the inputs.
+             */
+            vintage_date: string;
+            /**
+             * Vintage Probability
+             * @description Same fold model, inputs as first known on the cut-off date.
+             */
+            vintage_probability: number | null;
+        };
+        /** VintageReplayInput */
+        VintageReplayInput: {
+            /**
+             * Difference
+             * @description vintage_value - revised_value.
+             */
+            difference: number;
+            /** Feature */
+            feature: string;
+            /**
+             * From Vintage
+             * @description Rebuilt from the ALFRED vintage valid on the cut-off.
+             */
+            from_vintage: boolean;
+            /** Label */
+            label: string;
+            /** Revised Period */
+            revised_period: string | null;
+            /**
+             * Revised Value
+             * @description Input built from today's revised series.
+             */
+            revised_value: number;
+            /** Vintage Period */
+            vintage_period: string | null;
+            /**
+             * Vintage Value
+             * @description Same input from the figures published by then.
+             */
+            vintage_value: number;
+        };
         /** VintageSeriesInfo */
         VintageSeriesInfo: {
             /** Dataset */
@@ -2462,6 +2573,69 @@ export interface operations {
             };
             /** @description Unsupported country, horizon or as-of. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description No trained model / synced data. */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_vintage_replay_api_history_vintage_replay_get: {
+        parameters: {
+            query: {
+                /** @description ISO alpha-2 code. */
+                country: string;
+                /** @description Replay quarter. */
+                as_of: string;
+                /** @description Quarters ahead: 2 or 4. */
+                horizon?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VintageReplay"];
+                };
+            };
+            /** @description No out-of-sample estimate for this quarter. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unsupported country, horizon or as-of. */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Too many compute requests. */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

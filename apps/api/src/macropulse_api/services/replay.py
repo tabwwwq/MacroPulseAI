@@ -73,8 +73,9 @@ def basis(iso2: str, *, fred_key_configured: bool) -> dict[str, Any]:
             "ALFRED keeps the US figures as first published. With a server-side FRED_API_KEY "
             f"({'configured' if fred_key_configured else 'not configured'}) `macropulse "
             "vintages-sync` stores the revision history of US GDP, CPI and unemployment, shown as "
-            "'first release vs today' on the country page; this replay itself still uses today's "
-            "revised FRED data."
+            "'first release vs today' on the country page. This replay uses today's revised FRED "
+            "data; the vintage comparison scores the same fold model on the figures as first "
+            "published."
         )
     else:
         vintage = (

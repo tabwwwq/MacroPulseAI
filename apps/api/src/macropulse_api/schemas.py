@@ -782,6 +782,41 @@ class CrisisPreset(BaseModel):
     label: str
 
 
+class VintageReplayInput(BaseModel):
+    feature: str
+    label: str
+    from_vintage: bool = Field(description="Rebuilt from the ALFRED vintage valid on the cut-off.")
+    revised_value: float = Field(description="Input built from today's revised series.")
+    revised_period: str | None
+    vintage_value: float = Field(description="Same input from the figures published by then.")
+    vintage_period: str | None
+    difference: float = Field(description="vintage_value - revised_value.")
+
+
+class VintageReplay(BaseModel):
+    country: str
+    horizon: int
+    as_of: str
+    cutoff: date
+    vintage_date: date = Field(description="Real-time date whose vintage supplied the inputs.")
+    archive_start: date = Field(description="First day all three US series have a vintage.")
+    model_id: str
+    fold_year: int | None
+    available: bool
+    reason: str | None = Field(description="Why no vintage-based estimate is shown.")
+    reproduced: bool | None = Field(
+        description="True when the re-fitted fold model reproduced the stored estimate."
+    )
+    revised_probability: float = Field(description="Stored walk-forward estimate (revised data).")
+    vintage_probability: float | None = Field(
+        description="Same fold model, inputs as first known on the cut-off date."
+    )
+    vintage_band: str | None
+    inputs: list[VintageReplayInput]
+    note: str
+    computed_at: datetime
+
+
 # ---------------------------------------------------------------- ALFRED vintages / revisions
 
 

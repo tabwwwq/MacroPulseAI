@@ -1,4 +1,4 @@
-"""Model registry: reference baselines, Logistic Regression and boosted-tree challengers.
+"""Model registry: reference baselines, Logistic Regression, boosted trees and a small neural net.
 
 Hyperparameters are fixed in advance (no tuning on test data) and recorded with every artifact.
 """
@@ -14,6 +14,7 @@ import numpy as np
 from numpy.typing import NDArray
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -136,6 +137,30 @@ def boosted(seed: int) -> HistGradientBoostingClassifier:
     )
 
 
+def neural(seed: int) -> Pipeline:
+    """A one-hidden-layer perceptron on standardised features: the smallest neural network that can
+    represent interactions the linear model cannot. With a few hundred pooled quarters and few
+    events it is heavily L2-regularised and fitted with full-batch L-BFGS (deterministic for a
+    seed). The step is named "net", not "model": explanations then use the documented local
+    sensitivity, not linear coefficients."""
+    return Pipeline(
+        [
+            ("scale", StandardScaler()),
+            (
+                "net",
+                MLPClassifier(
+                    hidden_layer_sizes=(8,),
+                    activation="tanh",
+                    solver="lbfgs",
+                    alpha=3.0,
+                    max_iter=3000,
+                    random_state=seed,
+                ),
+            ),
+        ]
+    )
+
+
 def xgboost_available() -> bool:
     return importlib.util.find_spec("xgboost") is not None
 
@@ -185,6 +210,12 @@ SPECS: tuple[ModelSpec, ...] = (
         calibrated=True,
     ),
     ModelSpec(
+        "mlp",
+        "Neural network (MLP, 8 tanh units, L2)",
+        "candidate",
+        {"hidden_layer_sizes": [8], "activation": "tanh", "alpha": 3.0, "solver": "lbfgs"},
+    ),
+    ModelSpec(
         "xgboost",
         "XGBoost",
         "candidate",
@@ -204,6 +235,9 @@ def make(key: str, seed: int) -> Classifier:
     if key == "hist_gbm":
         tree: Classifier = boosted(seed)
         return tree
+    if key == "mlp":
+        net: Classifier = neural(seed)
+        return net
     if key == "xgboost":
         return xgb(seed)
     raise KeyError(key)

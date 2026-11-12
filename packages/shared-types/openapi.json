@@ -4487,6 +4487,213 @@
         "title": "ValuePoint",
         "type": "object"
       },
+      "VintageReplay": {
+        "properties": {
+          "archive_start": {
+            "description": "First day all three US series have a vintage.",
+            "format": "date",
+            "title": "Archive Start",
+            "type": "string"
+          },
+          "as_of": {
+            "title": "As Of",
+            "type": "string"
+          },
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "computed_at": {
+            "format": "date-time",
+            "title": "Computed At",
+            "type": "string"
+          },
+          "country": {
+            "title": "Country",
+            "type": "string"
+          },
+          "cutoff": {
+            "format": "date",
+            "title": "Cutoff",
+            "type": "string"
+          },
+          "fold_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fold Year"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "integer"
+          },
+          "inputs": {
+            "items": {
+              "$ref": "#/components/schemas/VintageReplayInput"
+            },
+            "title": "Inputs",
+            "type": "array"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why no vintage-based estimate is shown.",
+            "title": "Reason"
+          },
+          "reproduced": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "True when the re-fitted fold model reproduced the stored estimate.",
+            "title": "Reproduced"
+          },
+          "revised_probability": {
+            "description": "Stored walk-forward estimate (revised data).",
+            "title": "Revised Probability",
+            "type": "number"
+          },
+          "vintage_band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vintage Band"
+          },
+          "vintage_date": {
+            "description": "Real-time date whose vintage supplied the inputs.",
+            "format": "date",
+            "title": "Vintage Date",
+            "type": "string"
+          },
+          "vintage_probability": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Same fold model, inputs as first known on the cut-off date.",
+            "title": "Vintage Probability"
+          }
+        },
+        "required": [
+          "country",
+          "horizon",
+          "as_of",
+          "cutoff",
+          "vintage_date",
+          "archive_start",
+          "model_id",
+          "fold_year",
+          "available",
+          "reason",
+          "reproduced",
+          "revised_probability",
+          "vintage_probability",
+          "vintage_band",
+          "inputs",
+          "note",
+          "computed_at"
+        ],
+        "title": "VintageReplay",
+        "type": "object"
+      },
+      "VintageReplayInput": {
+        "properties": {
+          "difference": {
+            "description": "vintage_value - revised_value.",
+            "title": "Difference",
+            "type": "number"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "from_vintage": {
+            "description": "Rebuilt from the ALFRED vintage valid on the cut-off.",
+            "title": "From Vintage",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "revised_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revised Period"
+          },
+          "revised_value": {
+            "description": "Input built from today's revised series.",
+            "title": "Revised Value",
+            "type": "number"
+          },
+          "vintage_period": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vintage Period"
+          },
+          "vintage_value": {
+            "description": "Same input from the figures published by then.",
+            "title": "Vintage Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "feature",
+          "label",
+          "from_vintage",
+          "revised_value",
+          "revised_period",
+          "vintage_value",
+          "vintage_period",
+          "difference"
+        ],
+        "title": "VintageReplayInput",
+        "type": "object"
+      },
       "VintageSeriesInfo": {
         "properties": {
           "dataset": {
@@ -5088,6 +5295,105 @@
           }
         },
         "summary": "What the walk-forward model said at a past as-of quarter, and what followed",
+        "tags": [
+          "history"
+        ]
+      }
+    },
+    "/api/history/vintage-replay": {
+      "get": {
+        "operationId": "get_vintage_replay_api_history_vintage_replay_get",
+        "parameters": [
+          {
+            "description": "ISO alpha-2 code.",
+            "in": "query",
+            "name": "country",
+            "required": true,
+            "schema": {
+              "description": "ISO alpha-2 code.",
+              "pattern": "^[A-Za-z]{2}$",
+              "title": "Country",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Replay quarter.",
+            "in": "query",
+            "name": "as_of",
+            "required": true,
+            "schema": {
+              "description": "Replay quarter.",
+              "pattern": "^\\d{4}-Q[1-4]$",
+              "title": "As Of",
+              "type": "string"
+            }
+          },
+          {
+            "description": "Quarters ahead: 2 or 4.",
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "default": 4,
+              "description": "Quarters ahead: 2 or 4.",
+              "title": "Horizon",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VintageReplay"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No out-of-sample estimate for this quarter."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unsupported country, horizon or as-of."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Too many compute requests."
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "No trained model / synced data."
+          }
+        },
+        "summary": "US only: the same walk-forward fold model scored on the figures as first published",
         "tags": [
           "history"
         ]
